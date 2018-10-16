@@ -1,6 +1,7 @@
 package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,10 +32,12 @@ import static com.firebase.ui.auth.AuthUI.TAG;
 public class ConnexionPage extends Activity {
 
     private static int RC_SIGN_IN = 100;
+    private static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ConnexionPage.context = this;
         setContentView(R.layout.connexion_page_layout);
         TextView seConnecter = (TextView) findViewById(R.id.se_connecter_texte);
         seConnecter.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +63,7 @@ public class ConnexionPage extends Activity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String email = user.getEmail();
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 db.collection("users")
@@ -70,13 +73,15 @@ public class ConnexionPage extends Activity {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
+                                    Intent intent = new Intent(ConnexionPage.context, MainPage.class);
+                                    startActivity(intent);
 
                                 } else {
                                     Log.d(TAG, "Error getting documents: ", task.getException());
                                 }
                             }
                         });
-                // ...
+
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check

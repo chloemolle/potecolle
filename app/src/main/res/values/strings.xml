@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Potecolle</string>
-    <string name="inscription">S'inscrire</string>
+    <string name="inscription">S\'inscrire</string>
     <string name="se_connecter">Se connecter</string>
     <string name="connexion">Connexion</string>
     <string name="username">Mail</string>
     <string name="mdp">Mot de passe</string>
-
+    <string name="start_game">Nouvelle partie</string>
 </resources>
