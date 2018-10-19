@@ -2,6 +2,7 @@ package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -30,6 +31,7 @@ public class ChoixAmiPage extends Activity {
         setContentView(R.layout.choix_ami_page_layout);
         final LinearLayout layout = (LinearLayout) findViewById(R.id.linear_layout_ami);
         final Context context = this;
+        final Globals globalVariables = (Globals) getApplicationContext();
 
         FirebaseFunctions mFunctions = FirebaseFunctions.getInstance();
 
@@ -46,8 +48,17 @@ public class ChoixAmiPage extends Activity {
                     public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
                         ArrayList<Map<String, String>> arr = (ArrayList<Map<String, String>>) task.getResult().getData();
                         for (Map<String, String> s : arr) {
+                            final String name = s.get("name");
                             Button newButton = new Button(context);
-                            newButton.setText(s.get("name"));
+                            newButton.setText(name);
+                            newButton.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(v.getContext(), ChoixAmiPage.class);
+                                    globalVariables.getCurrentGame().setPlayer2(name);
+                                    startActivity(intent);
+                                }
+                            });
+
                             layout.addView(newButton);
                         }
                         progressBar.setVisibility(View.GONE);

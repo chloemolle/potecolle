@@ -16,7 +16,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Arrays;
@@ -36,6 +35,14 @@ public class ConnexionPage extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Cas où on est déjà connecté
+        /*final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) { //TODO: vérifier ce que renvoie la base si il n'y a pas d'utilisateur
+            Intent intent = new Intent(ConnexionPage.context, MainPage.class);
+            startActivity(intent);
+            return;
+        }*/
         super.onCreate(savedInstanceState);
         ConnexionPage.context = this;
         setContentView(R.layout.connexion_page_layout);

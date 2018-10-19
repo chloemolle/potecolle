@@ -36,8 +36,7 @@ public class ChoixSujetPage extends Activity {
         setContentView(R.layout.choix_sujet_page_layout);
         final LinearLayout layout = (LinearLayout) findViewById(R.id.linear_layout_sujet);
         final Context context = this;
-
-        final String matiere = getIntent().getExtras().getString("matière");
+        final Globals globalVariables = (Globals) getApplicationContext();
 
         FirebaseFunctions mFunctions = FirebaseFunctions.getInstance();
 
@@ -46,7 +45,7 @@ public class ChoixSujetPage extends Activity {
 
         ArrayList<String> data = new ArrayList<String>();
         data.add("Troisieme");
-        data.add(matiere);
+        data.add(globalVariables.getCurrentGame().getMatiere());
 
         mFunctions
             .getHttpsCallable("getCollections")
@@ -56,11 +55,13 @@ public class ChoixSujetPage extends Activity {
                 public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
                     ArrayList<String> arr = (ArrayList<String>) task.getResult().getData();
                     for (String s : arr) {
+                        final String sujet = s;
                         Button newButton = new Button(context);
                         newButton.setText(s);
                         newButton.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
                                 Intent intent = new Intent(v.getContext(), ChoixAmiPage.class);
+                                globalVariables.getCurrentGame().setSujet(sujet);
                                 startActivity(intent);
                             }
                         });

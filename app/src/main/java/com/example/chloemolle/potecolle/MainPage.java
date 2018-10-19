@@ -25,6 +25,9 @@ import java.util.Map;
  */
 
 public class MainPage extends Activity {
+
+    //TODO: ajouter un pop up lorsque l'on fait un back pour demander si on veut vraiment se deconnecter. 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +35,7 @@ public class MainPage extends Activity {
 
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final Globals globalVariables = (Globals) getApplicationContext();
 
 
         DocumentReference userDB = db.collection("Users").document(user.getEmail());
@@ -42,8 +46,9 @@ public class MainPage extends Activity {
                         if (task.isSuccessful()) {
                             DocumentSnapshot doc = task.getResult();
                             TextView studentName = (TextView) findViewById(R.id.student_name);
-                            studentName.setText("Salut " + doc.getString("username") + " !");
-
+                            String userName = doc.getString("username");
+                            studentName.setText("Salut " + userName + " !");
+                            globalVariables.setUserName(userName);
                         }
                     }
                 })
@@ -57,6 +62,7 @@ public class MainPage extends Activity {
         startGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ChoixMatierePage.class);
+                globalVariables.setCurrentGame(new Game(globalVariables.getUserName()));
                 startActivity(intent);
             }
         });

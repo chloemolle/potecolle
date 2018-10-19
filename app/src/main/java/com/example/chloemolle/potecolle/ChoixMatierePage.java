@@ -25,11 +25,13 @@ public class ChoixMatierePage extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choix_matiere_page_layout);
 
+        final Globals globalVariables = (Globals) getApplicationContext();
+
         Button mathsButton = (Button) findViewById(R.id.maths_button);
         mathsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ChoixSujetPage.class);
-                intent.putExtra("matière", "Maths");
+                globalVariables.getCurrentGame().setMatiere("Maths");
                 startActivity(intent);
             }
         });
