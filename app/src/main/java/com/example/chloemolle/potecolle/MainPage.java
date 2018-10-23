@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class MainPage extends Activity {
 
-    //TODO: ajouter un pop up lorsque l'on fait un back pour demander si on veut vraiment se deconnecter. 
+    //TODO: ajouter un pop up lorsque l'on fait un back pour demander si on veut vraiment se deconnecter.
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

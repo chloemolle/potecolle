@@ -5,20 +5,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+
+import static com.firebase.ui.auth.AuthUI.TAG;
 
 /**
  * Created by chloemolle on 16/10/2018.
@@ -39,32 +48,39 @@ public class ChoixAmiPage extends Activity {
         progressBar.setVisibility(View.VISIBLE);
 
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        Task task = mFunctions
-                .getHttpsCallable("getFriends")
-                .call(user)
-                .continueWith(new Continuation<HttpsCallableResult, String>() {
-                    @Override
-                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                        ArrayList<Map<String, String>> arr = (ArrayList<Map<String, String>>) task.getResult().getData();
-                        for (Map<String, String> s : arr) {
-                            final String name = s.get("name");
-                            Button newButton = new Button(context);
-                            newButton.setText(name);
-                            newButton.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(v.getContext(), ChoixAmiPage.class);
-                                    globalVariables.getCurrentGame().setPlayer2(name);
-                                    startActivity(intent);
-                                }
-                            });
 
-                            layout.addView(newButton);
-                        }
-                        progressBar.setVisibility(View.GONE);
-                        return "";
+        DocumentReference docRef = db.collection("Users").document(user.getEmail());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    User user = documentSnapshot.toObject(User.class);
+                    ArrayList<HashMap<String,String>> friends = user.getFriends();
+                    for (HashMap<String,String> test: friends) {
+                        Button newButton = new Button(context);
+                        final String name = test.get("name");
+                        newButton.setText(name);
+                        newButton.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                Intent intent = new Intent(v.getContext(), ChoixSujetPage.class);
+                                globalVariables.getCurrentGame().setPlayer2(name);
+                                startActivity(intent);
+                            }
+                        });
+
+                        layout.addView(newButton);
                     }
-                });
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    Log.d(TAG, "No such document");
+                    progressBar.setVisibility(View.GONE);
+                }
+
+            }
+        });
+
 
     }
 }
