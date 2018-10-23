@@ -49,6 +49,7 @@ public class MainPage extends Activity {
                             String userName = doc.getString("username");
                             studentName.setText("Salut " + userName + " !");
                             globalVariables.setUserName(userName);
+                            globalVariables.setCurrentGame(new Game(globalVariables.getUserName(), doc.getString("classe")));
                         }
                     }
                 })
@@ -62,7 +63,6 @@ public class MainPage extends Activity {
         startGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ChoixMatierePage.class);
-                globalVariables.setCurrentGame(new Game(globalVariables.getUserName()));
                 startActivity(intent);
             }
         });

@@ -64,7 +64,7 @@ public class ChoixAmiPage extends Activity {
                         newButton.setText(name);
                         newButton.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
-                                Intent intent = new Intent(v.getContext(), ChoixSujetPage.class);
+                                Intent intent = new Intent(v.getContext(), QuizPage.class);
                                 globalVariables.getCurrentGame().setPlayer2(name);
                                 startActivity(intent);
                             }

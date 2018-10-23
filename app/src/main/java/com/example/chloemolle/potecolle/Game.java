@@ -11,8 +11,9 @@ public class Game {
     private String sujet;
     private String classe;
 
-    public Game (String _player1) {
+    public Game (String _player1, String _classe) {
         this.player1 = _player1;
+        this.classe = _classe;
     }
 
     public String getPlayer1() {
