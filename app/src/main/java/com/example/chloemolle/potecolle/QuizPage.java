@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -45,8 +46,12 @@ public class QuizPage extends Activity {
         if (currentQuestionNumber == 4) {
             bouton.setText("Fin");
         }
+
+        final EditText userAnswer = (EditText) findViewById(R.id.user_answer);
+
         bouton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                globalVariables.getCurrentGame().addAnswerForPlayer1(userAnswer.getText().toString());
                 if (currentQuestionNumber == 4) {
                     Intent intent = new Intent(v.getContext(), FinQuizPage.class);
                     startActivity(intent);

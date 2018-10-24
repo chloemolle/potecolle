@@ -4,28 +4,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
-import com.google.firebase.functions.HttpsCallableResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import static com.firebase.ui.auth.AuthUI.TAG;
 
@@ -62,6 +56,13 @@ public class ChoixAmiPage extends Activity {
                         Button newButton = new Button(context);
                         final String name = test.get("name");
                         newButton.setText(name);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        params.setMargins(20, 0, 20, 0);
+                        newButton.setLayoutParams(params);
+                        newButton.setTextColor(getResources().getColor(R.color.white));
                         newButton.setBackground(getDrawable(R.drawable.button_with_radius));
                         newButton.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {

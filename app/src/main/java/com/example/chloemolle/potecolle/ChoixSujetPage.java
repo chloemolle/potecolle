@@ -68,7 +68,14 @@ public class ChoixSujetPage extends Activity {
                         final String sujet = s;
                         Button newButton = new Button(context);
                         newButton.setText(s);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        params.setMargins(20, 0, 20, 0);
+                        newButton.setLayoutParams(params);
                         newButton.setBackground(getDrawable(R.drawable.button_with_radius));
+                        newButton.setTextColor(getResources().getColor(R.color.white));
                         newButton.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
                                 Intent intent = new Intent(v.getContext(), ChoixAmiPage.class);

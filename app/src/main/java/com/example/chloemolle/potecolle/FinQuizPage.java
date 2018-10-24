@@ -2,6 +2,7 @@ package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.TextView;
 
 /**
  * Created by chloemolle on 24/10/2018.
