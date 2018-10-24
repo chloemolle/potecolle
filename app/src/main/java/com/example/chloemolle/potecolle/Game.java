@@ -1,5 +1,9 @@
 package com.example.chloemolle.potecolle;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by chloemolle on 19/10/2018.
  */
@@ -10,6 +14,7 @@ public class Game {
     private String matiere;
     private String sujet;
     private String classe;
+    private ArrayList<Map<String, Object>> questions;
 
     public Game (String _player1, String _classe) {
         this.player1 = _player1;
@@ -54,5 +59,13 @@ public class Game {
 
     public void setSujet(String sujet) {
         this.sujet = sujet;
+    }
+
+    public ArrayList<Map<String, Object>> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(ArrayList<Map<String, Object>> questions) {
+        this.questions = questions;
     }
 }

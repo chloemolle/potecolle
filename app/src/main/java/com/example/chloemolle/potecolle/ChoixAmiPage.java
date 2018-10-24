@@ -62,6 +62,7 @@ public class ChoixAmiPage extends Activity {
                         Button newButton = new Button(context);
                         final String name = test.get("name");
                         newButton.setText(name);
+                        newButton.setBackground(getDrawable(R.drawable.button_with_radius));
                         newButton.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
                                 Intent intent = new Intent(v.getContext(), QuizPage.class);

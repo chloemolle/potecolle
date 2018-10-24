@@ -1,44 +1,64 @@
 package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import org.w3c.dom.Text;
+
+import java.util.Map;
+
+import static com.firebase.ui.auth.AuthUI.TAG;
 
 /**
  * Created by chloemolle on 23/10/2018.
  */
 
 public class QuizPage extends Activity {
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quiz_page_layout);
-        final LinearLayout layout = (LinearLayout) findViewById(R.id.linear_layout_quiz);
 
         final Globals globalVariables = (Globals) getApplicationContext();
 
+        final TextView question = (TextView) findViewById(R.id.question_quiz);
+        final Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
+        Map<String, Object> currentQuestion = globalVariables.getCurrentGame().getQuestions().get(currentQuestionNumber);
+        question.setText(currentQuestion.get("question").toString());
 
-        TextView text1 = new TextView(this) ;
-        text1.setText(globalVariables.getCurrentGame().getClasse());
-        layout.addView(text1);
+        Button bouton = (Button) findViewById(R.id.next_quiz);
+        if (currentQuestionNumber == 4) {
+            bouton.setText("Fin");
+        }
+        bouton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (currentQuestionNumber == 4) {
+                    Intent intent = new Intent(v.getContext(), FinQuizPage.class);
+                    startActivity(intent);
+                } else {
+                    globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
+                    Intent intent = new Intent(v.getContext(), QuizPage.class);
+                    startActivity(intent);
+                }
+            }
+        });
 
-        TextView text2 = new TextView(this) ;
-        text2.setText(globalVariables.getCurrentGame().getMatiere());
-        layout.addView(text2);
-
-        TextView text4 = new TextView(this) ;
-        text4.setText(globalVariables.getCurrentGame().getSujet());
-        layout.addView(text4);
-
-        TextView text3 = new TextView(this) ;
-        text3.setText(globalVariables.getCurrentGame().getPlayer1());
-        layout.addView(text3);
-
-        TextView text5 = new TextView(this) ;
-        text5.setText(globalVariables.getCurrentGame().getPlayer2());
-        layout.addView(text5);
     }
+
+
 }

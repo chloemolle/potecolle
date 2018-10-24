@@ -34,6 +34,8 @@
         <activity android:name=".QuizPage">
         </activity>
 
+        <activity android:name=".FinQuizPage">
+        </activity>
 
     </application>
 

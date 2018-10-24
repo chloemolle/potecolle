@@ -10,6 +10,7 @@ public class Globals extends Application {
 
     private Game currentGame;
     private String userName;
+    private Integer currentQuestionNumero = 0;
 
     public Game getCurrentGame() {
         return currentGame;
@@ -25,5 +26,13 @@ public class Globals extends Application {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Integer getCurrentQuestionNumero() {
+        return currentQuestionNumero;
+    }
+
+    public void setCurrentQuestionNumero(Integer currentQuestionNumero) {
+        this.currentQuestionNumero = currentQuestionNumero;
     }
 }
