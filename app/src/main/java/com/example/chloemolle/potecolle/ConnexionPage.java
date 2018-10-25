@@ -5,8 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
@@ -37,15 +42,16 @@ public class ConnexionPage extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
 
         // Cas où on est déjà connecté
-        /*final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) { //TODO: vérifier ce que renvoie la base si il n'y a pas d'utilisateur
-            Intent intent = new Intent(ConnexionPage.context, MainPage.class);
+            Intent intent = new Intent(this, MainPage.class);
             startActivity(intent);
             return;
-        }*/
+        }
         super.onCreate(savedInstanceState);
         ConnexionPage.context = this;
         setContentView(R.layout.connexion_page_layout);
+        Button bouton = (Button) findViewById(R.id.s_inscrire_bouton);
         TextView seConnecter = (TextView) findViewById(R.id.se_connecter_texte);
         seConnecter.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -70,6 +76,16 @@ public class ConnexionPage extends Activity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
+                ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.layout_connexion);
+                Button bouton = (Button) findViewById(R.id.s_inscrire_bouton);
+                TextView seConnecter = (TextView) findViewById(R.id.se_connecter_texte);
+                ImageView logo = (ImageView) findViewById(R.id.logo);
+                layout.removeView(seConnecter);
+                layout.removeView(bouton);
+                layout.removeView(logo);
+                ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleLarge);
+                progressBar.setVisibility(View.VISIBLE);
+                layout.addView(progressBar);
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String email = user.getEmail();
                 FirebaseFirestore db = FirebaseFirestore.getInstance();

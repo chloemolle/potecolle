@@ -9,4 +9,7 @@
     <string name="maths">Maths</string>
     <string name="français">Français</string>
     <string name="next">Suivant</string>
+    <string name="se_deconnecter">Se deconnecter</string>
+    <string name="rester_connecter">Rester connecté</string>
+
 </resources>

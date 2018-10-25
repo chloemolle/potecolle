@@ -1,6 +1,9 @@
 package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,7 +38,6 @@ public class MainPage extends Activity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Globals globalVariables = (Globals) getApplicationContext();
 
-
         DocumentReference userDB = db.collection("Users").document(user.getEmail());
 
         userDB.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -68,7 +70,25 @@ public class MainPage extends Activity {
 
     @Override
     public void onBackPressed(){
-        moveTaskToBack(true);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        final Context context = this;
+        alertDialog.setPositiveButton(R.string.se_deconnecter, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                FirebaseAuth test = FirebaseAuth.getInstance();
+                test.signOut();
+                Intent intent = new Intent(context, ConnexionPage.class);
+                startActivity(intent);
+            }
+        });
+        alertDialog.setNegativeButton(R.string.rester_connecter, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+
+        alertDialog.setTitle("Deconnexion");
+        alertDialog.setMessage("Es-tu sur de vouloir te déconnecter?");
+        alertDialog.setCancelable(true);
+        alertDialog.create().show();
     }
 
 }
