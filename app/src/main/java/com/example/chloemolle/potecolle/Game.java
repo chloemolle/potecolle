@@ -15,8 +15,8 @@ public class Game {
     private String sujet;
     private String classe;
     private ArrayList<Map<String, Object>> questions;
-    private ArrayList<String> player1Answers;
-    private ArrayList<String> player2Answers;
+    private ArrayList<String> player1Answers = new ArrayList<>();
+    private ArrayList<String> player2Answers = new ArrayList<>();
 
 
     public Game (String _player1, String _classe) {
@@ -81,9 +81,6 @@ public class Game {
     }
 
     public void addAnswerForPlayer1(String answer) {
-        if (this.player1Answers.isEmpty()) {
-            this.player1Answers = new ArrayList<>();
-        }
         this.player1Answers.add(answer);
     }
 

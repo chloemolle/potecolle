@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,9 +50,34 @@ public class QuizPage extends Activity {
 
         final EditText userAnswer = (EditText) findViewById(R.id.user_answer);
 
+
+        userAnswer.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                String userAnswerText = userAnswer.getText().toString();
+                if (userAnswerText.isEmpty()) {
+                    return false;
+                }
+                globalVariables.getCurrentGame().addAnswerForPlayer1(userAnswerText);
+                if (currentQuestionNumber == 4) {
+                    Intent intent = new Intent(v.getContext(), FinQuizPage.class);
+                    startActivity(intent);
+                } else {
+                    globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
+                    Intent intent = new Intent(v.getContext(), QuizPage.class);
+                    startActivity(intent);
+                }
+                return true;
+            }
+        });
+
         bouton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                globalVariables.getCurrentGame().addAnswerForPlayer1(userAnswer.getText().toString());
+                String userAnswerText = userAnswer.getText().toString();
+                if (userAnswerText.isEmpty()) {
+                    return;
+                }
+                globalVariables.getCurrentGame().addAnswerForPlayer1(userAnswerText);
                 if (currentQuestionNumber == 4) {
                     Intent intent = new Intent(v.getContext(), FinQuizPage.class);
                     startActivity(intent);
@@ -63,6 +89,12 @@ public class QuizPage extends Activity {
             }
         });
 
+    }
+
+
+    @Override
+    public void onBackPressed(){
+        return;
     }
 
 

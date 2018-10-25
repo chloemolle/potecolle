@@ -26,8 +26,6 @@ import java.util.Map;
 
 public class MainPage extends Activity {
 
-    //TODO: ajouter un pop up lorsque l'on fait un back pour demander si on veut vraiment se deconnecter.
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +64,11 @@ public class MainPage extends Activity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed(){
+        moveTaskToBack(true);
     }
 
 }

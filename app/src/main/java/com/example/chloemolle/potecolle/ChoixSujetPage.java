@@ -93,7 +93,7 @@ public class ChoixSujetPage extends Activity {
                                                     if (nbQuestionDisponible > 5) {
                                                         Random r = new Random();
                                                         while (questionToFetch.size() != 5) {
-                                                            Integer tmp = r.nextInt(nbQuestionDisponible - 1);
+                                                            Integer tmp = r.nextInt(nbQuestionDisponible);
                                                             if (questionToFetch.indexOf(tmp) == -1) {
                                                                 questionToFetch.add(tmp);
                                                             }
@@ -109,11 +109,18 @@ public class ChoixSujetPage extends Activity {
                                                     Integer index = 0;
                                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                                         if (questionToFetch.indexOf(index) != -1) {
-                                                            questionsQuiz.add(document.getData());
-                                                            index ++;
+                                                            if (questionsQuiz.size() > 0) {
+                                                                Random r = new Random();
+                                                                Integer randomInt = r.nextInt(questionsQuiz.size());
+                                                                questionsQuiz.add(randomInt, document.getData());
+                                                            } else {
+                                                                questionsQuiz.add(document.getData());
+                                                            }
                                                         }
+                                                        index ++;
                                                     }
                                                     globalVariables.getCurrentGame().setQuestions(questionsQuiz);
+                                                    Log.d("Information", "Voici les questions: " + questionsQuiz.toString());
                                                 } else {
                                                     Log.d(TAG, "Error getting documents: ", task.getException());
                                                 }
