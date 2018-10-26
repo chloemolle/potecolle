@@ -14,9 +14,15 @@ public class Game {
     private String matiere;
     private String sujet;
     private String classe;
+    private String repondu;
     private ArrayList<Map<String, Object>> questions;
+    private ArrayList<String> questionsId;
     private ArrayList<String> player1Answers = new ArrayList<>();
     private ArrayList<String> player2Answers = new ArrayList<>();
+
+
+    public Game () {
+    }
 
 
     public Game (String _player1, String _classe) {
@@ -90,5 +96,21 @@ public class Game {
 
     public void setPlayer2Answers(ArrayList<String> player2Answers) {
         this.player2Answers = player2Answers;
+    }
+
+    public ArrayList<String> getQuestionsId() {
+        return questionsId;
+    }
+
+    public void setQuestionsId(ArrayList<String> questionsId) {
+        this.questionsId = questionsId;
+    }
+
+    public String getRepondu() {
+        return repondu;
+    }
+
+    public void setRepondu(String repondu) {
+        this.repondu = repondu;
     }
 }

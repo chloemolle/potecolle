@@ -31,4 +31,14 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.317" />
+
+    <LinearLayout
+        android:id="@+id/layout_partie_en_cours"
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lancer_partie"></LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -15,7 +15,10 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -40,6 +43,9 @@ public class ChoixSujetPage extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choix_sujet_page_layout);
+
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
         final LinearLayout layout = (LinearLayout) findViewById(R.id.linear_layout_sujet);
         final Context context = this;
         final Globals globalVariables = (Globals) getApplicationContext();
@@ -88,6 +94,7 @@ public class ChoixSujetPage extends Activity {
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     ArrayList<Map<String, Object>> questionsQuiz = new ArrayList<>();
+                                                    ArrayList<String> questionsQuizId = new ArrayList<>();
                                                     Integer nbQuestionDisponible = task.getResult().size();
                                                     ArrayList<Integer> questionToFetch = new ArrayList<>();
                                                     if (nbQuestionDisponible > 5) {
@@ -113,13 +120,16 @@ public class ChoixSujetPage extends Activity {
                                                                 Random r = new Random();
                                                                 Integer randomInt = r.nextInt(questionsQuiz.size());
                                                                 questionsQuiz.add(randomInt, document.getData());
+                                                                questionsQuizId.add(randomInt, document.getId());
                                                             } else {
                                                                 questionsQuiz.add(document.getData());
+                                                                questionsQuizId.add(document.getId());
                                                             }
                                                         }
                                                         index ++;
                                                     }
                                                     globalVariables.getCurrentGame().setQuestions(questionsQuiz);
+                                                    globalVariables.getCurrentGame().setQuestionsId(questionsQuizId);
                                                     Log.d("Information", "Voici les questions: " + questionsQuiz.toString());
                                                 } else {
                                                     Log.d(TAG, "Error getting documents: ", task.getException());

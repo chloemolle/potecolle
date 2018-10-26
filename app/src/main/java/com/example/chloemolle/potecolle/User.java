@@ -13,6 +13,8 @@ public class User {
     private String classe;
     private String username;
     private ArrayList<HashMap<String,String>> friends;
+    private ArrayList<HashMap<String,String>> partiesEnCours;
+
 
     public User() {};
 
@@ -26,5 +28,9 @@ public class User {
 
     public String getUsername() {
         return username;
+    }
+
+    public ArrayList<HashMap<String, String>> getPartiesEnCours() {
+        return partiesEnCours;
     }
 }

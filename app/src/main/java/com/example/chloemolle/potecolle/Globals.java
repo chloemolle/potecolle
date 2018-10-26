@@ -9,7 +9,7 @@ import android.app.Application;
 public class Globals extends Application {
 
     private Game currentGame;
-    private String userName;
+    private User user;
     private Integer currentQuestionNumero = 0;
 
     public Game getCurrentGame() {
@@ -20,19 +20,19 @@ public class Globals extends Application {
         this.currentGame = currentGame;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public Integer getCurrentQuestionNumero() {
         return currentQuestionNumero;
     }
 
     public void setCurrentQuestionNumero(Integer currentQuestionNumero) {
         this.currentQuestionNumero = currentQuestionNumero;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
