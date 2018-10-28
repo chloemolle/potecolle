@@ -2,6 +2,8 @@ package com.example.chloemolle.potecolle;
 
 import android.app.Application;
 
+import java.util.Map;
+
 /**
  * Created by chloemolle on 19/10/2018.
  */
@@ -27,6 +29,11 @@ public class Globals extends Application {
     public void setCurrentQuestionNumero(Integer currentQuestionNumero) {
         this.currentQuestionNumero = currentQuestionNumero;
     }
+
+    public void addQuestionToGame(Map<String, Object> question) {
+        this.currentGame.addQuestions(question);
+    }
+
 
     public User getUser() {
         return user;

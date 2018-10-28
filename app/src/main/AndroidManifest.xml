@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".FirstPage"
-            android:theme="@style/ConnexionTheme">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -40,6 +40,10 @@
 
         <activity android:name=".FinQuizPage">
         </activity>
+
+        <activity android:name=".ResultPage">
+        </activity>
+
 
     </application>
 

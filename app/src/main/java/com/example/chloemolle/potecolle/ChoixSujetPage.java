@@ -80,7 +80,11 @@ public class ChoixSujetPage extends Activity {
                         );
                         params.setMargins(20, 0, 20, 0);
                         newButton.setLayoutParams(params);
-                        newButton.setBackground(getDrawable(R.drawable.button_with_radius));
+                        if (android.os.Build.VERSION.SDK_INT >= 21){
+                            newButton.setBackground(getDrawable(R.drawable.button_with_radius));
+                        } else{
+                            newButton.setBackground(getResources().getDrawable(R.drawable.button_with_radius));
+                        }
                         newButton.setTextColor(getResources().getColor(R.color.white));
                         newButton.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {

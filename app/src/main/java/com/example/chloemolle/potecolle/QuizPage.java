@@ -13,13 +13,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.w3c.dom.Text;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.firebase.ui.auth.AuthUI.TAG;
@@ -37,9 +40,11 @@ public class QuizPage extends Activity {
         setContentView(R.layout.quiz_page_layout);
 
         final Globals globalVariables = (Globals) getApplicationContext();
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         final TextView question = (TextView) findViewById(R.id.question_quiz);
         final Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
+
         Map<String, Object> currentQuestion = globalVariables.getCurrentGame().getQuestions().get(currentQuestionNumber);
         question.setText(currentQuestion.get("question").toString());
 
@@ -88,6 +93,10 @@ public class QuizPage extends Activity {
                 }
             }
         });
+
+
+
+
 
     }
 
