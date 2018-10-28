@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -122,13 +123,15 @@ public class MainPage extends Activity {
                                                                             (repondu.equals("true") && fini.equals("true")) ?
                                                                                     "regarde les résultats !" : "Réponds aux questions :) ";
 
-                                                                    newButton.setText(finiOuPas + " " + partieTest.get("adversaire") + " " + partieTest.get("classe") + " " + partieTest.get("matiere") + " " + partieTest.get("sujet"));
+                                                                    newButton.setText(finiOuPas + " \n" + partieTest.get("adversaire") + ", " + partieTest.get("classe") + " \n" + partieTest.get("matiere") + ", " + partieTest.get("sujet"));
+                                                                    newButton.setGravity(Gravity.LEFT);
                                                                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                                                                             LinearLayout.LayoutParams.MATCH_PARENT,
-                                                                            LinearLayout.LayoutParams.WRAP_CONTENT
+                                                                            LinearLayout.LayoutParams.MATCH_PARENT
                                                                     );
                                                                     params.setMargins(100, 0, 100, 0);
                                                                     newButton.setLayoutParams(params);
+                                                                    newButton.setPadding(10, 10, 10, 10);
                                                                     newButton.setTextColor(getResources().getColor(R.color.colorTheme));
                                                                     if (android.os.Build.VERSION.SDK_INT >= 21){
                                                                         newButton.setBackground(getDrawable(R.drawable.parties_en_cours));
