@@ -42,22 +42,22 @@ public class FinQuizPage extends Activity {
 
         globalVariables.setCurrentQuestionNumero(0);
         ArrayList<String> player1Answers = globalVariables.getCurrentGame().getPlayer1Answers();
-        ArrayList<Map<String,Object>> realAnswers = globalVariables.getCurrentGame().getQuestions();
+        ArrayList<Question> realAnswers = globalVariables.getCurrentGame().getQuestions();
 
         LinearLayout ll = (LinearLayout) findViewById(R.id.linear_layout_reponse);
 
         Integer score = 0;
         for (Integer i = 0; i < player1Answers.size(); i ++) {
             String playerAnswer = player1Answers.get(i);
-            Object answer = realAnswers.get(i).get("reponse");
-            Object question = realAnswers.get(i).get("question");
+            Object answer = realAnswers.get(i).getReponse();
+            Object question = realAnswers.get(i).getQuestion();
             String realAnswer = "";
             try {
                 realAnswer = answer.toString();
             } catch (Exception e) {
                 Log.e("ERROR", "probleme" + realAnswers.get(i));
             }
-            if (playerAnswer.equals(realAnswer)) {
+            if (playerAnswer.replaceAll("\\s", "").equalsIgnoreCase(realAnswer.replaceAll("\\s", ""))) {
                 score ++;
             } else {
                 TextView textQuestion = new TextView(this);

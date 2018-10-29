@@ -30,7 +30,7 @@ public class Globals extends Application {
         this.currentQuestionNumero = currentQuestionNumero;
     }
 
-    public void addQuestionToGame(Map<String, Object> question) {
+    public void addQuestionToGame(Question question) {
         this.currentGame.addQuestions(question);
     }
 

@@ -144,18 +144,19 @@ public class ChoixAmiPage extends Activity {
                                                 newGame.put("question4Id", questionsId.get(3));
                                                 newGame.put("question5Id", questionsId.get(4));
                                                 arr.add(newGame);
-                                                ArrayList<Map<String, Object>> questions = currentGame.getQuestions();
-                                                newGame.put("question1", questions.get(0).get("question").toString());
-                                                newGame.put("question2", questions.get(1).get("question").toString());
-                                                newGame.put("question3", questions.get(2).get("question").toString());
-                                                newGame.put("question4", questions.get(3).get("question").toString());
-                                                newGame.put("question5", questions.get(4).get("question").toString());
+                                                ArrayList<Question> questions = currentGame.getQuestions();
+                                                newGame.put("question1", questions.get(0).getQuestion().toString());
+                                                newGame.put("question2", questions.get(1).getQuestion().toString());
+                                                newGame.put("question3", questions.get(2).getQuestion().toString());
+                                                newGame.put("question4", questions.get(3).getQuestion().toString());
+                                                newGame.put("question5", questions.get(4).getQuestion().toString());
 
-                                                newGame.put("reponse1", questions.get(0).get("reponse").toString());
-                                                newGame.put("reponse2", questions.get(1).get("reponse").toString());
-                                                newGame.put("reponse3", questions.get(2).get("reponse").toString());
-                                                newGame.put("reponse4", questions.get(3).get("reponse").toString());
-                                                newGame.put("reponse5", questions.get(4).get("reponse").toString());
+
+                                                newGame.put("reponse1", questions.get(0).getReponse().toString());
+                                                newGame.put("reponse2", questions.get(1).getReponse().toString());
+                                                newGame.put("reponse3", questions.get(2).getReponse().toString());
+                                                newGame.put("reponse4", questions.get(3).getReponse().toString());
+                                                newGame.put("reponse5", questions.get(4).getReponse().toString());
 
                                                 OpponentDB.update("partiesEnCours", arr)
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {

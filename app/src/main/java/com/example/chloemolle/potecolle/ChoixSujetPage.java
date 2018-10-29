@@ -78,13 +78,14 @@ public class ChoixSujetPage extends Activity {
                                 LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
                         );
-                        params.setMargins(20, 0, 20, 0);
+                        params.setMargins(20, 20, 20, 20);
                         newButton.setLayoutParams(params);
                         if (android.os.Build.VERSION.SDK_INT >= 21){
                             newButton.setBackground(getDrawable(R.drawable.button_with_radius));
                         } else{
                             newButton.setBackground(getResources().getDrawable(R.drawable.button_with_radius));
                         }
+
                         newButton.setTextColor(getResources().getColor(R.color.white));
                         newButton.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
@@ -97,7 +98,7 @@ public class ChoixSujetPage extends Activity {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
-                                                    ArrayList<Map<String, Object>> questionsQuiz = new ArrayList<>();
+                                                    ArrayList<Question> questionsQuiz = new ArrayList<>();
                                                     ArrayList<String> questionsQuizId = new ArrayList<>();
                                                     Integer nbQuestionDisponible = task.getResult().size();
                                                     ArrayList<Integer> questionToFetch = new ArrayList<>();
@@ -123,10 +124,16 @@ public class ChoixSujetPage extends Activity {
                                                             if (questionsQuiz.size() > 0) {
                                                                 Random r = new Random();
                                                                 Integer randomInt = r.nextInt(questionsQuiz.size());
-                                                                questionsQuiz.add(randomInt, document.getData());
+                                                                Question question = document.toObject(Question.class);
+                                                                ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
+                                                                question.setPropositions(propositions);
+                                                                questionsQuiz.add(randomInt, question);
                                                                 questionsQuizId.add(randomInt, document.getId());
                                                             } else {
-                                                                questionsQuiz.add(document.getData());
+                                                                Question question = document.toObject(Question.class);
+                                                                ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
+                                                                question.setPropositions(propositions);
+                                                                questionsQuiz.add(question);
                                                                 questionsQuizId.add(document.getId());
                                                             }
                                                         }

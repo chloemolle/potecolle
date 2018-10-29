@@ -28,19 +28,5 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"/>
 
-        <Button
-            android:id="@+id/francais_button"
-            android:textColor="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/français"
-            android:background="@drawable/button_square"
-            tools:layout_editor_absoluteX="117dp"
-            tools:layout_editor_absoluteY="378dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"/>
-
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
