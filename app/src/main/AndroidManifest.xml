@@ -44,6 +44,9 @@
         <activity android:name=".ResultPage">
         </activity>
 
+        <activity android:name=".EcriturePage">
+        </activity>
+
 
     </application>
 

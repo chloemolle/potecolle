@@ -11,5 +11,8 @@
     <string name="next">Suivant</string>
     <string name="se_deconnecter">Se deconnecter</string>
     <string name="rester_connecter">Rester connecté</string>
+    <string name="explication_ecriture">Voici ta page de brouillon ;)</string>
+    <string name="retour_quiz">Retour au quiz</string>
+    <string name="brouillon">brouillon</string>
 
 </resources>

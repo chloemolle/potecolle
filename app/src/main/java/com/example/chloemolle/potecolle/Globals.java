@@ -13,6 +13,8 @@ public class Globals extends Application {
     private Game currentGame;
     private User user;
     private Integer currentQuestionNumero = 0;
+    private String brouillonText = "";
+    private String reponseText = "";
 
     public Game getCurrentGame() {
         return currentGame;
@@ -41,5 +43,21 @@ public class Globals extends Application {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getBrouillonText() {
+        return brouillonText;
+    }
+
+    public void setBrouillonText(String brouillonText) {
+        this.brouillonText = brouillonText;
+    }
+
+    public String getReponseText() {
+        return reponseText;
+    }
+
+    public void setReponseText(String reponseText) {
+        this.reponseText = reponseText;
     }
 }
