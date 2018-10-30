@@ -57,7 +57,7 @@ public class ChoixAmiPage extends Activity {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            params.setMargins(20, 0, 20, 0);
+            params.setMargins(20, 20, 20, 20);
             newButton.setLayoutParams(params);
             newButton.setTextColor(getResources().getColor(R.color.white));
 
