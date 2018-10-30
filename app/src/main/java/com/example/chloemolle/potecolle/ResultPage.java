@@ -25,7 +25,7 @@ public class ResultPage extends Activity {
         Integer sonScore = Integer.parseInt(sonScoreString);
 
         String quiAGagne =  votreScore > sonScore ? " Vous avez gagné ! " :
-                votreScore == sonScore ? " Vous êtes à égalité ! " : " Vous avez perdu mais pas de soucis, vous pouvez le redéfier ! é";
+                votreScore == sonScore ? " Vous êtes à égalité ! " : " Vous avez perdu mais pas de soucis, vous pouvez le redéfier ! ";
         text.setText("Voici les résultats !" + quiAGagne);
         text.setTextColor(getResources().getColor(R.color.colorTheme));
 
