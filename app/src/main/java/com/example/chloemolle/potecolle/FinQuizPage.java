@@ -8,13 +8,17 @@ import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.w3c.dom.Text;
 
@@ -83,38 +87,60 @@ public class FinQuizPage extends Activity {
         final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
         final Integer scoreFinal = score;
 
-        userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    User user = documentSnapshot.toObject(User.class);
-                    Game currentGame = globalVariables.getCurrentGame();
-                    ArrayList<HashMap<String,String>> arr = user.getPartiesEnCours();
-                    for (Integer i = 0; i < arr.size(); i ++) {
-                        HashMap<String,String> gameTmp = arr.get(i);
-                        if(currentGame.isEqual(gameTmp.get("matiere"), gameTmp.get("sujet"), user.getUsername(),gameTmp.get("adversaire"), gameTmp.get("question1Id"), gameTmp.get("question2Id"), gameTmp.get("question3Id"), gameTmp.get("question4Id"), gameTmp.get("question5Id"))) {
-                            arr.get(i).put("repondu", "true");
-                            arr.get(i).put("score", scoreFinal.toString());
+        Map<String, Object> updateFields = new HashMap<>();
+        updateFields.put("score", scoreFinal.toString());
+        updateFields.put("repondu", "true");
+
+
+        userDB.collection("Games").document(globalVariables.getCurrentGame().getId())
+                .update(updateFields)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
+
+
+        final Map<String, Object> updateOtherFields = new HashMap<>();
+        updateOtherFields.put("scoreOpponent", scoreFinal.toString());
+        updateOtherFields.put("fini", "true");
+
+
+        db.collection("Users")
+                .whereEqualTo("username", globalVariables.getCurrentGame().getAdversaire())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                final DocumentReference opponentDB = db.collection("Users").document(document.getId());
+                                opponentDB.collection("Games")
+                                        .document(globalVariables.getCurrentGame().getId())
+                                        .update(updateOtherFields)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Error updating document", e);
+                                            }
+                                        });
+                            }
                         }
                     }
-                    userDB.update("partiesEnCours", arr)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w(TAG, "Error updating document", e);
-                                }
-                            });;
-                } else {
-                    Log.d(TAG, "No such document");
-                }
-            }
-        });
+                });
 
     }
 

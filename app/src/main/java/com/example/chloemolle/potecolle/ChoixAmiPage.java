@@ -24,6 +24,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,6 +69,11 @@ public class ChoixAmiPage extends Activity {
                     String opponentUsername = b.getText().toString();
                     Intent intent = new Intent(v.getContext(), QuizPage.class);
                     globalVariables.getCurrentGame().setPlayer2(name);
+                    globalVariables.getCurrentGame().setAdversaire(name);
+                    Date date = new Date();
+                    Long tmp = date.getTime();
+                    final String id = tmp.toString();
+                    globalVariables.getCurrentGame().setId(id);
 
                     final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
                     //set game for user
@@ -75,24 +81,11 @@ public class ChoixAmiPage extends Activity {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             if (documentSnapshot.exists()) {
-                                //TODO: un jour il faudra s'occuper de quand plusieurs parties ont les mêmes propriétés
                                 User user = documentSnapshot.toObject(User.class);
-                                Game currentGame = globalVariables.getCurrentGame();
-                                ArrayList<HashMap<String,String>> arr = user.getPartiesEnCours();
-                                HashMap<String,String> newGame = new HashMap<>();
-                                newGame.put("adversaire", currentGame.getPlayer2());
-                                newGame.put("classe", currentGame.getClasse());
-                                newGame.put("matiere", currentGame.getMatiere());
-                                newGame.put("sujet", currentGame.getSujet());
-                                newGame.put("fini", "false");
-                                newGame.put("repondu", "false");
-                                ArrayList<String> questionsId = currentGame.getQuestionsId();
-                                newGame.put("question1Id", questionsId.get(0));
-                                newGame.put("question2Id", questionsId.get(1));
-                                newGame.put("question3Id", questionsId.get(2));
-                                newGame.put("question4Id", questionsId.get(3));
-                                newGame.put("question5Id", questionsId.get(4));
-                                arr.add(newGame);
+                                final Game currentGame = globalVariables.getCurrentGame();
+                                //Updating the array of the player
+                                ArrayList<String> arr = user.getPartiesEnCours();
+                                arr.add(id);
                                 userDB.update("partiesEnCours", arr)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
@@ -106,6 +99,46 @@ public class ChoixAmiPage extends Activity {
                                                 Log.w(TAG, "Error updating document", e);
                                             }
                                         });
+
+                                //Creating the document
+                                HashMap<String,String> newGame = new HashMap<>();
+                                newGame.put("adversaire", currentGame.getPlayer2());
+                                newGame.put("classe", currentGame.getClasse());
+                                newGame.put("matiere", currentGame.getMatiere());
+                                newGame.put("sujet", currentGame.getSujet());
+                                newGame.put("fini", "false");
+                                newGame.put("repondu", "false");
+                                newGame.put("id", id);
+                                userDB.collection("Games").document(id)
+                                        .set(newGame)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                ArrayList<String> questionsId = currentGame.getQuestionsId();
+                                                userDB.collection("Games").document(id)
+                                                        .update("questionsId", questionsId)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.w(TAG, "Error updating document", e);
+                                                            }
+                                                        });
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Error writing document", e);
+                                            }
+                                        });
+
                             } else {
                                 Log.d(TAG, "No such document");
                             }
@@ -121,44 +154,18 @@ public class ChoixAmiPage extends Activity {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    final DocumentReference OpponentDB = db.collection("Users").document(document.getId());
-                                    OpponentDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    final DocumentReference opponentDB = db.collection("Users").document(document.getId());
+                                    opponentDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                         @Override
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                             if (documentSnapshot.exists()) {
-                                                //TODO: un jour il faudra s'occuper de quand plusieurs parties ont les mêmes propriétés
                                                 User user = documentSnapshot.toObject(User.class);
-                                                Game currentGame = globalVariables.getCurrentGame();
-                                                ArrayList<HashMap<String,String>> arr = user.getPartiesEnCours();
-                                                HashMap<String,String> newGame = new HashMap<>();
-                                                newGame.put("adversaire", currentGame.getPlayer1());
-                                                newGame.put("classe", currentGame.getClasse());
-                                                newGame.put("matiere", currentGame.getMatiere());
-                                                newGame.put("sujet", currentGame.getSujet());
-                                                newGame.put("fini", "false");
-                                                newGame.put("repondu", "false");
-                                                ArrayList<String> questionsId = currentGame.getQuestionsId();
-                                                newGame.put("question1Id", questionsId.get(0));
-                                                newGame.put("question2Id", questionsId.get(1));
-                                                newGame.put("question3Id", questionsId.get(2));
-                                                newGame.put("question4Id", questionsId.get(3));
-                                                newGame.put("question5Id", questionsId.get(4));
-                                                arr.add(newGame);
-                                                ArrayList<Question> questions = currentGame.getQuestions();
-                                                newGame.put("question1", questions.get(0).getQuestion().toString());
-                                                newGame.put("question2", questions.get(1).getQuestion().toString());
-                                                newGame.put("question3", questions.get(2).getQuestion().toString());
-                                                newGame.put("question4", questions.get(3).getQuestion().toString());
-                                                newGame.put("question5", questions.get(4).getQuestion().toString());
+                                                final Game currentGame = globalVariables.getCurrentGame();
 
-
-                                                newGame.put("reponse1", questions.get(0).getReponse().toString());
-                                                newGame.put("reponse2", questions.get(1).getReponse().toString());
-                                                newGame.put("reponse3", questions.get(2).getReponse().toString());
-                                                newGame.put("reponse4", questions.get(3).getReponse().toString());
-                                                newGame.put("reponse5", questions.get(4).getReponse().toString());
-
-                                                OpponentDB.update("partiesEnCours", arr)
+                                                //Updating the array of the player
+                                                ArrayList<String> arr = user.getPartiesEnCours();
+                                                arr.add(id);
+                                                opponentDB.update("partiesEnCours", arr)
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
@@ -170,7 +177,48 @@ public class ChoixAmiPage extends Activity {
                                                             public void onFailure(@NonNull Exception e) {
                                                                 Log.w(TAG, "Error updating document", e);
                                                             }
-                                                        });;
+                                                        });
+
+                                                //Creating the document
+                                                HashMap<String,String> newGame = new HashMap<>();
+                                                newGame.put("adversaire", currentGame.getPlayer1());
+                                                newGame.put("classe", currentGame.getClasse());
+                                                newGame.put("matiere", currentGame.getMatiere());
+                                                newGame.put("sujet", currentGame.getSujet());
+                                                newGame.put("fini", "false");
+                                                newGame.put("repondu", "false");
+                                                newGame.put("id", id);
+                                                opponentDB.collection("Games").document(id)
+                                                        .set(newGame)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                                Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                                ArrayList<String> questionsId = currentGame.getQuestionsId();
+                                                                opponentDB.collection("Games").document(id)
+                                                                        .update("questionsId", questionsId)
+                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
+                                                                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                                                            }
+                                                                        })
+                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                            @Override
+                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                Log.w(TAG, "Error updating document", e);
+                                                                            }
+                                                                        });
+
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.w(TAG, "Error writing document", e);
+                                                            }
+                                                        });
                                             } else {
                                                 Log.d(TAG, "No such document");
                                             }

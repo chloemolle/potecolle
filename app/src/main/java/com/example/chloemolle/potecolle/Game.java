@@ -21,15 +21,18 @@ import static com.firebase.ui.auth.AuthUI.TAG;
 public class Game {
     private String player1;
     private String player2;
+    private String adversaire;
     private String matiere;
     private String sujet;
     private String classe;
     private String repondu;
-    private ArrayList<Question> questions;
+    private String fini;
+    private ArrayList<Question> questions= new ArrayList<>();
     private ArrayList<String> questionsId;
     private ArrayList<String> player1Answers = new ArrayList<>();
     private ArrayList<String> player2Answers = new ArrayList<>();
     private String score;
+    private String id;
     private String scoreOpponent;
 
     public Game () {
@@ -186,11 +189,35 @@ public class Game {
         this.repondu = repondu;
     }
 
+    public String getFini() {
+        return fini;
+    }
+
+    public void setFini(String fini) {
+        this.fini = fini;
+    }
+
     public String getScore() {
         return score;
     }
 
     public String getScoreOpponent() {
         return scoreOpponent;
+    }
+
+    public String getAdversaire() {
+        return adversaire;
+    }
+
+    public void setAdversaire(String adversaire) {
+        this.adversaire = adversaire;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

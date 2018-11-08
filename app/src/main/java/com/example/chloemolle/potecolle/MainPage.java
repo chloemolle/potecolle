@@ -79,282 +79,112 @@ public class MainPage extends Activity {
 
                     final ArrayList<HashMap<String, String>> updatedGame = new ArrayList<>();
                     // On affiche un bouton par partie en cours
-                    for (final HashMap<String, String> partie : user.getPartiesEnCours()) {
-                        //TODO: Plus tard il faudrait créer une collection quiz par personne
-                        final HashMap<String, String> partieTest = partie;
-
-                        db.collection("Users")
-                                .whereEqualTo("username", partie.get("adversaire"))
+                    ArrayList<String> parties = user.getPartiesEnCours();
+                    for (String partie: parties) {
+                        final String partieTmp = partie;
+                        userDB.collection("Games").document(partieTmp)
                                 .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                String id = document.getId();
-                                                final DocumentReference OpponentDB = db.collection("Users").document(id);
-                                                OpponentDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                    @Override
-                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                        if (documentSnapshot.exists()) {
-                                                            //TODO: un jour il faudra s'occuper de quand plusieurs parties ont les mêmes propriétés
-                                                            User userOpponent = documentSnapshot.toObject(User.class);
-                                                            ArrayList<HashMap<String, String>> arr = userOpponent.getPartiesEnCours();
-                                                            for (Integer i = 0; i < arr.size(); i++) {
-                                                                final HashMap<String, String> partieOpponent = arr.get(i);
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if (documentSnapshot.exists()) {
+                                            String scoreOpponent = (String) documentSnapshot.get("scoreOpponent");
+                                            final Game game = documentSnapshot.toObject(Game.class);
 
-                                                                db.collection(partieOpponent.get("classe")).document(partieOpponent.get("matiere")).collection(partieOpponent.get("sujet")).get()
-                                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                            @Override
-                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                if (task.isSuccessful()) {
-                                                                                    final Task<QuerySnapshot> taskToUse = task;
-                                                                                    if (user.getUsername().equals(partieOpponent.get("adversaire")) &&
-                                                                                            (partieOpponent.get("question1Id").equals(partieTest.get("question1Id"))) &&
-                                                                                            (partieOpponent.get("question2Id").equals(partieTest.get("question2Id"))) &&
-                                                                                            (partieOpponent.get("question3Id").equals(partieTest.get("question3Id"))) &&
-                                                                                            (partieOpponent.get("question4Id").equals(partieTest.get("question4Id"))) &&
-                                                                                            (partieOpponent.get("question5Id").equals(partieTest.get("question5Id")))) {
-                                                                                        if (partieOpponent.get("repondu").equals("true") && partieTest.get("repondu").equals("true")) {
-                                                                                            partieTest.put("fini", "true");
-                                                                                            partieTest.put("scoreOpponent", partieOpponent.get("score"));
-                                                                                        }
-                                                                                        updatedGame.add(partieTest);
-
-                                                                                        Button newButton = new Button(context);
-
-                                                                                        String repondu = partieTest.get("repondu");
-                                                                                        String fini = partieTest.get("fini");
-
-                                                                                        String finiOuPas = (repondu.equals("true") && fini.equals("false")) ?
-                                                                                                "Attends qu'il réponde aux questions !" :
-                                                                                                (repondu.equals("true") && fini.equals("true")) ?
-                                                                                                        "regarde les résultats !" : "Réponds aux questions :) ";
-
-                                                                                        newButton.setText(finiOuPas + " \n" + partieTest.get("adversaire") + ", " + partieTest.get("classe") + " \n" + partieTest.get("matiere") + ", " + partieTest.get("sujet"));
-                                                                                        newButton.setGravity(Gravity.LEFT);
-                                                                                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                                                                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                                                                                LinearLayout.LayoutParams.MATCH_PARENT
-                                                                                        );
-                                                                                        params.setMargins(100, 0, 100, 0);
-                                                                                        newButton.setLayoutParams(params);
-                                                                                        newButton.setPadding(10, 10, 10, 10);
-                                                                                        newButton.setTextColor(getResources().getColor(R.color.colorTheme));
-                                                                                        if (android.os.Build.VERSION.SDK_INT >= 21) {
-                                                                                            newButton.setBackground(getDrawable(R.drawable.parties_en_cours));
-                                                                                        } else {
-                                                                                            newButton.setBackground(getResources().getDrawable(R.drawable.parties_en_cours));
-                                                                                        }
-                                                                                        if (fini.equals("true")) {
-                                                                                            newButton.setOnClickListener(new View.OnClickListener() {
-                                                                                                public void onClick(View v) {
-                                                                                                    Question q1 = new Question(partieTest.get("question1"), partieTest.get("reponse1"));
-                                                                                                    Question q2 = new Question(partieTest.get("question2"), partieTest.get("reponse2"));
-                                                                                                    Question q3 = new Question(partieTest.get("question3"), partieTest.get("reponse3"));
-                                                                                                    Question q4 = new Question(partieTest.get("question4"), partieTest.get("reponse4"));
-                                                                                                    Question q5 = new Question(partieTest.get("question5"), partieTest.get("reponse5"));
-                                                                                                    globalVariables.setCurrentGame(new Game(globalVariables.getUser().getUsername(), partieTest.get("adversaire"), globalVariables.getUser().getClasse(), partieTest.get("matiere"), partieTest.get("sujet"), partieTest.get("question1Id"), partieTest.get("question2Id"), partieTest.get("question3Id"), partieTest.get("question4Id"), partieTest.get("question5Id"), q1, q2, q3, q4, q5, partieTest.get("score"), partieOpponent.get("score")));
-                                                                                                    Intent intent = new Intent(v.getContext(), ResultPage.class);
-                                                                                                    startActivity(intent);
+                                            //On met à jour la partie suivant si l'adversaire a repondu aux questions
+                                            db.collection("Users")
+                                                    .whereEqualTo("username", game.getAdversaire())
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                    db.collection("Users").document(document.getId())
+                                                                    .collection("Games").document(partieTmp)
+                                                                    .get()
+                                                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                        @Override
+                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                            if (documentSnapshot.exists()) {
+                                                                                if (documentSnapshot.get("repondu").equals("true") && game.getRepondu().equals("true")) {
+                                                                                    DocumentReference doc = userDB.collection("Games").document(partieTmp);
+                                                                                    doc.update("fini", "true")
+                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Void aVoid) {
+                                                                                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                                                                                }
+                                                                                            })
+                                                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                                                @Override
+                                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                                    Log.w(TAG, "Error updating document", e);
                                                                                                 }
                                                                                             });
-                                                                                        } else if (repondu.equals("false")) {
-                                                                                            newButton.setOnClickListener(new View.OnClickListener() {
-                                                                                                public void onClick(View v) {
-                                                                                                    ArrayList<Question> questionsQuiz = new ArrayList<>();
-                                                                                                    ArrayList<String> questionsQuizId = new ArrayList<>();
-                                                                                                    Integer nbQuestionDisponible = taskToUse.getResult().size();
-                                                                                                    ArrayList<Integer> questionToFetch = new ArrayList<>();
-                                                                                                    if (nbQuestionDisponible > 5) {
-                                                                                                        Random r = new Random();
-                                                                                                        while (questionToFetch.size() != 5) {
-                                                                                                            Integer tmp = r.nextInt(nbQuestionDisponible);
-                                                                                                            if (questionToFetch.indexOf(tmp) == -1) {
-                                                                                                                questionToFetch.add(tmp);
-                                                                                                            }
-                                                                                                        }
-                                                                                                    } else {
-                                                                                                        questionToFetch = new ArrayList<>();
-                                                                                                        questionToFetch.add(0);
-                                                                                                        questionToFetch.add(1);
-                                                                                                        questionToFetch.add(2);
-                                                                                                        questionToFetch.add(3);
-                                                                                                        questionToFetch.add(4);
-                                                                                                    }
-                                                                                                    Integer index = 0;
-                                                                                                    for (QueryDocumentSnapshot document : taskToUse.getResult()) {
-                                                                                                        if (questionToFetch.indexOf(index) != -1) {
-                                                                                                            if (questionsQuiz.size() > 0) {
-                                                                                                                Random r = new Random();
-                                                                                                                Integer randomInt = r.nextInt(questionsQuiz.size());
-                                                                                                                Question question = document.toObject(Question.class);
-                                                                                                                ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
-                                                                                                                question.setPropositions(propositions);
-                                                                                                                questionsQuiz.add(randomInt, question);
-                                                                                                                questionsQuizId.add(randomInt, document.getId());
-                                                                                                            } else {
-                                                                                                                Question question = document.toObject(Question.class);
-                                                                                                                ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
-                                                                                                                question.setPropositions(propositions);
-                                                                                                                questionsQuiz.add(question);
-                                                                                                                questionsQuizId.add(document.getId());
-                                                                                                            }
-                                                                                                        }
-                                                                                                        index++;
-                                                                                                    }
+                                                                                }
 
-                                                                                                    globalVariables.setCurrentGame(new Game(globalVariables.getUser().getUsername(), partieTest.get("adversaire"), globalVariables.getUser().getClasse(), partieTest.get("matiere"), partieTest.get("sujet")));
+                                                                                // on ajoute un bouton pour accéder à la partie (/!!!!\ à changer rapidement
+                                                                                Button newButton = new Button(context);
 
-                                                                                                    globalVariables.getCurrentGame().setQuestions(questionsQuiz);
-                                                                                                    globalVariables.getCurrentGame().setQuestionsId(questionsQuizId);
-                                                                                                    Log.d("Information", "Voici les questions: " + questionsQuiz.toString());
-                                                                                                    Intent intent = new Intent(v.getContext(), QuizPage.class);
-                                                                                                    startActivity(intent);
+                                                                                String repondu = game.getRepondu();
+                                                                                String fini = game.getFini();
 
-                                                                                                }
+                                                                                String finiOuPas = (repondu.equals("true") && fini.equals("false"))?
+                                                                                        "Attends qu'il réponde aux questions !" :
+                                                                                        (repondu.equals("true") && fini.equals("true")) ?
+                                                                                                "regarde les résultats !" : "Réponds aux questions :) ";
 
-                                                                                            });
+                                                                                newButton.setText(finiOuPas + " " + game.getAdversaire() + " " + game.getClasse() + " " + game.getMatiere() + " " + game.getSujet());
+                                                                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                                                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                                                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                                                                );
+                                                                                params.setMargins(100, 0, 100, 0);
+                                                                                newButton.setLayoutParams(params);
+                                                                                newButton.setTextColor(getResources().getColor(R.color.colorTheme));
+                                                                                newButton.setBackground(getResources().getDrawable(R.drawable.parties_en_cours));
+                                                                                if (repondu.equals("false")) {
+                                                                                    newButton.setOnClickListener(new View.OnClickListener() {
+                                                                                        public void onClick(View v) {
+                                                                                            globalVariables.setCurrentGame(game);
+                                                                                            Intent intent = new Intent(v.getContext(), LoadingQuizPage.class);
+                                                                                            startActivity(intent);
                                                                                         }
-                                                                                        layout.addView(newButton);
-
-                                                                                    }
+                                                                                    });
+                                                                                } else if (fini.equals("true")) {
+                                                                                    newButton.setOnClickListener(new View.OnClickListener() {
+                                                                                        public void onClick(View v) {
+                                                                                            globalVariables.setCurrentGame(game);
+                                                                                            Intent intent = new Intent(v.getContext(), ResultPage.class);
+                                                                                            startActivity(intent);
+                                                                                        }
+                                                                                    });
                                                                                 }
+
+                                                                                layout.addView(newButton);
+
                                                                             }
-                                                                        });
-                                                            }
-
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    }
-                                });
-                    }
-                }
-            }
-
-        });
-    }
-
-
-
-
-
-/* Pour plus tard!!! A remettre apres les user testing
-                                                            ArrayList<HashMap<String,String>> arr = userOpponent.getPartiesEnCours();
-                                                            for (Integer i = 0; i < arr.size(); i ++) {
-                                                                final HashMap<String,String> partieOpponent = arr.get(i);
-                                                                if (user.getUsername().equals(partieOpponent.get("adversaire")) &&
-                                                                        (partieOpponent.get("question1Id").equals(partieTest.get("question1Id"))) &&
-                                                                        (partieOpponent.get("question2Id").equals(partieTest.get("question2Id"))) &&
-                                                                        (partieOpponent.get("question3Id").equals(partieTest.get("question3Id"))) &&
-                                                                        (partieOpponent.get("question4Id").equals(partieTest.get("question4Id"))) &&
-                                                                        (partieOpponent.get("question5Id").equals(partieTest.get("question5Id")))) {
-                                                                    if(partieOpponent.get("repondu").equals("true")) {
-                                                                        partieTest.put("fini", "true");
-                                                                        partieTest.put("scoreOpponent", partieOpponent.get("score"));
-                                                                    }
-                                                                    updatedGame.add(partieTest);
-
-                                                                    Button newButton = new Button(context);
-
-                                                                    String repondu = partieTest.get("repondu");
-                                                                    String fini = partieTest.get("fini");
-
-                                                                    String finiOuPas = (repondu.equals("true") && fini.equals("false"))?
-                                                                            "Attends qu'il réponde aux questions !" :
-                                                                            (repondu.equals("true") && fini.equals("true")) ?
-                                                                                    "regarde les résultats !" : "Réponds aux questions :) ";
-
-                                                                    newButton.setText(finiOuPas + " \n" + partieTest.get("adversaire") + ", " + partieTest.get("classe") + " \n" + partieTest.get("matiere") + ", " + partieTest.get("sujet"));
-                                                                    newButton.setGravity(Gravity.LEFT);
-                                                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                                                            LinearLayout.LayoutParams.MATCH_PARENT,
-                                                                            LinearLayout.LayoutParams.MATCH_PARENT
-                                                                    );
-                                                                    params.setMargins(100, 0, 100, 0);
-                                                                    newButton.setLayoutParams(params);
-                                                                    newButton.setPadding(10, 10, 10, 10);
-                                                                    newButton.setTextColor(getResources().getColor(R.color.colorTheme));
-                                                                    if (android.os.Build.VERSION.SDK_INT >= 21){
-                                                                        newButton.setBackground(getDrawable(R.drawable.parties_en_cours));
-                                                                    } else{
-                                                                        newButton.setBackground(getResources().getDrawable(R.drawable.parties_en_cours));
-                                                                    }
-                                                                    if (repondu.equals("false")) {
-                                                                        newButton.setOnClickListener(new View.OnClickListener() {
-                                                                            public void onClick(View v) {
-                                                                                Question q1 = new Question(partieTest.get("question1"), partieTest.get("reponse1"));
-                                                                                Question q2 = new Question(partieTest.get("question2"), partieTest.get("reponse2"));
-                                                                                Question q3 = new Question(partieTest.get("question3"), partieTest.get("reponse3"));
-                                                                                Question q4 = new Question(partieTest.get("question4"), partieTest.get("reponse4"));
-                                                                                Question q5 = new Question(partieTest.get("question5"), partieTest.get("reponse5"));
-
-                                                                                globalVariables.setCurrentGame(new Game(globalVariables.getUser().getUsername(), partieTest.get("adversaire"), globalVariables.getUser().getClasse(), partieTest.get("matiere"), partieTest.get("sujet"), partieTest.get("question1Id"), partieTest.get("question2Id"), partieTest.get("question3Id"), partieTest.get("question4Id"), partieTest.get("question5Id"), q1, q2,q3, q4, q5, "", ""));
-                                                                                Intent intent = new Intent(v.getContext(), QuizPage.class);
-                                                                                startActivity(intent);
-                                                                            }
-                                                                        });
-                                                                    } else if (fini.equals("true")) {
-                                                                        newButton.setOnClickListener(new View.OnClickListener() {
-                                                                            public void onClick(View v) {
-                                                                                Question q1 = new Question(partieTest.get("question1"), partieTest.get("reponse1"));
-                                                                                Question q2 = new Question(partieTest.get("question2"), partieTest.get("reponse2"));
-                                                                                Question q3 = new Question(partieTest.get("question3"), partieTest.get("reponse3"));
-                                                                                Question q4 = new Question(partieTest.get("question4"), partieTest.get("reponse4"));
-                                                                                Question q5 = new Question(partieTest.get("question5"), partieTest.get("reponse5"));
-                                                                                globalVariables.setCurrentGame(new Game(globalVariables.getUser().getUsername(), partieTest.get("adversaire"), globalVariables.getUser().getClasse(), partieTest.get("matiere"), partieTest.get("sujet"), partieTest.get("question1Id"), partieTest.get("question2Id"), partieTest.get("question3Id"), partieTest.get("question4Id"), partieTest.get("question5Id"), q1, q2,q3, q4, q5, partieTest.get("score"), partieOpponent.get("score")));
-                                                                                Intent intent = new Intent(v.getContext(), ResultPage.class);
-                                                                                startActivity(intent);
-                                                                            }
-                                                                        });
-                                                                    }
-
-                                                                    userDB.update("partiesEnCours", updatedGame)
-                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                @Override
-                                                                                public void onSuccess(Void aVoid) {
-                                                                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                                                                }
-                                                                            })
-                                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                                @Override
-                                                                                public void onFailure(@NonNull Exception e) {
-                                                                                    Log.w(TAG, "Error updating document", e);
-                                                                                }
-                                                                            });
-
-                                                                    layout.addView(newButton);
-
-                                                                    break;
-                                                                } else {
-                                                                    Log.d("Error", "Et non toujours pas");
+                                                                        }
+                                                                    });
                                                                 }
+                                                            } else {
+                                                                Log.d(TAG, "Error getting documents: ", task.getException());
                                                             }
-                                                        } else {
-                                                            Log.d(TAG, "No such document 1");
                                                         }
-                                                    }
-                                                });
-                                            }
-                                        } else {
-                                            Log.d(TAG, "No such document 2");
+                                                    });
+
+
                                         }
                                     }
                                 });
 
-
                     }
-
-                } else {
-                    Log.d(TAG, "No such document 3");
                 }
             }
+
         });
     }
-*/
 
     @Override
     public void onBackPressed(){

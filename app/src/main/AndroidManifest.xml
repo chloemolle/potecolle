@@ -35,7 +35,8 @@
         <activity android:name=".ChoixAmiPage">
         </activity>
 
-        <activity android:name=".QuizPage">
+        <activity android:name=".QuizPage"
+            android:windowSoftInputMode="adjustResize">
         </activity>
 
         <activity android:name=".FinQuizPage">
@@ -47,6 +48,8 @@
         <activity android:name=".EcriturePage">
         </activity>
 
+        <activity android:name=".LoadingQuizPage">
+        </activity>
 
     </application>
 
