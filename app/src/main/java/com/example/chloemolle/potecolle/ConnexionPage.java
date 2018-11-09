@@ -113,4 +113,11 @@ public class ConnexionPage extends Activity {
             }
         }
     }
+
+    @Override
+    public void onBackPressed(){
+        moveTaskToBack(true);
+    }
+
+
 }

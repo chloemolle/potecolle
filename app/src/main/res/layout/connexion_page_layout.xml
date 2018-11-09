@@ -10,7 +10,7 @@
         android:id="@+id/s_inscrire_bouton"
         android:layout_width="320dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="304dp"
+        android:layout_marginTop="268dp"
         android:layout_weight="1"
         android:background="@drawable/button_with_radius"
         android:text="@string/inscription"
@@ -24,7 +24,7 @@
         android:id="@+id/se_connecter_texte"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView3"
+        android:layout_below="@+id/logo"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:layout_weight="1"
@@ -37,15 +37,16 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="379dp"
-        android:layout_height="285dp"
+        android:layout_width="241dp"
+        android:layout_height="158dp"
         android:layout_marginBottom="40dp"
+        android:layout_marginStart="72dp"
         android:layout_marginTop="8dp"
+        android:src="@drawable/logo_orange"
         app:layout_constraintBottom_toTopOf="@+id/se_connecter_texte"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.52"
-        android:src="@mipmap/logo_bleu_foreground" />
+        app:layout_constraintVertical_bias="0.512" />
 
 </android.support.constraint.ConstraintLayout>

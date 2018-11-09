@@ -40,7 +40,7 @@ public class ResultPage extends Activity {
 
     @Override
     public void onBackPressed(){
-        Intent intent = new Intent(this, MainPage.class);
+        Intent intent = new Intent(this, NotificationPage.class);
         startActivity(intent);
     }
 

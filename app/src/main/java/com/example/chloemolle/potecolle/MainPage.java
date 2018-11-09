@@ -7,12 +7,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -46,14 +48,11 @@ public class MainPage extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_page_layout);
 
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Globals globalVariables = (Globals) getApplicationContext();
-        final Context context = this;
 
-        final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
-
-        final DocumentReference userDB = db.collection("Users").document(user.getEmail());
+        final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
 
         userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -63,7 +62,7 @@ public class MainPage extends Activity {
                     Map<String, Object> test = documentSnapshot.getData();
                     final User user = documentSnapshot.toObject(User.class);
                     globalVariables.setUser(user);
-                    Button startGame = (Button) findViewById(R.id.lancer_partie);
+                    final Button startGame = (Button) findViewById(R.id.lancer_partie);
                     //on crée le bouton pour démarrer une partie
                     startGame.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
@@ -80,106 +79,20 @@ public class MainPage extends Activity {
                     final ArrayList<HashMap<String, String>> updatedGame = new ArrayList<>();
                     // On affiche un bouton par partie en cours
                     ArrayList<String> parties = user.getPartiesEnCours();
-                    for (String partie: parties) {
-                        final String partieTmp = partie;
-                        userDB.collection("Games").document(partieTmp)
-                                .get()
-                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        if (documentSnapshot.exists()) {
-                                            String scoreOpponent = (String) documentSnapshot.get("scoreOpponent");
-                                            final Game game = documentSnapshot.toObject(Game.class);
 
-                                            //On met à jour la partie suivant si l'adversaire a repondu aux questions
-                                            db.collection("Users")
-                                                    .whereEqualTo("username", game.getAdversaire())
-                                                    .get()
-                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                            if (task.isSuccessful()) {
-                                                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                    db.collection("Users").document(document.getId())
-                                                                    .collection("Games").document(partieTmp)
-                                                                    .get()
-                                                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                        @Override
-                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                            if (documentSnapshot.exists()) {
-                                                                                if (documentSnapshot.get("repondu").equals("true") && game.getRepondu().equals("true")) {
-                                                                                    DocumentReference doc = userDB.collection("Games").document(partieTmp);
-                                                                                    doc.update("fini", "true")
-                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                @Override
-                                                                                                public void onSuccess(Void aVoid) {
-                                                                                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                                                                                }
-                                                                                            })
-                                                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                                                @Override
-                                                                                                public void onFailure(@NonNull Exception e) {
-                                                                                                    Log.w(TAG, "Error updating document", e);
-                                                                                                }
-                                                                                            });
-                                                                                }
-
-                                                                                // on ajoute un bouton pour accéder à la partie (/!!!!\ à changer rapidement
-                                                                                Button newButton = new Button(context);
-
-                                                                                String repondu = game.getRepondu();
-                                                                                String fini = game.getFini();
-
-                                                                                String finiOuPas = (repondu.equals("true") && fini.equals("false"))?
-                                                                                        "Attends qu'il réponde aux questions !" :
-                                                                                        (repondu.equals("true") && fini.equals("true")) ?
-                                                                                                "regarde les résultats !" : "Réponds aux questions :) ";
-
-                                                                                newButton.setText(finiOuPas + " " + game.getAdversaire() + " " + game.getClasse() + " " + game.getMatiere() + " " + game.getSujet());
-                                                                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                                                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                                                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                                                                );
-                                                                                params.setMargins(100, 0, 100, 0);
-                                                                                newButton.setLayoutParams(params);
-                                                                                newButton.setTextColor(getResources().getColor(R.color.colorTheme));
-                                                                                newButton.setBackground(getResources().getDrawable(R.drawable.parties_en_cours));
-                                                                                if (repondu.equals("false")) {
-                                                                                    newButton.setOnClickListener(new View.OnClickListener() {
-                                                                                        public void onClick(View v) {
-                                                                                            globalVariables.setCurrentGame(game);
-                                                                                            Intent intent = new Intent(v.getContext(), LoadingQuizPage.class);
-                                                                                            startActivity(intent);
-                                                                                        }
-                                                                                    });
-                                                                                } else if (fini.equals("true")) {
-                                                                                    newButton.setOnClickListener(new View.OnClickListener() {
-                                                                                        public void onClick(View v) {
-                                                                                            globalVariables.setCurrentGame(game);
-                                                                                            Intent intent = new Intent(v.getContext(), ResultPage.class);
-                                                                                            startActivity(intent);
-                                                                                        }
-                                                                                    });
-                                                                                }
-
-                                                                                layout.addView(newButton);
-
-                                                                            }
-                                                                        }
-                                                                    });
-                                                                }
-                                                            } else {
-                                                                Log.d(TAG, "Error getting documents: ", task.getException());
-                                                            }
-                                                        }
-                                                    });
-
-
-                                        }
-                                    }
-                                });
-
+                    if (parties.size() > 0) {
+                        ImageButton notification = (ImageButton) findViewById(R.id.button_notification);
+                        notification.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                Intent intent = new Intent(v.getContext(), NotificationPage.class);
+                                startActivity(intent);
+                            }
+                        });
+                    } else {
+                        ImageButton notification = (ImageButton) findViewById(R.id.button_notification);
+                        notification.setVisibility(View.GONE);
                     }
+
                 }
             }
 
