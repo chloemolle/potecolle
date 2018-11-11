@@ -161,8 +161,13 @@ public class Game {
         this.player1Answers = player1Answers;
     }
 
-    public void addAnswerForPlayer1(String answer) {
-        this.player1Answers.add(answer);
+    public void addAnswerForPlayer1(Integer index, String answer) {
+        if (index < this.player1Answers.size()) {
+            this.player1Answers.remove(this.player1Answers.get(index));
+            this.player1Answers.add(index, answer);
+        } else {
+            this.player1Answers.add(answer);
+        }
     }
 
     public ArrayList<String> getPlayer2Answers() {

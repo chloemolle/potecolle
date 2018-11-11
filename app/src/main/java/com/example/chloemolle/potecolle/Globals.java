@@ -15,6 +15,7 @@ public class Globals extends Application {
     private Integer currentQuestionNumero = 0;
     private String brouillonText = "";
     private String reponseText = "";
+    private Boolean debug = true;
 
     public Game getCurrentGame() {
         return currentGame;
@@ -59,5 +60,13 @@ public class Globals extends Application {
 
     public void setReponseText(String reponseText) {
         this.reponseText = reponseText;
+    }
+
+    public Boolean getDebug() {
+        return debug;
+    }
+
+    public void setDebug(Boolean debug) {
+        this.debug = debug;
     }
 }

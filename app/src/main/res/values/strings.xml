@@ -14,5 +14,5 @@
     <string name="explication_ecriture">Voici ta page de brouillon ;)</string>
     <string name="retour_quiz">Retour au quiz</string>
     <string name="brouillon">brouillon</string>
-
+    <string name="retourMain">Retour</string>
 </resources>

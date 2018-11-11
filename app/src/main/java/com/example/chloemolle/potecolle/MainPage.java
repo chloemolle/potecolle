@@ -52,7 +52,54 @@ public class MainPage extends Activity {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Globals globalVariables = (Globals) getApplicationContext();
 
+
         final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
+
+      /*
+      A decommenter si on veut flusher la base de données des parties en cours
+
+      db.collection("Users").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                final DocumentReference user = db.collection("Users").document(document.getId());
+                                ArrayList<String> arr = new ArrayList<>();
+                                user.update("partiesEnCours", arr);
+                                user.collection("Games").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                if (document.get("real") != null && document.get("real").equals("false")) {
+                                                    continue;
+                                                } else {
+                                                    user.collection("Games").document(document.getId()).delete()
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.w(TAG, "Error deleting document", e);
+                                                                }
+                                                            });
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+
+                            }
+                        }
+                    }
+                });
+
+*/
 
         userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override

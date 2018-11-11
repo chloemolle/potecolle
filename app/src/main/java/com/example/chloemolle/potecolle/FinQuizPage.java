@@ -2,9 +2,13 @@ package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -61,23 +65,37 @@ public class FinQuizPage extends Activity {
             } catch (Exception e) {
                 Log.e("ERROR", "probleme" + realAnswers.get(i));
             }
+            LinearLayout llText = new LinearLayout(this);
+            llText.setOrientation(LinearLayout.VERTICAL);
+            llText.setPadding(10, 10, 10, 10);
+            LinearLayout.LayoutParams layoutParamsQuestion = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            layoutParamsQuestion.setMargins(10, 10, 10, 0);
+            llText.setLayoutParams(layoutParamsQuestion);
+            TextView textQuestion = new TextView(this);
+            textQuestion.setText("question: " + question);
+
             if (playerAnswer.replaceAll("\\s", "").equalsIgnoreCase(realAnswer.replaceAll("\\s", ""))) {
                 score ++;
+                TextView textReponse = new TextView(this);
+                textReponse.setText("ta réponse: " + playerAnswer);
+                textReponse.setTextColor(getResources().getColor(R.color.green));
+                llText.addView(textQuestion);
+                llText.addView(textReponse);
             } else {
-                TextView textQuestion = new TextView(this);
-                textQuestion.setText("question: " + question);
-
                 TextView textReponse = new TextView(this);
                 textReponse.setText("ta réponse: " + playerAnswer);
                 textReponse.setTextColor(getResources().getColor(R.color.red));
-
                 TextView textSolution = new TextView(this);
                 textSolution.setText("la solution: " + realAnswer);
-
-                ll.addView(textQuestion);
-                ll.addView(textReponse);
-                ll.addView(textSolution);
+                llText.addView(textQuestion);
+                llText.addView(textReponse);
+                llText.addView(textSolution);
             }
+            llText.setBackground(getResources().getDrawable(R.drawable.parties_en_cours));
+            ll.addView(llText);
         }
 
         text.setText("Bravo ! Ton score: " + score + ". Reviens plus tard pour voir si tu as battu ton pote ;)");
@@ -141,6 +159,14 @@ public class FinQuizPage extends Activity {
                         }
                     }
                 });
+
+        Button retourMainPage = (Button) findViewById(R.id.retour_main_page);
+        retourMainPage.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MainPage.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
