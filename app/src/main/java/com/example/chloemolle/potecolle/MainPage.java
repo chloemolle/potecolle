@@ -55,10 +55,9 @@ public class MainPage extends Activity {
 
         final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
 
-      /*
-      A decommenter si on veut flusher la base de données des parties en cours
+//      A decommenter si on veut flusher la base de données des parties en cours
 
-      db.collection("Users").get()
+ /*     db.collection("Users").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -98,9 +97,7 @@ public class MainPage extends Activity {
                         }
                     }
                 });
-
 */
-
         userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {

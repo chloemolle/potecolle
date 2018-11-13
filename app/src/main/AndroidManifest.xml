@@ -53,6 +53,9 @@
         <activity android:name=".NotificationPage">
         </activity>
 
+        <activity android:name=".ChoixTimer">
+        </activity>
+
     </application>
 
 </manifest>
