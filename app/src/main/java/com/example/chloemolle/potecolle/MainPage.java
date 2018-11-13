@@ -96,8 +96,9 @@ public class MainPage extends Activity {
                             }
                         }
                     }
-                });
-*/
+                });*/
+    //FIN de ce qu'il faut décommenter
+
         userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {

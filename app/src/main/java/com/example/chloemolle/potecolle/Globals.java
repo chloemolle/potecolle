@@ -16,6 +16,8 @@ public class Globals extends Application {
     private String brouillonText = "";
     private String reponseText = "";
     private Boolean debug = true;
+    private int tmpTime;
+    private Long test = new Long(0);
 
     public Game getCurrentGame() {
         return currentGame;
@@ -68,5 +70,21 @@ public class Globals extends Application {
 
     public void setDebug(Boolean debug) {
         this.debug = debug;
+    }
+
+    public int getTmpTime() {
+        return tmpTime;
+    }
+
+    public void setTmpTime(int tmpTime) {
+        this.tmpTime = tmpTime;
+    }
+
+    public Long getTest() {
+        return test;
+    }
+
+    public void setTest(Long test) {
+        this.test = test;
     }
 }

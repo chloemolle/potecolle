@@ -34,6 +34,7 @@ public class Game {
     private String score;
     private String id;
     private String scoreOpponent;
+    private String timed;
 
     public Game () {
     }
@@ -224,5 +225,13 @@ public class Game {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getTimed() {
+        return timed;
+    }
+
+    public void setTimed(String timed) {
+        this.timed = timed;
     }
 }

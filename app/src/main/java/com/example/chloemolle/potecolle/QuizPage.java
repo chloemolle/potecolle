@@ -1,16 +1,25 @@
 package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.lang.ref.WeakReference;
+import java.util.Date;
 
 /**
  * Created by chloemolle on 23/10/2018.
@@ -24,16 +33,67 @@ public class QuizPage extends Activity {
         super.onCreate(savedInstanceState);
         final Globals globalVariables = (Globals) getApplicationContext();
         final Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
-        Question currentQuestion = globalVariables.getCurrentGame().getQuestions().get(currentQuestionNumber);
+        final Question currentQuestion = globalVariables.getCurrentGame().getQuestions().get(currentQuestionNumber);
+
+
 
         if (currentQuestion.getType().equals("qcm") || currentQuestion.getType().equals("questionInversé")) {
             setContentView(R.layout.qcm_page_layout);
+        } else {
+            setContentView(R.layout.quiz_page_layout);
+        }
+
+        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+            ImageButton boutonPrecedent = (ImageButton) findViewById(R.id.retour_precedent_quiz);
+            boutonPrecedent.setVisibility(View.GONE);
+        }
+
+        final ProgressBar pgBar = (ProgressBar) findViewById(R.id.progressBarTimer);
+        final Handler handler = new Handler();
+        final int delay = 1000; //milliseconds
+
+        final EditText userAnswer = (EditText) findViewById(R.id.user_answer);
+
+        final Runnable runnable = new Runnable(){
+            public void run(){
+                //do something
+                globalVariables.setTmpTime(globalVariables.getTmpTime() - 1);
+                if (globalVariables.getTmpTime() == 0) {
+                    if (currentQuestion.getType().equals("qcm") || currentQuestion.getType().equals("questionInversé")) {
+                        globalVariables.setBrouillonText("");
+                        globalVariables.setReponseText("");
+                        globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, "");
+                    } else {
+                        String userAnswerText = userAnswer.getText().toString();
+                        globalVariables.setReponseText("");
+                        globalVariables.setBrouillonText("");
+                        globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
+                    }
+                    globalVariables.setTmpTime(30);
+                    nextPage(getBaseContext());
+                } else {
+                    pgBar.setProgress(globalVariables.getTmpTime());
+                    Log.d("ProgressBar", "current is " + globalVariables.getTmpTime());
+                    if (globalVariables.getTmpTime() < 10) {
+                        pgBar.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.red)));
+                    }
+                    handler.postDelayed(this, delay);
+                }
+            }
+        };
+
+        handler.postDelayed(runnable, delay);
+
+
+        if (currentQuestion.getType().equals("qcm") || currentQuestion.getType().equals("questionInversé")) {
             setRetourButton();
+            setProgressBar();
 
             ImageButton boutonBrouillon = (ImageButton) findViewById(R.id.brouillon_button);
             boutonBrouillon.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), EcriturePage.class);
+                    handler.removeCallbacks(runnable);
                     startActivity(intent);
                 }
             });
@@ -56,14 +116,9 @@ public class QuizPage extends Activity {
                     globalVariables.setBrouillonText("");
                     globalVariables.setReponseText("");
                     globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    if (currentQuestionNumber == 4) {
-                        Intent intent = new Intent(v.getContext(), FinQuizPage.class);
-                        startActivity(intent);
-                    } else {
-                        globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
-                        Intent intent = new Intent(v.getContext(), QuizPage.class);
-                        startActivity(intent);
-                    }
+                    globalVariables.setTmpTime(30);
+                    handler.removeCallbacks(runnable);
+                    nextPage(v.getContext());
                 }
             });
 
@@ -81,14 +136,9 @@ public class QuizPage extends Activity {
                     globalVariables.setBrouillonText("");
                     globalVariables.setReponseText("");
                     globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    if (currentQuestionNumber == 4) {
-                        Intent intent = new Intent(v.getContext(), FinQuizPage.class);
-                        startActivity(intent);
-                    } else {
-                        globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
-                        Intent intent = new Intent(v.getContext(), QuizPage.class);
-                        startActivity(intent);
-                    }
+                    globalVariables.setTmpTime(30);
+                    handler.removeCallbacks(runnable);
+                    nextPage(v.getContext());
                 }
             });
 
@@ -106,14 +156,9 @@ public class QuizPage extends Activity {
                     globalVariables.setBrouillonText("");
                     globalVariables.setReponseText("");
                     globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    if (currentQuestionNumber == 4) {
-                        Intent intent = new Intent(v.getContext(), FinQuizPage.class);
-                        startActivity(intent);
-                    } else {
-                        globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
-                        Intent intent = new Intent(v.getContext(), QuizPage.class);
-                        startActivity(intent);
-                    }
+                    globalVariables.setTmpTime(30);
+                    handler.removeCallbacks(runnable);
+                    nextPage(v.getContext());
                 }
             });
 
@@ -132,21 +177,16 @@ public class QuizPage extends Activity {
                     globalVariables.setBrouillonText("");
                     globalVariables.setReponseText("");
                     globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    if (currentQuestionNumber == 4) {
-                        Intent intent = new Intent(v.getContext(), FinQuizPage.class);
-                        startActivity(intent);
-                    } else {
-                        globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
-                        Intent intent = new Intent(v.getContext(), QuizPage.class);
-                        startActivity(intent);
-                    }
+                    globalVariables.setTmpTime(30);
+                    handler.removeCallbacks(runnable);
+                    nextPage(v.getContext());
                 }
             });
 
 
         } else {
-            setContentView(R.layout.quiz_page_layout);
             setRetourButton();
+            setProgressBar();
             final TextView question = (TextView) findViewById(R.id.question_quiz);
             question.setText(currentQuestion.getQuestion().toString());
             if (currentQuestionNumber < globalVariables.getCurrentGame().getPlayer1Answers().size()) {
@@ -155,12 +195,12 @@ public class QuizPage extends Activity {
 
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
             ImageButton bouton = (ImageButton) findViewById(R.id.next_quiz);
-            final EditText userAnswer = (EditText) findViewById(R.id.user_answer);
             userAnswer.setText(globalVariables.getReponseText());
             ImageButton boutonBrouillon = (ImageButton) findViewById(R.id.brouillon_button);
             boutonBrouillon.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     globalVariables.setReponseText(userAnswer.getText().toString());
+                    handler.removeCallbacks(runnable);
                     Intent intent = new Intent(v.getContext(), EcriturePage.class);
                     startActivity(intent);
                 }
@@ -177,14 +217,9 @@ public class QuizPage extends Activity {
                     globalVariables.setReponseText("");
                     globalVariables.setBrouillonText("");
                     globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    if (currentQuestionNumber == 4) {
-                        Intent intent = new Intent(v.getContext(), FinQuizPage.class);
-                        startActivity(intent);
-                    } else {
-                        globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
-                        Intent intent = new Intent(v.getContext(), QuizPage.class);
-                        startActivity(intent);
-                    }
+                    globalVariables.setTmpTime(30);
+                    handler.removeCallbacks(runnable);
+                    nextPage(v.getContext());
                     return true;
                 }
             });
@@ -198,14 +233,9 @@ public class QuizPage extends Activity {
                     globalVariables.setReponseText("");
                     globalVariables.setBrouillonText("");
                     globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    if (currentQuestionNumber == 4) {
-                        Intent intent = new Intent(v.getContext(), FinQuizPage.class);
-                        startActivity(intent);
-                    } else {
-                        globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
-                        Intent intent = new Intent(v.getContext(), QuizPage.class);
-                        startActivity(intent);
-                    }
+                    globalVariables.setTmpTime(30);
+                    handler.removeCallbacks(runnable);
+                    nextPage(v.getContext());
                 }
             });
 
@@ -228,6 +258,7 @@ public class QuizPage extends Activity {
                     globalVariables.setReponseText("");
                     globalVariables.setBrouillonText("");
                     globalVariables.setCurrentQuestionNumero(currentQuestionNumber - 1);
+                    globalVariables.setTmpTime(30);
                     Intent intent = new Intent(v.getContext(), QuizPage.class);
                     startActivity(intent);
                 }
@@ -236,6 +267,33 @@ public class QuizPage extends Activity {
 
     }
 
+    public void nextPage(Context c) {
+        Globals globalVariables = (Globals) getApplicationContext();
+        Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
+        if (currentQuestionNumber == 4) {
+            Intent intent = new Intent(c, FinQuizPage.class);
+            startActivity(intent);
+        } else {
+            globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
+            Intent intent = new Intent(c, QuizPage.class);
+            startActivity(intent);
+        }
+    }
+
+    private void setProgressBar() {
+        Globals globalVariables = (Globals) getApplicationContext();
+        ProgressBar pgBar = (ProgressBar) findViewById(R.id.progressBarTimer);
+        if (globalVariables.getCurrentGame().getTimed().equals("false")) {
+            pgBar.setVisibility(View.GONE);
+        } else {
+            pgBar.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
+            pgBar.setMax(30);
+            Log.d("ProgressBar", "SetMaxto 30");
+            Log.d("ProgressBar", "current is " + globalVariables.getTmpTime());
+            pgBar.setProgress(globalVariables.getTmpTime());
+        }
+
+    }
 
     @Override
     public void onBackPressed(){
@@ -250,3 +308,4 @@ public class QuizPage extends Activity {
 
 
 }
+

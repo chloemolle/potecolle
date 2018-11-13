@@ -45,6 +45,10 @@ public class ChoixTimer extends Activity {
         boutonOui.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final Globals globalVariables = (Globals) getApplicationContext();
+                final Game currentGame = globalVariables.getCurrentGame();
+                currentGame.setTimed("true");
+                globalVariables.setTmpTime(30);
                 setGame(true);
                 Intent intent = new Intent(v.getContext(), QuizPage.class);
                 startActivity(intent);
@@ -54,6 +58,9 @@ public class ChoixTimer extends Activity {
         boutonNon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final Globals globalVariables = (Globals) getApplicationContext();
+                final Game currentGame = globalVariables.getCurrentGame();
+                currentGame.setTimed("false");
                 setGame(false);
                 Intent intent = new Intent(v.getContext(), QuizPage.class);
                 startActivity(intent);
@@ -97,11 +104,7 @@ public class ChoixTimer extends Activity {
 
                     //Creating the document
                     HashMap<String,String> newGame = new HashMap<>();
-                    if (isTimer) {
-                        newGame.put("timed", "true");
-                    } else {
-                        newGame.put("timed", "false");
-                    }
+                    newGame.put("timed", currentGame.getTimed());
                     newGame.put("adversaire", currentGame.getPlayer2());
                     newGame.put("classe", currentGame.getClasse());
                     newGame.put("matiere", currentGame.getMatiere());
@@ -180,11 +183,7 @@ public class ChoixTimer extends Activity {
 
                                             //Creating the document
                                             HashMap<String,String> newGame = new HashMap<>();
-                                            if (isTimer) {
-                                                newGame.put("timed", "true");
-                                            } else {
-                                                newGame.put("timed", "false");
-                                            }
+                                            newGame.put("timed", currentGame.getTimed());
                                             newGame.put("adversaire", currentGame.getPlayer1());
                                             newGame.put("classe", currentGame.getClasse());
                                             newGame.put("matiere", currentGame.getMatiere());
