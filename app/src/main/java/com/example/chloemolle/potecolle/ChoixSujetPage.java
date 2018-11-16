@@ -3,6 +3,8 @@ package com.example.chloemolle.potecolle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -14,12 +16,16 @@ import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -177,7 +183,26 @@ public class ChoixSujetPage extends Activity {
                                             if (questionsQuiz.size() > 0) {
                                                 Random r = new Random();
                                                 Integer randomInt = r.nextInt(questionsQuiz.size());
-                                                Question question = document.toObject(Question.class);
+                                                final Question question = document.toObject(Question.class);
+                                                if (question.getType().equals("image")){
+                                                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                                                    // Create a storage reference from our app
+                                                    StorageReference storageRef = storage.getReference();
+                                                    StorageReference mountainImagesRef = storageRef.child(question.getImage());
+                                                    mountainImagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                                        @Override
+                                                        public void onSuccess(byte[] bytes) {
+                                                            // Use the bytes to display the image
+                                                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                                            question.setBmp(bmp);
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception exception) {
+                                                            // Handle any errors
+                                                        }
+                                                    });
+                                                }
                                                 ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
                                                 question.setPropositions(propositions);
                                                 questionsQuiz.add(randomInt, question);

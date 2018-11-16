@@ -1,5 +1,7 @@
 package com.example.chloemolle.potecolle;
 
+import android.graphics.Bitmap;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +14,8 @@ public class Question {
     private Object question;
     private Object reponse;
     private Object type;
+    private String image;
+    private Bitmap bmp;
     private ArrayList<String> propositions = new ArrayList<>();
 
     public Question(){};
@@ -49,4 +53,15 @@ public class Question {
         this.propositions = _propositions;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public Bitmap getBmp() {
+        return bmp;
+    }
+
+    public void setBmp(Bitmap bmp) {
+        this.bmp = bmp;
+    }
 }
