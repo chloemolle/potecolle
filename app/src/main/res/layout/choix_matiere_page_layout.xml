@@ -28,6 +28,108 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"/>
+s
+        <Button
+            android:id="@+id/francais_button"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Francais"
+            tools:layout_editor_absoluteX="16dp"
+            android:background="@drawable/button_square"
+            tools:layout_editor_absoluteY="447dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"/>
+
+        <Button
+            android:id="@+id/physique_button"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Physique"
+            tools:layout_editor_absoluteX="16dp"
+            android:background="@drawable/button_square"
+            tools:layout_editor_absoluteY="447dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"/>
+
+        <Button
+            android:id="@+id/svt_button"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Svt"
+            tools:layout_editor_absoluteX="16dp"
+            android:background="@drawable/button_square"
+            tools:layout_editor_absoluteY="447dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"/>
+
+        <Button
+            android:id="@+id/histoire_button"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Histoire - Géo"
+            tools:layout_editor_absoluteX="16dp"
+            android:background="@drawable/button_square"
+            tools:layout_editor_absoluteY="447dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"/>
+
+
+
+        <Button
+            android:id="@+id/anglais_button"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Anglais"
+            tools:layout_editor_absoluteX="16dp"
+            android:background="@drawable/button_square"
+            tools:layout_editor_absoluteY="447dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"/>
+
+        <Button
+            android:id="@+id/allemand_button"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Allemand"
+            tools:layout_editor_absoluteX="16dp"
+            android:background="@drawable/button_square"
+            tools:layout_editor_absoluteY="447dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"/>
+
+
+        <Button
+            android:id="@+id/espagnol_button"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Espagnol"
+            tools:layout_editor_absoluteX="16dp"
+            android:background="@drawable/button_square"
+            tools:layout_editor_absoluteY="447dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"/>
+
 
 
     </LinearLayout>

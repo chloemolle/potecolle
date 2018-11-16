@@ -10,26 +10,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import static com.firebase.ui.auth.AuthUI.TAG;
@@ -43,123 +41,175 @@ public class ChoixSujetPage extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choix_sujet_page_layout);
-
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        final LinearLayout layout = (LinearLayout) findViewById(R.id.linear_layout_sujet);
         final Context context = this;
         final Globals globalVariables = (Globals) getApplicationContext();
 
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final String classe = globalVariables.getCurrentGame().getClasse();
-        final String matiere = globalVariables.getCurrentGame().getMatiere();
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar_sujets);
+        progressBar.setVisibility(View.VISIBLE);
 
+        File cacheFile = new File(context.getCacheDir(), "sujets_" + globalVariables.getCurrentGame().getMatiere());
+
+        try {
+            FileInputStream fis = new FileInputStream(cacheFile);
+            fis.getChannel().position(0);
+            BufferedReader bfr = new BufferedReader(new InputStreamReader(fis));
+            String currentLine = bfr.readLine();
+            if (currentLine == null) {
+                goWithTheDatabase();
+            } else {
+                while (currentLine != null) {
+                    createButtonWithNameForSubject(currentLine);
+                    currentLine = bfr.readLine();
+                }
+            }
+            fis.close();
+            bfr.close();
+            progressBar.setVisibility(View.GONE);
+        } catch (Exception e) {
+            Log.d("problemeCache", e.getMessage());
+            goWithTheDatabase();
+        }
+
+
+
+    }
+
+    private void goWithTheDatabase(){
+        final Globals globalVariables = (Globals) getApplicationContext();
         FirebaseFunctions mFunctions = FirebaseFunctions.getInstance();
 
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar_sujets);
-        progressBar.setVisibility(View.VISIBLE);
+        final Context context = this;
+
 
         ArrayList<String> data = new ArrayList<String>();
         data.add("Troisieme");
         data.add(globalVariables.getCurrentGame().getMatiere());
 
         mFunctions
-            .getHttpsCallable("getCollections")
-            .call(data)
-            .continueWith(new Continuation<HttpsCallableResult, String>() {
-                @Override
-                public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                    ArrayList<String> arr = (ArrayList<String>) task.getResult().getData();
-                    for (String s : arr) {
-                        final String sujet = s;
-                        Button newButton = new Button(context);
-                        newButton.setText(s);
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        params.setMargins(20, 20, 20, 20);
-                        newButton.setLayoutParams(params);
-                        if (android.os.Build.VERSION.SDK_INT >= 21){
-                            newButton.setBackground(getDrawable(R.drawable.button_with_radius));
-                        } else{
-                            newButton.setBackground(getResources().getDrawable(R.drawable.button_with_radius));
-                        }
+                .getHttpsCallable("getCollections")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        ArrayList<String> arr = (ArrayList<String>) task.getResult().getData();
+                            FileWriter fw;
+                            BufferedWriter bfw;
+                            File cacheFile = new File(context.getCacheDir(), "sujets_" + globalVariables.getCurrentGame().getMatiere());
+                            try {
+                                fw = new FileWriter(cacheFile.getAbsoluteFile());
+                                bfw = new BufferedWriter(fw);
+                                for (String sujet : arr) {
+                                    createButtonWithNameForSubject(sujet);
+                                    bfw.write(sujet);
+                                    bfw.newLine();
+                                }
+                                bfw.close();
+                            } catch (Exception e) {
+                                Log.d("problemeCache", e.getMessage());
+                            }
 
-                        newButton.setTextColor(getResources().getColor(R.color.white));
-                        newButton.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                Intent intent = new Intent(v.getContext(), ChoixAmiPage.class);
-                                globalVariables.getCurrentGame().setSujet(sujet);
+                        progressBar.setVisibility(View.GONE);
+                        return "";
+                    }
+                });
+        return;
+    }
 
-                                //Creation des questions pour le quiz
-                                db.collection(classe).document(matiere).collection(sujet).get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    ArrayList<Question> questionsQuiz = new ArrayList<>();
-                                                    ArrayList<String> questionsQuizId = new ArrayList<>();
-                                                    Integer nbQuestionDisponible = task.getResult().size();
-                                                    ArrayList<Integer> questionToFetch = new ArrayList<>();
-                                                    if (nbQuestionDisponible > 5) {
-                                                        Random r = new Random();
-                                                        while (questionToFetch.size() != 5) {
-                                                            Integer tmp = r.nextInt(nbQuestionDisponible);
-                                                            if (questionToFetch.indexOf(tmp) == -1) {
-                                                                questionToFetch.add(tmp);
-                                                            }
-                                                        }
-                                                    } else {
-                                                        questionToFetch = new ArrayList<>();
-                                                        questionToFetch.add(0);
-                                                        questionToFetch.add(1);
-                                                        questionToFetch.add(2);
-                                                        questionToFetch.add(3);
-                                                        questionToFetch.add(4);
-                                                    }
-                                                    Integer index = 0;
-                                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                                        if (questionToFetch.indexOf(index) != -1) {
-                                                            if (questionsQuiz.size() > 0) {
-                                                                Random r = new Random();
-                                                                Integer randomInt = r.nextInt(questionsQuiz.size());
-                                                                Question question = document.toObject(Question.class);
-                                                                ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
-                                                                question.setPropositions(propositions);
-                                                                questionsQuiz.add(randomInt, question);
-                                                                questionsQuizId.add(randomInt, document.getId());
-                                                            } else {
-                                                                Question question = document.toObject(Question.class);
-                                                                ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
-                                                                question.setPropositions(propositions);
-                                                                questionsQuiz.add(question);
-                                                                questionsQuizId.add(document.getId());
-                                                            }
-                                                        }
-                                                        index ++;
-                                                    }
-                                                    globalVariables.getCurrentGame().setQuestions(questionsQuiz);
-                                                    globalVariables.getCurrentGame().setQuestionsId(questionsQuizId);
-                                                    Log.d("Information", "Voici les questions: " + questionsQuiz.toString());
-                                                } else {
-                                                    Log.d(TAG, "Error getting documents: ", task.getException());
-                                                }
+    private void createButtonWithNameForSubject(String name) {
+        final LinearLayout layout = (LinearLayout) findViewById(R.id.linear_layout_sujet);
+        final Context context = this;
+        final Globals globalVariables = (Globals) getApplicationContext();
+        final String name_sujet = name;
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final String classe = globalVariables.getCurrentGame().getClasse();
+        final String matiere = globalVariables.getCurrentGame().getMatiere();
+
+        Button newButton = new Button(context);
+        newButton.setText(name_sujet);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(20, 20, 20, 20);
+        newButton.setLayoutParams(params);
+        if (android.os.Build.VERSION.SDK_INT >= 21){
+            newButton.setBackground(getDrawable(R.drawable.button_with_radius));
+        } else{
+            newButton.setBackground(getResources().getDrawable(R.drawable.button_with_radius));
+        }
+
+        newButton.setTextColor(getResources().getColor(R.color.white));
+        newButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), ChoixAmiPage.class);
+                globalVariables.getCurrentGame().setSujet(name_sujet);
+
+                //Creation des questions pour le quiz
+                db.collection(classe).document(matiere).collection(name_sujet).get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    ArrayList<Question> questionsQuiz = new ArrayList<>();
+                                    ArrayList<String> questionsQuizId = new ArrayList<>();
+                                    Integer nbQuestionDisponible = task.getResult().size();
+                                    ArrayList<Integer> questionToFetch = new ArrayList<>();
+                                    if (nbQuestionDisponible > 5) {
+                                        Random r = new Random();
+                                        while (questionToFetch.size() != 5) {
+                                            Integer tmp = r.nextInt(nbQuestionDisponible);
+                                            if (questionToFetch.indexOf(tmp) == -1) {
+                                                questionToFetch.add(tmp);
                                             }
-                                        });
-
-
-
-
-                                startActivity(intent);
+                                        }
+                                    } else {
+                                        questionToFetch = new ArrayList<>();
+                                        questionToFetch.add(0);
+                                        questionToFetch.add(1);
+                                        questionToFetch.add(2);
+                                        questionToFetch.add(3);
+                                        questionToFetch.add(4);
+                                    }
+                                    Integer index = 0;
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        if (questionToFetch.indexOf(index) != -1) {
+                                            if (questionsQuiz.size() > 0) {
+                                                Random r = new Random();
+                                                Integer randomInt = r.nextInt(questionsQuiz.size());
+                                                Question question = document.toObject(Question.class);
+                                                ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
+                                                question.setPropositions(propositions);
+                                                questionsQuiz.add(randomInt, question);
+                                                questionsQuizId.add(randomInt, document.getId());
+                                            } else {
+                                                Question question = document.toObject(Question.class);
+                                                ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
+                                                question.setPropositions(propositions);
+                                                questionsQuiz.add(question);
+                                                questionsQuizId.add(document.getId());
+                                            }
+                                        }
+                                        index ++;
+                                    }
+                                    globalVariables.getCurrentGame().setQuestions(questionsQuiz);
+                                    globalVariables.getCurrentGame().setQuestionsId(questionsQuizId);
+                                    Log.d("Information", "Voici les questions: " + questionsQuiz.toString());
+                                } else {
+                                    Log.d(TAG, "Error getting documents: ", task.getException());
+                                }
                             }
                         });
-                        layout.addView(newButton);
-                    }
-                    progressBar.setVisibility(View.GONE);
-                    return "";
-                }
-            });
 
+
+
+
+                startActivity(intent);
+            }
+        });
+        layout.addView(newButton);
+        return;
     }
+
+
 }

@@ -141,6 +141,12 @@ public class MainPage extends Activity {
                 }
             }
 
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Failure", "problème dans la requête du profil");
+            }
         });
     }
 

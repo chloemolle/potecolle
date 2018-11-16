@@ -47,10 +47,10 @@ public class ChoixAmiPage extends Activity {
         progressBar.setVisibility(View.VISIBLE);
 
         User user = globalVariables.getUser();
-        ArrayList<HashMap<String,String>> friends = user.getFriends();
-        for (HashMap<String,String> friend: friends) {
+        ArrayList<String> friends = user.getFriends();
+        for (String friend: friends) {
             Button newButton = new Button(context);
-            final String name = friend.get("name");
+            final String name = friend;
             newButton.setText(name);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,

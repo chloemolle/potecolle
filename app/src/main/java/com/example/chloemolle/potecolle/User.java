@@ -12,7 +12,7 @@ public class User {
 
     private String classe;
     private String username;
-    private ArrayList<HashMap<String,String>> friends;
+    private ArrayList<String> friends;
     private ArrayList<String> partiesEnCours;
 
 
@@ -22,7 +22,7 @@ public class User {
         return classe;
     }
 
-    public ArrayList<HashMap<String, String>> getFriends() {
+    public ArrayList<String> getFriends() {
         return friends;
     }
 
