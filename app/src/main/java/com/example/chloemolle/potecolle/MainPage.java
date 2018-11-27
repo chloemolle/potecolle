@@ -32,6 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -51,52 +52,48 @@ public class MainPage extends Activity {
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Globals globalVariables = (Globals) getApplicationContext();
-
+        final ImageButton notification = (ImageButton) findViewById(R.id.button_notification);
+        notification.setVisibility(View.GONE);
 
         final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
 
 //      A decommenter si on veut flusher la base de données des parties en cours
-
- /*     db.collection("Users").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+/*
+            userDB.get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                final DocumentReference user = db.collection("Users").document(document.getId());
-                                ArrayList<String> arr = new ArrayList<>();
-                                user.update("partiesEnCours", arr);
-                                user.collection("Games").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                if (document.get("real") != null && document.get("real").equals("false")) {
-                                                    continue;
-                                                } else {
-                                                    user.collection("Games").document(document.getId()).delete()
-                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void aVoid) {
-                                                                    Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                                                                }
-                                                            })
-                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    Log.w(TAG, "Error deleting document", e);
-                                                                }
-                                                            });
-                                                }
-                                            }
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        ArrayList<String> arr = new ArrayList<>();
+                        userDB.update("partiesEnCours", arr);
+                        userDB.collection("Games").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        if (document.get("real") != null && document.get("real").equals("false")) {
+                                            continue;
+                                        } else {
+                                            userDB.collection("Games").document(document.getId()).delete()
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.w(TAG, "Error deleting document", e);
+                                                        }
+                                                    });
                                         }
                                     }
-                                });
-
+                                }
                             }
-                        }
+                        });
                     }
                 });*/
+
     //FIN de ce qu'il faut décommenter
 
         userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -121,22 +118,62 @@ public class MainPage extends Activity {
                     String userName = user.getUsername();
                     studentName.setText("Salut " + userName + " !");
 
-                    final ArrayList<HashMap<String, String>> updatedGame = new ArrayList<>();
-                    // On affiche un bouton par partie en cours
-                    ArrayList<String> parties = user.getPartiesEnCours();
 
-                    if (parties.size() > 0) {
-                        ImageButton notification = (ImageButton) findViewById(R.id.button_notification);
-                        notification.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                Intent intent = new Intent(v.getContext(), NotificationPage.class);
-                                startActivity(intent);
-                            }
-                        });
-                    } else {
-                        ImageButton notification = (ImageButton) findViewById(R.id.button_notification);
-                        notification.setVisibility(View.GONE);
-                    }
+                    userDB.collection("FriendRequests")
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if(task.isSuccessful()) {
+                                        List<DocumentSnapshot> lists = task.getResult().getDocuments();
+                                        ArrayList<HashMap<String, String>> arrayListFriendsRequests = new ArrayList<>();
+                                        for(DocumentSnapshot doc: lists) {
+                                            HashMap<String, String> friendRequest = new HashMap<>();
+                                            friendRequest.put("email", doc.getData().get("email").toString());
+                                            friendRequest.put("username", doc.getData().get("username").toString());
+                                            friendRequest.put("demande", doc.getData().get("demande").toString());
+                                            friendRequest.put("pending", doc.getData().get("pending").toString());
+
+                                            arrayListFriendsRequests.add(friendRequest);
+                                        }
+                                        user.setFriendRequests(arrayListFriendsRequests);
+                                        // On affiche un bouton par partie en cours
+                                        ArrayList<String> parties = user.getPartiesEnCours();
+
+                                        if (parties.size() > 0 || user.getFriendRequests().size() > 0) {
+                                            notification.setOnClickListener(new View.OnClickListener() {
+                                                public void onClick(View v) {
+                                                    Intent intent = new Intent(v.getContext(), NotificationPage.class);
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                            notification.setVisibility(View.VISIBLE);
+                                        } else {
+                                            notification.setVisibility(View.GONE);
+                                        }
+
+                                    } else {
+                                        Log.d("Error getting documents", task.getException().getMessage());
+                                    }
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d("Error getting documents", e.getMessage());
+                                }
+                            });
+
+
+                    Button addFriends = (Button) findViewById(R.id.add_friends);
+                    addFriends.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(v.getContext(), AddFriendsPage.class);
+                            startActivity(intent);
+                        }
+                    });
+
 
                 }
             }

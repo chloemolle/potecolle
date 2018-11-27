@@ -14,7 +14,7 @@ public class User {
     private String username;
     private ArrayList<String> friends;
     private ArrayList<String> partiesEnCours;
-
+    private ArrayList<HashMap<String, String>> friendRequests = new ArrayList<>();
 
     public User() {};
 
@@ -32,5 +32,13 @@ public class User {
 
     public ArrayList<String> getPartiesEnCours() {
         return partiesEnCours;
+    }
+
+    public ArrayList<HashMap<String, String>> getFriendRequests() {
+        return friendRequests;
+    }
+
+    public void setFriendRequests(ArrayList<HashMap<String, String>> friendRequests) {
+        this.friendRequests = friendRequests;
     }
 }

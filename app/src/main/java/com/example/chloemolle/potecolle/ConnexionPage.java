@@ -16,15 +16,23 @@ import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.data.model.*;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.firebase.ui.auth.AuthUI.TAG;
 
@@ -43,7 +51,7 @@ public class ConnexionPage extends Activity {
 
         // Cas où on est déjà connecté
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) { //TODO: vérifier ce que renvoie la base si il n'y a pas d'utilisateur
+        if (user != null) {
             Intent intent = new Intent(this, MainPage.class);
             startActivity(intent);
             return;
@@ -51,8 +59,8 @@ public class ConnexionPage extends Activity {
         super.onCreate(savedInstanceState);
         ConnexionPage.context = this;
         setContentView(R.layout.connexion_page_layout);
-        Button bouton = (Button) findViewById(R.id.s_inscrire_bouton);
-        TextView seConnecter = (TextView) findViewById(R.id.se_connecter_texte);
+
+        Button seConnecter = (Button) findViewById(R.id.s_inscrire_bouton);
         seConnecter.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Choose authentication providers
@@ -73,7 +81,7 @@ public class ConnexionPage extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
+            final IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.layout_connexion);
@@ -87,20 +95,65 @@ public class ConnexionPage extends Activity {
                 progressBar.setVisibility(View.VISIBLE);
                 layout.addView(progressBar);
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                String email = user.getEmail();
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                db.collection("users")
-                        .whereEqualTo("email", email)
+                final String email = user.getEmail();
+                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                db.collection("Users")
+                        .document(email)
                         .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 if (task.isSuccessful()) {
                                     Intent intent = new Intent(ConnexionPage.context, MainPage.class);
                                     startActivity(intent);
 
                                 } else {
-                                    Log.d(TAG, "Error getting documents: ", task.getException());
+                                    Log.d(TAG, "Creating new user: ", task.getException());
+                                    Map<String, Object> new_user = new HashMap<>();
+                                    new_user.put("classe", "Troisieme");
+                                    new_user.put("partiesEnCours", new ArrayList<String>());
+                                    new_user.put("friends", new ArrayList<String>());
+
+
+                                    db.collection("Users").document(email)
+                                            .set(new_user)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+
+                                                    Map<String, Object> game = new HashMap<>();
+                                                    game.put("real", false);
+                                                    db.collection("Users").document(email)
+                                                            .collection("Games")
+                                                            .document()
+                                                            .set(game)
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                                    Intent intent = new Intent(ConnexionPage.context, AskForUsername.class);
+                                                                    startActivity(intent);
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.w(TAG, "Error writing document", e);
+                                                                }
+                                                            });
+
+
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w(TAG, "Error writing document", e);
+                                                }
+                                            });
+
                                 }
                             }
                         });

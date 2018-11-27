@@ -49,7 +49,9 @@ public class ChoixTimer extends Activity {
                 final Game currentGame = globalVariables.getCurrentGame();
                 currentGame.setTimed("true");
                 globalVariables.setTmpTime(30);
-                setGame(true);
+                if (!globalVariables.getCurrentGame().getSeul()){
+                    setGame(true);
+                }
                 Intent intent = new Intent(v.getContext(), QuizPage.class);
                 startActivity(intent);
             }
@@ -61,7 +63,9 @@ public class ChoixTimer extends Activity {
                 final Globals globalVariables = (Globals) getApplicationContext();
                 final Game currentGame = globalVariables.getCurrentGame();
                 currentGame.setTimed("false");
-                setGame(false);
+                if (!globalVariables.getCurrentGame().getSeul()){
+                    setGame(false);
+                }
                 Intent intent = new Intent(v.getContext(), QuizPage.class);
                 startActivity(intent);
             }
@@ -77,7 +81,7 @@ public class ChoixTimer extends Activity {
         final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
         final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
         final Game currentGame = globalVariables.getCurrentGame();
-        final String opponentUsername = currentGame.getPlayer2();
+        final String opponentUsername = currentGame.getAdversaire();
 
         //set game for user
         userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -105,7 +109,7 @@ public class ChoixTimer extends Activity {
                     //Creating the document
                     HashMap<String,String> newGame = new HashMap<>();
                     newGame.put("timed", currentGame.getTimed());
-                    newGame.put("adversaire", currentGame.getPlayer2());
+                    newGame.put("adversaire", currentGame.getAdversaire());
                     newGame.put("classe", currentGame.getClasse());
                     newGame.put("matiere", currentGame.getMatiere());
                     newGame.put("sujet", currentGame.getSujet());
@@ -150,24 +154,52 @@ public class ChoixTimer extends Activity {
 
         //set game for opponent
         db.collection("Users")
-                .whereEqualTo("username", opponentUsername)
+                .document(opponentUsername)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                final DocumentReference opponentDB = db.collection("Users").document(document.getId());
-                                opponentDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        if (documentSnapshot.exists()) {
-                                            User user = documentSnapshot.toObject(User.class);
+                            DocumentSnapshot document = task.getResult();
+                            final DocumentReference opponentDB = db.collection("Users").document(document.getId());
+                            User user = document.toObject(User.class);
+                            //Updating the array of the player
+                            ArrayList<String> arr = user.getPartiesEnCours();
+                            arr.add(currentGame.getId());
+                            opponentDB.update("partiesEnCours", arr)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error updating document", e);
+                                        }
+                                    });
 
-                                            //Updating the array of the player
-                                            ArrayList<String> arr = user.getPartiesEnCours();
-                                            arr.add(currentGame.getId());
-                                            opponentDB.update("partiesEnCours", arr)
+                            //Creating the document
+                            HashMap<String,String> newGame = new HashMap<>();
+                            newGame.put("timed", currentGame.getTimed());
+                            newGame.put("adversaire", userAuth.getEmail());
+                            newGame.put("classe", currentGame.getClasse());
+                            newGame.put("matiere", currentGame.getMatiere());
+                            newGame.put("sujet", currentGame.getSujet());
+                            newGame.put("fini", "false");
+                            newGame.put("repondu", "false");
+                            newGame.put("id", currentGame.getId());
+                            opponentDB.collection("Games").document(currentGame.getId())
+                                    .set(newGame)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "DocumentSnapshot successfully written!");
+                                            Log.d(TAG, "DocumentSnapshot successfully written!");
+                                            ArrayList<String> questionsId = currentGame.getQuestionsId();
+                                            opponentDB.collection("Games").document(currentGame.getId())
+                                                    .update("questionsId", questionsId)
                                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
@@ -181,56 +213,18 @@ public class ChoixTimer extends Activity {
                                                         }
                                                     });
 
-                                            //Creating the document
-                                            HashMap<String,String> newGame = new HashMap<>();
-                                            newGame.put("timed", currentGame.getTimed());
-                                            newGame.put("adversaire", currentGame.getPlayer1());
-                                            newGame.put("classe", currentGame.getClasse());
-                                            newGame.put("matiere", currentGame.getMatiere());
-                                            newGame.put("sujet", currentGame.getSujet());
-                                            newGame.put("fini", "false");
-                                            newGame.put("repondu", "false");
-                                            newGame.put("id", currentGame.getId());
-                                            opponentDB.collection("Games").document(currentGame.getId())
-                                                    .set(newGame)
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            Log.d(TAG, "DocumentSnapshot successfully written!");
-                                                            Log.d(TAG, "DocumentSnapshot successfully written!");
-                                                            ArrayList<String> questionsId = currentGame.getQuestionsId();
-                                                            opponentDB.collection("Games").document(currentGame.getId())
-                                                                    .update("questionsId", questionsId)
-                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                        @Override
-                                                                        public void onSuccess(Void aVoid) {
-                                                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                                                        }
-                                                                    })
-                                                                    .addOnFailureListener(new OnFailureListener() {
-                                                                        @Override
-                                                                        public void onFailure(@NonNull Exception e) {
-                                                                            Log.w(TAG, "Error updating document", e);
-                                                                        }
-                                                                    });
-
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Log.w(TAG, "Error writing document", e);
-                                                        }
-                                                    });
-                                        } else {
-                                            Log.d(TAG, "No such document");
                                         }
-                                    }
-                                });
-                            }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error writing document", e);
+                                        }
+                                    });
                         } else {
-                            Log.d(TAG, "No such document");
+                            Log.d(TAG, task.getException().getMessage());
                         }
+
                     }
                 });
     }

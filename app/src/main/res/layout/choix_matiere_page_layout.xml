@@ -28,7 +28,8 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"/>
-s
+<!--
+
         <Button
             android:id="@+id/francais_button"
             android:textColor="@color/white"
@@ -130,6 +131,7 @@ s
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"/>
 
+-->
 
 
     </LinearLayout>

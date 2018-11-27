@@ -56,6 +56,12 @@
         <activity android:name=".ChoixTimer">
         </activity>
 
+        <activity android:name=".AskForUsername">
+        </activity>
+
+        <activity android:name=".AddFriendsPage">
+        </activity>
+
     </application>
 
 </manifest>

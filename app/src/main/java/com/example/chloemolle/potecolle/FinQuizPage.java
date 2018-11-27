@@ -98,7 +98,19 @@ public class FinQuizPage extends Activity {
             ll.addView(llText);
         }
 
-        text.setText("Bravo ! Ton score: " + score + ". Reviens plus tard pour voir si tu as battu ton pote ;)");
+        String textFin = "";
+
+        if (score > 2) {
+            textFin += "Bravo ! Ton score: " + score + ".";
+        } else {
+            textFin += "Ne baisse pas les bras ! Ton score: " + score + ".";
+        }
+
+        if (!globalVariables.getCurrentGame().getSeul()) {
+            textFin += " Reviens plus tard pour voir les résultats de ton pote";
+        }
+
+        text.setText(textFin);
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
@@ -132,31 +144,31 @@ public class FinQuizPage extends Activity {
 
 
         db.collection("Users")
-                .whereEqualTo("username", globalVariables.getCurrentGame().getAdversaire())
+                .document(globalVariables.getCurrentGame().getAdversaire())
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                final DocumentReference opponentDB = db.collection("Users").document(document.getId());
-                                opponentDB.collection("Games")
-                                        .document(globalVariables.getCurrentGame().getId())
-                                        .update(updateOtherFields)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w(TAG, "Error updating document", e);
-                                            }
-                                        });
-                            }
+                            DocumentSnapshot document = task.getResult();
+                            final DocumentReference opponentDB = db.collection("Users").document(document.getId());
+                            opponentDB.collection("Games")
+                                    .document(globalVariables.getCurrentGame().getId())
+                                    .update(updateOtherFields)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error updating document", e);
+                                        }
+                                    });
                         }
+
                     }
                 });
 

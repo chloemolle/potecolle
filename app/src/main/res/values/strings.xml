@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">Potecolle</string>
-    <string name="inscription">S\'inscrire</string>
+    <string name="inscription">S\'inscrire ou se connecter</string>
     <string name="se_connecter">Se connecter</string>
     <string name="connexion">Connexion</string>
     <string name="username">Mail</string>
     <string name="mdp">Mot de passe</string>
     <string name="start_game">Nouvelle partie</string>
+    <string name="ajout_ami">ajouter un ami</string>
     <string name="maths">Maths</string>
     <string name="français">Français</string>
     <string name="next">Suivant</string>
@@ -15,5 +16,19 @@
     <string name="retour_quiz">Retour au quiz</string>
     <string name="brouillon">brouillon</string>
     <string name="retourMain">Retour</string>
-    <string name="TimerQuestions">Souhaites-tu qu\'il y est un temps limite pour répondre aux questions?</string>
+    <string name="TimerQuestions">Souhaites-tu qu\'il y ait un temps limite pour répondre aux questions?</string>
+    <string name="bienvenue">Bienvenue chez Potecolle ! Donne nous le nom sous lequel tu veux apparaître auprès de tes potes ! ;)</string>
+    <string name="add_friends">Ajoute des amis pour jouer à plusieurs !</string>
+    <string name="entrainer_seul">S\'entrainer seul</string>
+    <string name="demande_envoye">Demande d\'ami envoyé !</string>
+    <string name="demande_accepte">Vous avez un nouvel ami !</string>
+    <string name="demande_non_accepte">Nous avons bien pris en compte votre refus</string>
+    <string name="demande_deleted">Nous avons bien pris en compte votre suppression</string>
+
+    <string-array name="classes">
+        <item>Troisieme</item>
+        <item>Seconde</item>
+    </string-array>
+
+
 </resources>

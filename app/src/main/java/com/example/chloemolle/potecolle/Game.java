@@ -35,6 +35,7 @@ public class Game {
     private String id;
     private String scoreOpponent;
     private String timed;
+    private Boolean seul = false;
 
     public Game () {
     }
@@ -233,5 +234,13 @@ public class Game {
 
     public void setTimed(String timed) {
         this.timed = timed;
+    }
+
+    public Boolean getSeul() {
+        return seul;
+    }
+
+    public void setSeul(Boolean seul) {
+        this.seul = seul;
     }
 }
