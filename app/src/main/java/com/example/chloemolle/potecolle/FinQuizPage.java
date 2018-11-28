@@ -112,66 +112,67 @@ public class FinQuizPage extends Activity {
 
         text.setText(textFin);
 
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-        final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
-        final Integer scoreFinal = score;
+        if (!globalVariables.getCurrentGame().getSeul()) {
+            final FirebaseFirestore db = FirebaseFirestore.getInstance();
+            final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
+            final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+            final Integer scoreFinal = score;
 
-        Map<String, Object> updateFields = new HashMap<>();
-        updateFields.put("score", scoreFinal.toString());
-        updateFields.put("repondu", "true");
-
-
-        userDB.collection("Games").document(globalVariables.getCurrentGame().getId())
-                .update(updateFields)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
-                });
+            Map<String, Object> updateFields = new HashMap<>();
+            updateFields.put("score", scoreFinal.toString());
+            updateFields.put("repondu", "true");
 
 
-        final Map<String, Object> updateOtherFields = new HashMap<>();
-        updateOtherFields.put("scoreOpponent", scoreFinal.toString());
-        updateOtherFields.put("fini", "true");
-
-
-        db.collection("Users")
-                .document(globalVariables.getCurrentGame().getAdversaire())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            final DocumentReference opponentDB = db.collection("Users").document(document.getId());
-                            opponentDB.collection("Games")
-                                    .document(globalVariables.getCurrentGame().getId())
-                                    .update(updateOtherFields)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error updating document", e);
-                                        }
-                                    });
+            userDB.collection("Games").document(globalVariables.getCurrentGame().getId())
+                    .update(updateFields)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "DocumentSnapshot successfully updated!");
                         }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error updating document", e);
+                        }
+                    });
 
-                    }
-                });
 
+            final Map<String, Object> updateOtherFields = new HashMap<>();
+            updateOtherFields.put("scoreOpponent", scoreFinal.toString());
+            updateOtherFields.put("fini", "true");
+
+
+            db.collection("Users")
+                    .document(globalVariables.getCurrentGame().getAdversaire())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                final DocumentReference opponentDB = db.collection("Users").document(document.getId());
+                                opponentDB.collection("Games")
+                                        .document(globalVariables.getCurrentGame().getId())
+                                        .update(updateOtherFields)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Error updating document", e);
+                                            }
+                                        });
+                            }
+
+                        }
+                    });
+        }
         Button retourMainPage = (Button) findViewById(R.id.retour_main_page);
         retourMainPage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

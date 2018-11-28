@@ -367,19 +367,21 @@ public class NotificationPage extends Activity {
                         if (task.isSuccessful()){
                             if(addFriend) {
                                 ArrayList<String> friends = user.getFriends();
-                                friends.add(friendRequest.get("email"));
-                                db.collection("Users").document(userFirebase.getEmail())
-                                        .update("friends", friends)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    Log.d("Success", "friend added");
-                                                } else {
-                                                    Log.d("Error", task.getException().getMessage());
+                                if (friends.indexOf(friendRequest.get("email")) == -1) {
+                                    friends.add(friendRequest.get("email"));
+                                    db.collection("Users").document(userFirebase.getEmail())
+                                            .update("friends", friends)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Log.d("Success", "friend added");
+                                                    } else {
+                                                        Log.d("Error", task.getException().getMessage());
+                                                    }
                                                 }
-                                            }
-                                        });
+                                            });
+                                }
                             }
                             Log.d("Success", "document successfully deleted");
                             layout.removeView(newButton);

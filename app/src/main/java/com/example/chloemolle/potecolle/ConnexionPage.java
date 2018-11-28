@@ -104,7 +104,8 @@ public class ConnexionPage extends Activity {
                         .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
+                                if (task.isSuccessful() && task.getResult().getData() != null) {
+                                    Map<String, Object> doc = task.getResult().getData();
                                     Intent intent = new Intent(ConnexionPage.context, MainPage.class);
                                     startActivity(intent);
 
