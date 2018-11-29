@@ -113,7 +113,6 @@ public class ConnexionPage extends Activity {
                                     Log.d(TAG, "Creating new user: ", task.getException());
                                     Map<String, Object> new_user = new HashMap<>();
                                     new_user.put("classe", "Troisieme");
-                                    new_user.put("partiesEnCours", new ArrayList<String>());
                                     new_user.put("friends", new ArrayList<String>());
 
 
@@ -123,29 +122,8 @@ public class ConnexionPage extends Activity {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     Log.d(TAG, "DocumentSnapshot successfully written!");
-
-                                                    Map<String, Object> game = new HashMap<>();
-                                                    game.put("real", false);
-                                                    db.collection("Users").document(email)
-                                                            .collection("Games")
-                                                            .document()
-                                                            .set(game)
-                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void aVoid) {
-                                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
-                                                                    Intent intent = new Intent(ConnexionPage.context, AskForUsername.class);
-                                                                    startActivity(intent);
-                                                                }
-                                                            })
-                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    Log.w(TAG, "Error writing document", e);
-                                                                }
-                                                            });
-
-
+                                                    Intent intent = new Intent(ConnexionPage.context, AskForUsername.class);
+                                                    startActivity(intent);
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {

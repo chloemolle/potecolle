@@ -34,6 +34,10 @@ public class User {
         return partiesEnCours;
     }
 
+    public void setPartiesEnCours(ArrayList<String> partiesEnCours) {
+        this.partiesEnCours = partiesEnCours;
+    }
+
     public ArrayList<HashMap<String, String>> getFriendRequests() {
         return friendRequests;
     }

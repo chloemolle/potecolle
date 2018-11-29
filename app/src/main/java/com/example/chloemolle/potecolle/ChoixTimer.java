@@ -88,24 +88,6 @@ public class ChoixTimer extends Activity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
-                    User user = documentSnapshot.toObject(User.class);
-                    //Updating the array of the player
-                    ArrayList<String> arr = user.getPartiesEnCours();
-                    arr.add(currentGame.getId());
-                    userDB.update("partiesEnCours", arr)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w(TAG, "Error updating document", e);
-                                }
-                            });
-
                     //Creating the document
                     HashMap<String,String> newGame = new HashMap<>();
                     newGame.put("timed", currentGame.getTimed());
@@ -162,24 +144,6 @@ public class ChoixTimer extends Activity {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             final DocumentReference opponentDB = db.collection("Users").document(document.getId());
-                            User user = document.toObject(User.class);
-                            //Updating the array of the player
-                            ArrayList<String> arr = user.getPartiesEnCours();
-                            arr.add(currentGame.getId());
-                            opponentDB.update("partiesEnCours", arr)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error updating document", e);
-                                        }
-                                    });
-
                             //Creating the document
                             HashMap<String,String> newGame = new HashMap<>();
                             newGame.put("timed", currentGame.getTimed());

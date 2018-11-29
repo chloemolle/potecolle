@@ -56,29 +56,8 @@ public class ChoixAmiPage extends Activity {
             final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar_ami);
             progressBar.setVisibility(View.VISIBLE);
 
-            File cacheFile = new File(context.getCacheDir(), "friends_" + globalVariables.getUser().getUsername());
+            goWithTheDatabase();
 
-            try {
-                FileInputStream fis = new FileInputStream(cacheFile);
-                fis.getChannel().position(0);
-                BufferedReader bfr = new BufferedReader(new InputStreamReader(fis));
-                String currentLine = bfr.readLine();
-                if (currentLine == null) {
-                    goWithTheDatabase();
-                } else {
-                    while (currentLine != null) {
-                        String[] friendInfo = currentLine.split("SPLIT_USERNAME_EMAIL");
-                        createButtonWithPlayerName(friendInfo[0], friendInfo[1]);
-                        currentLine = bfr.readLine();
-                    }
-                }
-                fis.close();
-                bfr.close();
-                progressBar.setVisibility(View.GONE);
-            } catch (Exception e) {
-                Log.d("problemeCache", e.getMessage());
-                goWithTheDatabase();
-            }
             progressBar.setVisibility(View.GONE);
 
         } else {
@@ -138,33 +117,24 @@ public class ChoixAmiPage extends Activity {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Context context = this;
 
-        final File cacheFile = new File(context.getCacheDir(), "friends_" + globalVariables.getUser().getUsername());
-        try {
-            for (String friend: friends) {
-                final String email = friend;
-                db.collection("Users").document(friend)
-                        .get()
-                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @Override
-                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                final User user = documentSnapshot.toObject(User.class);
-                                createButtonWithPlayerName(user.getUsername(), email);
-                                try {
-                                    final FileWriter fw = new FileWriter(cacheFile.getAbsoluteFile());
-                                    final BufferedWriter bfw = new BufferedWriter(fw);
-                                    bfw.write(user.getUsername() + "SPLIT_USERNAME_EMAIL" + email);
-                                    bfw.newLine();
-                                    bfw.close();
-                                } catch (Exception e) {
-                                    Log.d("problemeCache", e.getMessage());
-                                }
-                            }
-                        });
-            }
-        } catch (Exception e) {
-            Log.d("problemeCache", e.getMessage());
+        for (String friend: friends) {
+            final String email = friend;
+            db.collection("Users").document(friend)
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            final User user = documentSnapshot.toObject(User.class);
+                            createButtonWithPlayerName(user.getUsername(), email);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Fail", e.getMessage());
+                        }
+                    });
         }
-
 
 
 

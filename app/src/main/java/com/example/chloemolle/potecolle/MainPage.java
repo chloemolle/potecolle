@@ -11,12 +11,15 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -53,7 +56,10 @@ public class MainPage extends Activity {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Globals globalVariables = (Globals) getApplicationContext();
         final ImageButton notification = (ImageButton) findViewById(R.id.button_notification);
+        final ImageButton notificationOn = (ImageButton) findViewById(R.id.button_notification_on);
+
         notification.setVisibility(View.GONE);
+        notificationOn.setVisibility(View.GONE);
 
         final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
 
@@ -96,6 +102,35 @@ public class MainPage extends Activity {
 
     //FIN de ce qu'il faut décommenter
 
+
+        notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.toast,
+                        (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                TextView text = (TextView) layout.findViewById(R.id.text);
+                text.setText(R.string.no_notification);
+
+                Toast toast = new Toast(getApplicationContext());
+                toast.setGravity(Gravity.BOTTOM, 0, 0);
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.setView(layout);
+                toast.show();
+
+            }
+        });
+
+        notificationOn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), NotificationPage.class);
+                startActivity(intent);
+            }
+        });
+
+
+
         userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -137,21 +172,40 @@ public class MainPage extends Activity {
                                             arrayListFriendsRequests.add(friendRequest);
                                         }
                                         user.setFriendRequests(arrayListFriendsRequests);
-                                        // On affiche un bouton par partie en cours
-                                        ArrayList<String> parties = user.getPartiesEnCours();
 
-                                        if (parties.size() > 0 || user.getFriendRequests().size() > 0) {
-                                            notification.setOnClickListener(new View.OnClickListener() {
-                                                public void onClick(View v) {
-                                                    Intent intent = new Intent(v.getContext(), NotificationPage.class);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                            notification.setVisibility(View.VISIBLE);
-                                        } else {
-                                            notification.setVisibility(View.GONE);
-                                        }
+                                        userDB.collection("Games")
+                                                .get()
+                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        if(task.isSuccessful()) {
+                                                            List<DocumentSnapshot> lists = task.getResult().getDocuments();
+                                                            ArrayList<String> arrayListGames = new ArrayList<>();
+                                                            for(DocumentSnapshot doc: lists) {
+                                                                arrayListGames.add(lists.get(0).getId());
+                                                            }
+                                                            user.setPartiesEnCours(arrayListGames);
+                                                            // On affiche un bouton par partie en cours
 
+                                                            if (arrayListGames.size() > 0 || user.getFriendRequests().size() > 0) {
+                                                                notification.setVisibility(View.GONE);
+                                                                notificationOn.setVisibility(View.VISIBLE);
+                                                            } else {
+                                                                notification.setVisibility(View.VISIBLE);
+                                                                notificationOn.setVisibility(View.GONE);
+                                                            }
+
+                                                        } else {
+                                                            Log.d("Error getting documents", task.getException().getMessage());
+                                                        }
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.d("Error getting documents", e.getMessage());
+                                                    }
+                                                });
                                     } else {
                                         Log.d("Error getting documents", task.getException().getMessage());
                                     }
