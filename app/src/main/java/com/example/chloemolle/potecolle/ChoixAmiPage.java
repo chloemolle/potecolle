@@ -172,7 +172,7 @@ public class ChoixAmiPage extends Activity {
             }
         });
 
-        layout.addView(newButton);
+        layout.addView(newButton, 0);
     }
 
 

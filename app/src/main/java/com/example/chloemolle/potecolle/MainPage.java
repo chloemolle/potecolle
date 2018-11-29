@@ -168,10 +168,35 @@ public class MainPage extends Activity {
                                             friendRequest.put("username", doc.getData().get("username").toString());
                                             friendRequest.put("demande", doc.getData().get("demande").toString());
                                             friendRequest.put("pending", doc.getData().get("pending").toString());
+                                            friendRequest.put("accepte", doc.getData().get("accepte").toString());
 
                                             arrayListFriendsRequests.add(friendRequest);
                                         }
                                         user.setFriendRequests(arrayListFriendsRequests);
+
+                                        for (HashMap<String, String> friendRequest: arrayListFriendsRequests) {
+                                            if (friendRequest.get("demande").equals("true") &&
+                                                    friendRequest.get("pending").equals("false") &&
+                                                    friendRequest.get("accepte").equals("true")) {
+
+                                                ArrayList<String> friends = user.getFriends();
+                                                if (friends.indexOf(friendRequest.get("email")) == -1) {
+                                                    friends.add(friendRequest.get("email"));
+                                                    db.collection("Users").document(userFirebase.getEmail())
+                                                            .update("friends", friends)
+                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        Log.d("Success", "friend added");
+                                                                    } else {
+                                                                        Log.d("Error", task.getException().getMessage());
+                                                                    }
+                                                                }
+                                                            });
+                                                }
+                                            }
+                                        }
 
                                         userDB.collection("Games")
                                                 .get()

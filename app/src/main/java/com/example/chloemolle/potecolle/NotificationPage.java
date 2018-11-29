@@ -175,8 +175,6 @@ public class NotificationPage extends Activity {
             } else {
                 addButtonFriendRequestReceived(friendRequest);
             }
-
-
         }
     }
 

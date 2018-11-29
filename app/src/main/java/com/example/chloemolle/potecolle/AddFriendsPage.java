@@ -18,17 +18,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.firebase.ui.auth.AuthUI.TAG;
 
@@ -77,19 +82,48 @@ public class AddFriendsPage extends Activity {
                 .continueWith(new Continuation<HttpsCallableResult, String>() {
                     @Override
                     public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                        ArrayList<HashMap<String, String>> arr = (ArrayList<HashMap<String, String>>) task.getResult().getData();
-                        ArrayList<Integer> indexesToRemove = new ArrayList<>();
-                        for (HashMap<String, String> ami : arr) {
+                        final ArrayList<HashMap<String, String>> arr = (ArrayList<HashMap<String, String>>) task.getResult().getData();
+                        final ArrayList<Integer> indexesToRemove = new ArrayList<>();
+                        for (final HashMap<String, String> ami : arr) {
                             final String email = ami.get("email");
-                            ArrayList<String> friends = globalVariables.getUser().getFriends();
                             if (!userAuth.getEmail().equals(email)) {
-                                if (friends.indexOf(email) >= 0) {
-                                    indexesToRemove.add(arr.indexOf(ami));
-                                } else {
-                                    users.add(ami.get("username") + "\n" + email);
-                                }
+                                final ArrayList<String> friends = globalVariables.getUser().getFriends();
+                                db.collection("Users").document(userAuth.getEmail())
+                                        .collection("FriendRequests")
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                List<DocumentSnapshot> listFriendRequests = task.getResult().getDocuments();
+                                                ArrayList<String> emailFriendRequest = new ArrayList<>();
+                                                for (DocumentSnapshot friendRequest : listFriendRequests) {
+                                                    emailFriendRequest.add(friendRequest.get("email").toString());
+                                                }
+                                                if (friends.indexOf(email) >= 0 || emailFriendRequest.indexOf(email) >= 0) {
+                                                    indexesToRemove.add(arr.indexOf(ami));
+                                                } else {
+                                                    users.add(ami.get("username") + "\n" + email);
+                                                }
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d("Fail", e.getMessage());
+                                                if (!userAuth.getEmail().equals(email)) {
+                                                    if (friends.indexOf(email) >= 0) {
+                                                        indexesToRemove.add(arr.indexOf(ami));
+                                                    } else {
+                                                        users.add(ami.get("username") + "\n" + email);
+                                                    }
+                                                } else {
+                                                    indexesToRemove.add(arr.indexOf(ami));
+                                                }
+                                            }
+                                        });
                             } else {
                                 indexesToRemove.add(arr.indexOf(ami));
+
                             }
                         }
                         for (Integer indexToRemove: indexesToRemove) {
@@ -112,6 +146,7 @@ public class AddFriendsPage extends Activity {
                                 hashMap.put("username", globalVariables.getUser().getUsername());
                                 hashMap.put("demande", "false");
                                 hashMap.put("pending", "false");
+                                hashMap.put("accepte", "false");
 
 
                                 db.collection("Users").document(email)
@@ -152,6 +187,8 @@ public class AddFriendsPage extends Activity {
                                 hashMap.put("username", ami.get("username"));
                                 hashMap.put("demande", "true");
                                 hashMap.put("pending", "true");
+                                hashMap.put("accepte", "false");
+
 
                                 db.collection("Users").document(userAuth.getEmail())
                                         .collection("FriendRequests")
