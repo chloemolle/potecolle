@@ -125,7 +125,6 @@ public class QuizPage extends Activity {
                     200, false));
 
 
-
         } else if (currentQuestion.getType().equals("qcm") || currentQuestion.getType().equals("questionInversé")) {
             setRetourButton();
             setProgressBar();
