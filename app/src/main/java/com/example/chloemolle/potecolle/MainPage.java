@@ -18,6 +18,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -149,10 +152,20 @@ public class MainPage extends Activity {
                         }
                     });
 
+
+                    //Init view
                     TextView studentName = (TextView) findViewById(R.id.student_name);
                     String userName = user.getUsername();
                     studentName.setText("Salut " + userName + " !");
 
+                    TextView level = (TextView) findViewById(R.id.niveau);
+                    level.setText("Niveau " + user.getLevel().toString());
+
+                    ProgressBar avancement = (ProgressBar) findViewById(R.id.progressBarAvancement);
+                    Integer avancementInteger = (1000 * (user.getLevel() * (user.getLevel() + 1) / 2));
+                    TextView avancementText = (TextView) findViewById(R.id.avancement);
+                    avancementText.setText(user.getPointsActuels().toString() + "/" + avancementInteger.toString());
+                    avancement.setProgress(user.getPointsActuels()/avancementInteger);
 
                     userDB.collection("FriendRequests")
                             .get()
