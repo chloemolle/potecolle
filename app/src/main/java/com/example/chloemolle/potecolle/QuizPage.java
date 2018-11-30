@@ -101,26 +101,27 @@ public class QuizPage extends Activity {
                 }
             });
 
-            ImageButton bouton = (ImageButton) findViewById(R.id.next_quiz);
-            bouton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    String userAnswerText = userAnswer.getText().toString();
-                    if (userAnswerText.isEmpty()) {
-                        return;
+            if (currentQuestion.getType().equals("image")) {
+                ImageButton bouton = (ImageButton) findViewById(R.id.next_quiz);
+                bouton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        String userAnswerText = userAnswer.getText().toString();
+                        if (userAnswerText.isEmpty()) {
+                            return;
+                        }
+                        globalVariables.setReponseText("");
+                        globalVariables.setBrouillonText("");
+                        globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
+                        globalVariables.setTmpTime(30);
+                        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+                            handler.removeCallbacks(runnable);
+                        }
+                        nextPage(v.getContext());
                     }
-                    globalVariables.setReponseText("");
-                    globalVariables.setBrouillonText("");
-                    globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    globalVariables.setTmpTime(30);
-                    if (globalVariables.getCurrentGame().getTimed().equals("true")) {
-                        handler.removeCallbacks(runnable);
-                    }
-                    nextPage(v.getContext());
-                }
-            });
+                });
+            }
 
             final ImageView imageView = (ImageView) findViewById(R.id.question_quiz);
-
             imageView.setImageBitmap(Bitmap.createScaledBitmap(currentQuestion.getBmp(), 200,
                     200, false));
 
