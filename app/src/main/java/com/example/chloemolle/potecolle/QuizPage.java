@@ -125,6 +125,98 @@ public class QuizPage extends Activity {
                     200, false));
 
 
+            if (currentQuestion.getType().toString().contains("qcm")) {
+                final TextView prop1 = (TextView) findViewById(R.id.reponse_quiz1);
+                prop1.setPadding(20, 20, 20, 20);
+                prop1.setText(currentQuestion.getProposition().get(0).toString());
+                prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+
+                prop1.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        String userAnswerText = prop1.getText().toString();
+                        if (userAnswerText.isEmpty()) {
+                            return;
+                        }
+                        globalVariables.setBrouillonText("");
+                        globalVariables.setReponseText("");
+                        globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
+                        globalVariables.setTmpTime(30);
+                        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+                            handler.removeCallbacks(runnable);
+                        }
+                        nextPage(v.getContext());
+                    }
+                });
+
+                final TextView prop2 = (TextView) findViewById(R.id.reponse_quiz2);
+                prop2.setPadding(20, 20, 20, 20);
+                prop2.setText(currentQuestion.getProposition().get(1).toString());
+                prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+
+                prop2.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        String userAnswerText = prop2.getText().toString();
+                        if (userAnswerText.isEmpty()) {
+                            return;
+                        }
+                        globalVariables.setBrouillonText("");
+                        globalVariables.setReponseText("");
+                        globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
+                        globalVariables.setTmpTime(30);
+                        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+                            handler.removeCallbacks(runnable);
+                        }
+                        nextPage(v.getContext());
+                    }
+                });
+
+                final TextView prop3 = (TextView) findViewById(R.id.reponse_quiz3);
+                prop3.setPadding(20, 20, 20, 20);
+                prop3.setText(currentQuestion.getProposition().get(2).toString());
+                prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+
+                prop3.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        String userAnswerText = prop3.getText().toString();
+                        if (userAnswerText.isEmpty()) {
+                            return;
+                        }
+                        globalVariables.setBrouillonText("");
+                        globalVariables.setReponseText("");
+                        globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
+                        globalVariables.setTmpTime(30);
+                        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+                            handler.removeCallbacks(runnable);
+                        }
+                        nextPage(v.getContext());
+                    }
+                });
+
+                final TextView prop4 = (TextView) findViewById(R.id.reponse_quiz4);
+                prop4.setPadding(20, 20, 20, 20);
+                prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                prop4.setText(currentQuestion.getProposition().get(3).toString());
+
+
+                prop4.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        String userAnswerText = prop4.getText().toString();
+                        if (userAnswerText.isEmpty()) {
+                            return;
+                        }
+                        globalVariables.setBrouillonText("");
+                        globalVariables.setReponseText("");
+                        globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
+                        globalVariables.setTmpTime(30);
+                        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+                            handler.removeCallbacks(runnable);
+                        }
+                        nextPage(v.getContext());
+                    }
+                });
+            }
+
+
 
         } else if (currentQuestion.getType().equals("qcm") || currentQuestion.getType().equals("questionInversé")) {
             setRetourButton();
