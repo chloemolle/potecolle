@@ -111,12 +111,12 @@ public class FinQuizPage extends Activity {
         }
 
         text.setText(textFin);
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
+        final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+        final Integer scoreFinal = score;
 
         if (!globalVariables.getCurrentGame().getSeul()) {
-            final FirebaseFirestore db = FirebaseFirestore.getInstance();
-            final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-            final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
-            final Integer scoreFinal = score;
 
             Map<String, Object> updateFields = new HashMap<>();
             updateFields.put("score", scoreFinal.toString());
@@ -170,6 +170,29 @@ public class FinQuizPage extends Activity {
                                         });
                             }
 
+                        }
+                    });
+        } else {
+            //Ajoute les points
+            Integer newLevelPoints = 25 + 10 * score;
+            User userForLevel = globalVariables.getUser();
+            userForLevel.addPoints(newLevelPoints);
+
+            HashMap<String, Object> updateUser = new HashMap<>();
+            updateUser.put("level", userForLevel.getLevel());
+            updateUser.put("pointsActuels", userForLevel.getPointsActuels());
+
+            userDB.update(updateUser)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Log.d("Success", "C'est tout bon");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Fail", "C'est pas bon");
                         }
                     });
         }

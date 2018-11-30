@@ -162,7 +162,7 @@ public class MainPage extends Activity {
                     level.setText("Niveau " + user.getLevel().toString());
 
                     ProgressBar avancement = (ProgressBar) findViewById(R.id.progressBarAvancement);
-                    Integer avancementInteger = (1000 * (user.getLevel() * (user.getLevel() + 1) / 2));
+                    Integer avancementInteger = 500 * user.getLevel() * (user.getLevel() + 1);
                     TextView avancementText = (TextView) findViewById(R.id.avancement);
                     avancementText.setText(user.getPointsActuels().toString() + "/" + avancementInteger.toString());
                     avancement.setProgress(user.getPointsActuels()/avancementInteger);
