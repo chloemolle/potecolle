@@ -184,7 +184,7 @@ public class ChoixSujetPage extends Activity {
                                                 Random r = new Random();
                                                 Integer randomInt = r.nextInt(questionsQuiz.size());
                                                 final Question question = document.toObject(Question.class);
-                                                if (question.getType().equals("image")){
+                                                if (question.getType().toString().contains("image")){
                                                     FirebaseStorage storage = FirebaseStorage.getInstance();
                                                     // Create a storage reference from our app
                                                     StorageReference storageRef = storage.getReference();

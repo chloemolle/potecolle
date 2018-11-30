@@ -34,6 +34,8 @@ public class QuizPage extends Activity {
 
         if (currentQuestion.getType().equals("image")) {
             setContentView(R.layout.image_page_layout);
+        } else if (currentQuestion.getType().equals("imageqcm")) {
+            setContentView(R.layout.image_qcm_page_layout);
         } else if (currentQuestion.getType().equals("qcm") || currentQuestion.getType().equals("questionInversé")) {
             setContentView(R.layout.qcm_page_layout);
         } else {
@@ -84,7 +86,7 @@ public class QuizPage extends Activity {
         }
 
 
-        if (currentQuestion.getType().equals("image")){
+        if (currentQuestion.getType().toString().contains("image")){
             setRetourButton();
             setProgressBar();
 
