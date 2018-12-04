@@ -55,6 +55,13 @@ public class ResultPage extends Activity {
         if(!game.getScoreVu()) {
             User user = globalVariables.getUser();
             Integer pointsToAdd = votreScore > sonScore ? 75 + (2 * votreScore - sonScore) * 10 : 50 + votreScore * 10;
+
+            if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+               for (Integer integer: globalVariables.getCurrentGame().getReponsesTemps()){
+                   pointsToAdd += integer;
+               }
+            }
+
             user.addPoints(pointsToAdd);
 
             HashMap<String, Object> updateUser = new HashMap<>();

@@ -79,12 +79,14 @@ public class FinQuizPage extends Activity {
 
             if (playerAnswer.replaceAll("\\s", "").equalsIgnoreCase(realAnswer.replaceAll("\\s", ""))) {
                 score ++;
+                globalVariables.getCurrentGame().setReponsesTempsIndexScore(i);
                 TextView textReponse = new TextView(this);
                 textReponse.setText("ta réponse: " + playerAnswer);
                 textReponse.setTextColor(getResources().getColor(R.color.green));
                 llText.addView(textQuestion);
                 llText.addView(textReponse);
             } else {
+                globalVariables.getCurrentGame().setReponsesTempsIndexScore0(i);
                 TextView textReponse = new TextView(this);
                 textReponse.setText("ta réponse: " + playerAnswer);
                 textReponse.setTextColor(getResources().getColor(R.color.red));
@@ -121,6 +123,7 @@ public class FinQuizPage extends Activity {
             Map<String, Object> updateFields = new HashMap<>();
             updateFields.put("score", scoreFinal.toString());
             updateFields.put("repondu", "true");
+            updateFields.put("reponsesTemps", globalVariables.getCurrentGame().getReponsesTemps());
 
 
             userDB.collection("Games").document(globalVariables.getCurrentGame().getId())
