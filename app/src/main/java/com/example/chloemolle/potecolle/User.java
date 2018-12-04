@@ -55,4 +55,16 @@ public class User {
     public Integer getPointsActuels() {
         return pointsActuels;
     }
+
+    public void addPoints(Integer points) {
+        Integer nextFloor = 500 * getLevel() * (getLevel() + 1);
+        Integer newPoints = getPointsActuels() + points;
+        if (newPoints >= nextFloor) {
+            pointsActuels = newPoints - nextFloor;
+            level ++;
+        } else {
+            pointsActuels = newPoints;
+        }
+        return;
+    }
 }
