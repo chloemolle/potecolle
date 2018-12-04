@@ -16,6 +16,7 @@ public class Question {
     private Object type;
     private String image;
     private Bitmap bmp;
+    private Integer temps;
     private ArrayList<String> propositions = new ArrayList<>();
 
     public Question(){};
@@ -63,5 +64,9 @@ public class Question {
 
     public void setBmp(Bitmap bmp) {
         this.bmp = bmp;
+    }
+
+    public Integer getTemps() {
+        return temps;
     }
 }
