@@ -225,7 +225,7 @@ public class MainPage extends Activity {
                                                             List<DocumentSnapshot> lists = task.getResult().getDocuments();
                                                             ArrayList<String> arrayListGames = new ArrayList<>();
                                                             for(DocumentSnapshot doc: lists) {
-                                                                arrayListGames.add(lists.get(0).getId());
+                                                                arrayListGames.add(doc.getId());
                                                             }
                                                             user.setPartiesEnCours(arrayListGames);
                                                             // On affiche un bouton par partie en cours
