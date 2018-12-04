@@ -72,7 +72,7 @@ public class FinQuizPage extends Activity {
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
             );
-            layoutParamsQuestion.setMargins(10, 10, 10, 0);
+            layoutParamsQuestion.setMargins(10 ,10, 10, 10);
             llText.setLayoutParams(layoutParamsQuestion);
             TextView textQuestion = new TextView(this);
             textQuestion.setText("question: " + question);
