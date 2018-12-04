@@ -194,9 +194,14 @@ public class MainPage extends Activity {
 
                                                 ArrayList<String> friends = user.getFriends();
                                                 if (friends.indexOf(friendRequest.get("email")) == -1) {
+                                                    user.addPoints(100);
+                                                    HashMap<String, Object> updateUser = new HashMap<>();
+                                                    updateUser.put("friends", friends);
+                                                    updateUser.put("level", user.getLevel());
+                                                    updateUser.put("pointsActuels", user.getPointsActuels());
                                                     friends.add(friendRequest.get("email"));
                                                     db.collection("Users").document(userFirebase.getEmail())
-                                                            .update("friends", friends)
+                                                            .update(updateUser)
                                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {

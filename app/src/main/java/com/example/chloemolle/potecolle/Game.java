@@ -36,6 +36,7 @@ public class Game {
     private String scoreOpponent;
     private String timed;
     private Boolean seul = false;
+    private Boolean scoreVu = false;
 
     public Game () {
     }
@@ -242,5 +243,13 @@ public class Game {
 
     public void setSeul(Boolean seul) {
         this.seul = seul;
+    }
+
+    public void setScoreVu(Boolean scoreVu) {
+        this.scoreVu = scoreVu;
+    }
+
+    public Boolean getScoreVu() {
+        return scoreVu;
     }
 }
