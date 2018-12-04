@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -34,9 +38,27 @@ public class EcriturePage extends Activity {
 
         final EditText brouillon = (EditText) findViewById(R.id.ecriture);
         brouillon.setText(globalVariables.getBrouillonText());
-
+        ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.layout_brouillon);
         final Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
         final Question currentQuestion = globalVariables.getCurrentGame().getQuestions().get(currentQuestionNumber);
+
+        if (currentQuestion.getType().toString().contains("image")) {
+            final ImageView imageView = (ImageView) findViewById(R.id.brouillon_question_quiz);
+            imageView.setImageBitmap(Bitmap.createScaledBitmap(currentQuestion.getBmp(), 200,
+                    200, false));
+            TextView brouillonQuestion = (TextView) findViewById(R.id.brouillon_question);
+            brouillonQuestion.setVisibility(View.GONE);
+            ConstraintSet constraintSet = new ConstraintSet();
+            constraintSet.clone(layout);
+            constraintSet.connect(R.id.ecriture,ConstraintSet.TOP,R.id.brouillon_question_quiz,ConstraintSet.BOTTOM,36);
+            constraintSet.applyTo(layout);
+        } else {
+            TextView brouillonQuestion = (TextView) findViewById(R.id.brouillon_question);
+            brouillonQuestion.setText(currentQuestion.getQuestion().toString());
+            final ImageView imageView = (ImageView) findViewById(R.id.brouillon_question_quiz);
+            imageView.setVisibility(View.GONE);
+        }
+
         final Handler handler = new Handler();
 
         final Runnable runnable = new Runnable(){

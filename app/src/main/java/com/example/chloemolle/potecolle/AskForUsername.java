@@ -54,6 +54,8 @@ public class AskForUsername extends Activity {
                 Map<String, Object> updateUser = new HashMap<>();
                 updateUser.put("username", text.getText().toString());
                 updateUser.put("classe", userClass);
+                updateUser.put("level", 1);
+                updateUser.put("pointsActuels", 0);
 
                 userDB.update(updateUser)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {

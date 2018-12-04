@@ -3,15 +3,21 @@ package com.example.chloemolle.potecolle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -49,7 +55,26 @@ public class LoadingQuizPage extends Activity {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 ArrayList<String> propo = (ArrayList<String>) documentSnapshot.get("propositions");
-                                Question question = documentSnapshot.toObject(Question.class);
+                                final Question question = documentSnapshot.toObject(Question.class);
+                                if (question.getType().toString().contains("image")){
+                                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                                    // Create a storage reference from our app
+                                    StorageReference storageRef = storage.getReference();
+                                    StorageReference mountainImagesRef = storageRef.child(question.getImage());
+                                    mountainImagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                        @Override
+                                        public void onSuccess(byte[] bytes) {
+                                            // Use the bytes to display the image
+                                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                            question.setBmp(bmp);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception exception) {
+                                            // Handle any errors
+                                        }
+                                    });
+                                }
                                 if (propo != null && propo.size() > 0) {
                                     question.setPropositions(propo);
                                 }

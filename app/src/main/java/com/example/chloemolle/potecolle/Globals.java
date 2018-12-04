@@ -16,7 +16,7 @@ public class Globals extends Application {
     private String brouillonText = "";
     private String reponseText = "";
     private Boolean debug = true;
-    private int tmpTime;
+    private int tmpTime = 0;
     private Long test = new Long(0);
 
     public Game getCurrentGame() {
