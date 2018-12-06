@@ -131,7 +131,7 @@ public class ChoixAmiPage extends Activity {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.d("Fail", e.getMessage());
+                            Log.d("Fail", e.getMessage() + " il est fort probable qu'il n'est pas encore accepté la demande");
                         }
                     });
         }

@@ -25,6 +25,10 @@
     <string name="demande_non_accepte">Nous avons bien pris en compte votre refus</string>
     <string name="demande_deleted">Nous avons bien pris en compte votre suppression</string>
     <string name="no_notification">Vous n\'avez pas de notification !</string>
+    <string name="supprimer_compte">Supprimer le compte</string>
+    <string name="supprimer_compte_question">Es-tu sûr de vouloir supprimer ton compte? Toutes tes données seront effacées.</string>
+    <string name="supprimer">Supprimer</string>
+    <string name="annuler">Annuler</string>
 
     <string-array name="classes">
         <item>Troisieme</item>

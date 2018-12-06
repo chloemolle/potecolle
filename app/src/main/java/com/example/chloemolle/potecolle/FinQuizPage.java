@@ -6,11 +6,14 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -180,6 +183,19 @@ public class FinQuizPage extends Activity {
             Integer newLevelPoints = 25 + 10 * score;
             User userForLevel = globalVariables.getUser();
             userForLevel.addPoints(newLevelPoints);
+
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.toast,
+                    (ViewGroup) findViewById(R.id.custom_toast_container));
+
+            TextView textToast = (TextView) layout.findViewById(R.id.text);
+            textToast.setText("Bravo ! Vous avez gagné: " + newLevelPoints + "points !");
+            Toast toast = new Toast(getApplicationContext());
+            toast.setGravity(Gravity.BOTTOM, 0, 0);
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.setView(layout);
+            toast.show();
+
 
             HashMap<String, Object> updateUser = new HashMap<>();
             updateUser.put("level", userForLevel.getLevel());

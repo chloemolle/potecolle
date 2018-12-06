@@ -141,12 +141,37 @@ public class AddFriendsPage extends Activity {
                                 // Fill in the friend database
                                 HashMap<String, String> ami = newArr.get(position);
                                 String email = ami.get("email");
+                                User user = globalVariables.getUser();
+
+                                ArrayList<String> friends = user.getFriends();
+                                if (friends.indexOf(email) == -1) {
+                                    HashMap<String, Object> updateUser = new HashMap<>();
+                                    updateUser.put("friends", friends);
+                                    friends.add(email);
+                                    db.collection("Users").document(userAuth.getEmail())
+                                            .update(updateUser)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Log.d("Success", "friend added");
+                                                    } else {
+                                                        Log.d("Error", task.getException().getMessage());
+                                                    }
+                                                }
+                                            });
+                                }
+
+
+
                                 HashMap<String, String> hashMap = new HashMap<String, String>();
                                 hashMap.put("email", userAuth.getEmail());
-                                hashMap.put("username", globalVariables.getUser().getUsername());
+                                hashMap.put("username", user.getUsername());
                                 hashMap.put("demande", "false");
                                 hashMap.put("pending", "false");
                                 hashMap.put("accepte", "false");
+                                hashMap.put("vu", "false");
+
 
 
                                 db.collection("Users").document(email)
@@ -188,6 +213,7 @@ public class AddFriendsPage extends Activity {
                                 hashMap.put("demande", "true");
                                 hashMap.put("pending", "true");
                                 hashMap.put("accepte", "false");
+                                hashMap.put("vu", "false");
 
 
                                 db.collection("Users").document(userAuth.getEmail())

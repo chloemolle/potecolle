@@ -19,6 +19,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,7 +66,8 @@ public class MainPage extends Activity {
         notification.setVisibility(View.GONE);
         notificationOn.setVisibility(View.GONE);
 
-        final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
+        final String userEmail = userFirebase.getEmail();
+        final DocumentReference userDB = db.collection("Users").document(userEmail);
 
 //      A decommenter si on veut flusher la base de données des parties en cours
 /*
@@ -105,6 +107,106 @@ public class MainPage extends Activity {
                 });*/
 
     //FIN de ce qu'il faut décommenter
+
+
+
+        final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layout_parametre);
+
+        linearLayout.setVisibility(View.GONE);
+
+        ImageButton parametre = (ImageButton) findViewById(R.id.parametre_button);
+        parametre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (linearLayout.getVisibility() == View.GONE) {
+                    linearLayout.setVisibility(View.VISIBLE);
+                } else {
+                    linearLayout.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        final Context context = this;
+
+        TextView seDeconnecter = (TextView) findViewById(R.id.se_deconnecter);
+        seDeconnecter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                alertDialog.setPositiveButton(R.string.se_deconnecter, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(context, ConnexionPage.class);
+                        startActivity(intent);
+                    }
+                });
+                alertDialog.setNegativeButton(R.string.rester_connecter, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+
+                alertDialog.setTitle("Deconnexion");
+                alertDialog.setMessage("Es-tu sur de vouloir te déconnecter?");
+                alertDialog.setCancelable(true);
+                alertDialog.create().show();
+            }
+        });
+
+        TextView supprimerCompte = (TextView) findViewById(R.id.supprimer_compte);
+        supprimerCompte.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                alertDialog.setPositiveButton(R.string.supprimer, new DialogInterface.OnClickListener() {
+
+
+                    public void onClick(DialogInterface dialog, int id) {
+                        userDB.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Log.d("Reussi", "User deleted");
+
+
+                                userFirebase.delete()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Log.d("Reussi", "User deleted");
+
+                                                Intent intent = new Intent(context, ConnexionPage.class);
+                                                startActivity(intent);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d("Fail", "User NOT deleted");
+                                            }
+                                        });
+
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d("Fail", "User NOT deleted");
+                                    }
+                                });
+                    }
+                });
+                alertDialog.setNegativeButton(R.string.annuler, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+
+                alertDialog.setTitle("Suppression compte");
+                alertDialog.setMessage(R.string.supprimer_compte_question);
+                alertDialog.setCancelable(true);
+                alertDialog.create().show();
+
+            }
+        });
+
 
 
         notification.setOnClickListener(new View.OnClickListener() {
@@ -162,15 +264,7 @@ public class MainPage extends Activity {
                     TextView level = (TextView) findViewById(R.id.niveau);
                     level.setText("Niveau " + user.getLevel().toString());
 
-                    ProgressBar avancement = (ProgressBar) findViewById(R.id.progressBarAvancement);
-                    double avancementInteger = user.getFormule();
-                    double pointsActuelsDouble = user.getPointsActuels();
-
-                    TextView avancementText = (TextView) findViewById(R.id.avancement);
-                    avancementText.setText((int) pointsActuelsDouble + "/" + (int) avancementInteger);
-                    avancement.setProgress((int) pointsActuelsDouble);
-                    avancement.setMax((int) avancementInteger);
-                    avancement.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.red)));
+                    updateProgressBar();
 
                     userDB.collection("FriendRequests")
                             .get()
@@ -182,10 +276,12 @@ public class MainPage extends Activity {
                                         ArrayList<HashMap<String, String>> arrayListFriendsRequests = new ArrayList<>();
                                         for(DocumentSnapshot doc: lists) {
                                             HashMap<String, String> friendRequest = new HashMap<>();
+                                            friendRequest.put("id", doc.getId());
                                             friendRequest.put("email", doc.getData().get("email").toString());
                                             friendRequest.put("username", doc.getData().get("username").toString());
                                             friendRequest.put("demande", doc.getData().get("demande").toString());
                                             friendRequest.put("pending", doc.getData().get("pending").toString());
+                                            friendRequest.put("vu", doc.getData().get("vu").toString());
                                             friendRequest.put("accepte", doc.getData().get("accepte").toString());
 
                                             arrayListFriendsRequests.add(friendRequest);
@@ -198,13 +294,24 @@ public class MainPage extends Activity {
                                                     friendRequest.get("accepte").equals("true")) {
 
                                                 ArrayList<String> friends = user.getFriends();
-                                                if (friends.indexOf(friendRequest.get("email")) == -1) {
+                                                if (friendRequest.get("vu").equals("false")) {
                                                     user.addPoints(100);
+                                                    updateProgressBar();
+                                                    LayoutInflater inflater = getLayoutInflater();
+                                                    View layout = inflater.inflate(R.layout.toast,
+                                                            (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                                                    TextView textToast = (TextView) layout.findViewById(R.id.text);
+                                                    textToast.setText("Bravo ! Vous avez gagné 100 points en ajoutant un ami!");
+                                                    Toast toast = new Toast(getApplicationContext());
+                                                    toast.setGravity(Gravity.BOTTOM, 0, 0);
+                                                    toast.setDuration(Toast.LENGTH_LONG);
+                                                    toast.setView(layout);
+                                                    toast.show();
+
                                                     HashMap<String, Object> updateUser = new HashMap<>();
-                                                    updateUser.put("friends", friends);
                                                     updateUser.put("level", user.getLevel());
                                                     updateUser.put("pointsActuels", user.getPointsActuels());
-                                                    friends.add(friendRequest.get("email"));
                                                     db.collection("Users").document(userFirebase.getEmail())
                                                             .update(updateUser)
                                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -217,6 +324,26 @@ public class MainPage extends Activity {
                                                                     }
                                                                 }
                                                             });
+
+
+                                                    HashMap<String, Object> updateFriendRequest = new HashMap<>();
+                                                    updateFriendRequest.put("vu", "true");
+                                                    db.collection("Users").document(userFirebase.getEmail())
+                                                            .collection("FriendRequests")
+                                                            .document(friendRequest.get("id"))
+                                                            .update(updateFriendRequest)
+                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        Log.d("Success", "update");
+                                                                    } else {
+                                                                        Log.d("Error", task.getException().getMessage());
+                                                                    }
+                                                                }
+                                                            });
+
+
                                                 }
                                             }
                                         }
@@ -230,7 +357,7 @@ public class MainPage extends Activity {
                                                             List<DocumentSnapshot> lists = task.getResult().getDocuments();
                                                             ArrayList<String> arrayListGames = new ArrayList<>();
                                                             for(DocumentSnapshot doc: lists) {
-                                                                arrayListGames.add(lists.get(0).getId());
+                                                                arrayListGames.add(doc.getId());
                                                             }
                                                             user.setPartiesEnCours(arrayListGames);
                                                             // On affiche un bouton par partie en cours
@@ -287,6 +414,21 @@ public class MainPage extends Activity {
                 Log.d("Failure", "problème dans la requête du profil");
             }
         });
+    }
+
+
+    private void updateProgressBar() {
+        Globals globalVariables = (Globals) getApplicationContext();
+        User user = globalVariables.getUser();
+        ProgressBar avancement = (ProgressBar) findViewById(R.id.progressBarAvancement);
+        double avancementInteger = user.getFormule();
+        double pointsActuelsDouble = user.getPointsActuels();
+
+        TextView avancementText = (TextView) findViewById(R.id.avancement);
+        avancementText.setText((int) pointsActuelsDouble + "/" + (int) avancementInteger);
+        avancement.setMax((int) avancementInteger);
+        avancement.setProgress((int) pointsActuelsDouble);
+        avancement.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorTheme)));
     }
 
     @Override

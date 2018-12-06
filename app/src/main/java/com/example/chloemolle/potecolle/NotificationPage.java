@@ -63,10 +63,9 @@ public class NotificationPage extends Activity {
 
 
 
-        for (String partie: parties) {
-            final String partieTmp = partie;
+        for (final String partie: parties) {
 
-            userDB.collection("Games").document(partieTmp)
+            userDB.collection("Games").document(partie)
                     .get()
                     .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
@@ -89,14 +88,14 @@ public class NotificationPage extends Activity {
                                                         DocumentSnapshot document = task.getResult();
 
                                                         db.collection("Users").document(document.getId())
-                                                                .collection("Games").document(partieTmp)
+                                                                .collection("Games").document(partie)
                                                                 .get()
                                                                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                                     @Override
                                                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                                         if (documentSnapshot.exists()) {
                                                                             if (documentSnapshot.get("repondu").equals("true") && game.getRepondu().equals("true")) {
-                                                                                DocumentReference doc = userDB.collection("Games").document(partieTmp);
+                                                                                DocumentReference doc = userDB.collection("Games").document(partie);
                                                                                 doc.update("fini", "true")
                                                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                             @Override
@@ -175,7 +174,7 @@ public class NotificationPage extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //On supprime la requête de notre database
-                                suppressRequestFromDatabase(friendRequest, false);
+                                suppressRequestFromDatabase(friendRequest, false, newButton);
 
                                 HashMap<String, Object> demandeAccepte = new HashMap<>();
                                 demandeAccepte.put("pending", "false");
@@ -229,7 +228,7 @@ public class NotificationPage extends Activity {
         newButton.setLayoutParams(params);
         newButton.setTextColor(getResources().getColor(R.color.colorTheme));
         newButton.setBackgroundColor(getResources().getColor(R.color.white));
-        suppressRequestFromDatabase(friendRequest, true);
+        suppressRequestFromDatabase(friendRequest, false, newButton);
         layout.addView(newButton);
     }
 
@@ -262,7 +261,37 @@ public class NotificationPage extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //On supprime la requête de notre database
-                                suppressRequestFromDatabase(friendRequest, true);
+                                suppressRequestFromDatabase(friendRequest, true, newButton);
+                                user.addPoints(100);
+
+                                HashMap<String, Object> updateUser = new HashMap<>();
+                                updateUser.put("level", user.getLevel());
+                                updateUser.put("pointsActuels", user.getPointsActuels());
+                                db.collection("Users").document(userFirebase.getEmail())
+                                        .update(updateUser)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Log.d("Success", "friend added");
+                                                } else {
+                                                    Log.d("Error", task.getException().getMessage());
+                                                }
+                                            }
+                                        });
+                                LayoutInflater inflater = getLayoutInflater();
+                                View layout = inflater.inflate(R.layout.toast,
+                                        (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                                TextView textToast = (TextView) layout.findViewById(R.id.text);
+                                textToast.setText("Bravo ! Vous avez gagné 100 points en ajoutant un ami!");
+                                Toast toast = new Toast(getApplicationContext());
+                                toast.setGravity(Gravity.BOTTOM, 0, 0);
+                                toast.setDuration(Toast.LENGTH_LONG);
+                                toast.setView(layout);
+                                toast.show();
+
+
 
                                 HashMap<String, Object> demandeAccepte = new HashMap<>();
                                 demandeAccepte.put("pending", "false");
@@ -289,7 +318,7 @@ public class NotificationPage extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //On supprime la requête de notre database
-                                suppressRequestFromDatabase(friendRequest, false);
+                                suppressRequestFromDatabase(friendRequest, false, newButton);
 
                                 //On supprime  celle du demandeur
                                 db.collection("Users").document(friendRequest.get("email"))
@@ -314,9 +343,8 @@ public class NotificationPage extends Activity {
     }
 
     // Supprime une requete de FriendRequests et ajoute ou non l'ami à notre base de donnée
-    public void suppressRequestFromDatabase(final HashMap<String, String> friendRequest, final Boolean addFriend){
+    public void suppressRequestFromDatabase(final HashMap<String, String> friendRequest, final Boolean addFriend, final Button newButton){
         final Context context = this;
-        final Button newButton = new Button(context);
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
@@ -379,7 +407,7 @@ public class NotificationPage extends Activity {
         final Context context = this;
         final Globals globalVariables = (Globals) getApplicationContext();
         // on ajoute un bouton pour accéder à la partie (/!!!!\ à changer rapidement
-        Button newButton = new Button(this);
+        final Button newButton = new Button(this);
 
         String repondu = game.getRepondu();
         String fini = game.getFini();
@@ -432,6 +460,7 @@ public class NotificationPage extends Activity {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()){
+                                                        layout.removeView(newButton);
                                                         Log.d("Success", "document successfully deleted");
                                                     } else {
                                                         Log.d("Error", "document NOT successfully deleted");
