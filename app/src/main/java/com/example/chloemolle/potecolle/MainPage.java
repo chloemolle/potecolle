@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -162,10 +163,14 @@ public class MainPage extends Activity {
                     level.setText("Niveau " + user.getLevel().toString());
 
                     ProgressBar avancement = (ProgressBar) findViewById(R.id.progressBarAvancement);
-                    Integer avancementInteger = 500 * user.getLevel() * (user.getLevel() + 1);
+                    double avancementInteger = user.getFormule();
+                    double pointsActuelsDouble = user.getPointsActuels();
+
                     TextView avancementText = (TextView) findViewById(R.id.avancement);
-                    avancementText.setText(user.getPointsActuels().toString() + "/" + avancementInteger.toString());
-                    avancement.setProgress(user.getPointsActuels()/avancementInteger);
+                    avancementText.setText((int) pointsActuelsDouble + "/" + (int) avancementInteger);
+                    avancement.setProgress((int) pointsActuelsDouble);
+                    avancement.setMax((int) avancementInteger);
+                    avancement.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.red)));
 
                     userDB.collection("FriendRequests")
                             .get()
