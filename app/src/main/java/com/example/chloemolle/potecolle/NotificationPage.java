@@ -61,6 +61,14 @@ public class NotificationPage extends Activity {
 
         final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
 
+        Button backButton = (Button) findViewById(R.id.retour_main_page_from_notification);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MainPage.class);
+                startActivity(intent);
+            }
+        });
 
 
         for (final String partie: parties) {

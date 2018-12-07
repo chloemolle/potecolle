@@ -69,6 +69,10 @@ public class MainPage extends Activity {
         final String userEmail = userFirebase.getEmail();
         final DocumentReference userDB = db.collection("Users").document(userEmail);
 
+
+        
+
+
 //      A decommenter si on veut flusher la base de données des parties en cours
 /*
             userDB.get()
