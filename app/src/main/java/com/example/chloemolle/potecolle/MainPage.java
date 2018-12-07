@@ -8,18 +8,14 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,18 +29,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-
-import static com.firebase.ui.auth.AuthUI.TAG;
 
 /**
  * Created by chloemolle on 11/10/2018.
@@ -70,7 +60,7 @@ public class MainPage extends Activity {
         final DocumentReference userDB = db.collection("Users").document(userEmail);
 
 
-        
+
 
 
 //      A decommenter si on veut flusher la base de données des parties en cours
@@ -131,6 +121,16 @@ public class MainPage extends Activity {
         });
 
         final Context context = this;
+
+        TextView voirAmi = (TextView) findViewById(R.id.voir_ami);
+        voirAmi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), VoirAmiPage.class);
+                startActivity(intent);
+            }
+        });
+
 
         TextView seDeconnecter = (TextView) findViewById(R.id.se_deconnecter);
         seDeconnecter.setOnClickListener(new View.OnClickListener() {
@@ -241,6 +241,8 @@ public class MainPage extends Activity {
 
 
 
+
+
         userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -248,7 +250,59 @@ public class MainPage extends Activity {
                     //On récupère le nom du joueur
                     Map<String, Object> test = documentSnapshot.getData();
                     final User user = documentSnapshot.toObject(User.class);
+
                     globalVariables.setUser(user);
+
+                    //delete friends
+                    userDB.collection("FriendDeletion")
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        List<DocumentSnapshot> docs = task.getResult().getDocuments();
+                                        ArrayList<String> friends = user.getFriends();
+                                        for (DocumentSnapshot doc: docs) {
+                                            friends.remove(doc.get("email"));
+                                            userDB.collection("FriendDeletion")
+                                                    .document(doc.getId())
+                                                    .delete()
+                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            Log.d("Sucess", "sucess");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.d("Fail", e.getMessage());
+                                                        }
+                                                    });
+                                        }
+                                        userDB.update("friends", friends)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        Log.d("Success", "friends deleted");
+
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.d("fail", e.getMessage());
+                                                    }
+                                                });
+                                    }
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("fail", e.getMessage());
+                        }
+                    });
+
                     final Button startGame = (Button) findViewById(R.id.lancer_partie);
                     //on crée le bouton pour démarrer une partie
                     startGame.setOnClickListener(new View.OnClickListener() {
@@ -297,7 +351,6 @@ public class MainPage extends Activity {
                                                     friendRequest.get("pending").equals("false") &&
                                                     friendRequest.get("accepte").equals("true")) {
 
-                                                ArrayList<String> friends = user.getFriends();
                                                 if (friendRequest.get("vu").equals("false")) {
                                                     user.addPoints(100);
                                                     updateProgressBar();

@@ -182,7 +182,7 @@ public class NotificationPage extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //On supprime la requête de notre database
-                                suppressRequestFromDatabase(friendRequest, false, newButton);
+                                suppressRequestFromDatabase(friendRequest, false, newButton, true, true);
 
                                 HashMap<String, Object> demandeAccepte = new HashMap<>();
                                 demandeAccepte.put("pending", "false");
@@ -236,7 +236,7 @@ public class NotificationPage extends Activity {
         newButton.setLayoutParams(params);
         newButton.setTextColor(getResources().getColor(R.color.colorTheme));
         newButton.setBackgroundColor(getResources().getColor(R.color.white));
-        suppressRequestFromDatabase(friendRequest, false, newButton);
+        suppressRequestFromDatabase(friendRequest, false, newButton, false, false);
         layout.addView(newButton);
     }
 
@@ -269,7 +269,7 @@ public class NotificationPage extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //On supprime la requête de notre database
-                                suppressRequestFromDatabase(friendRequest, true, newButton);
+                                suppressRequestFromDatabase(friendRequest, true, newButton, true, true);
                                 user.addPoints(100);
 
                                 HashMap<String, Object> updateUser = new HashMap<>();
@@ -326,7 +326,7 @@ public class NotificationPage extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //On supprime la requête de notre database
-                                suppressRequestFromDatabase(friendRequest, false, newButton);
+                                suppressRequestFromDatabase(friendRequest, false, newButton, true, true);
 
                                 //On supprime  celle du demandeur
                                 db.collection("Users").document(friendRequest.get("email"))
@@ -351,7 +351,7 @@ public class NotificationPage extends Activity {
     }
 
     // Supprime une requete de FriendRequests et ajoute ou non l'ami à notre base de donnée
-    public void suppressRequestFromDatabase(final HashMap<String, String> friendRequest, final Boolean addFriend, final Button newButton){
+    public void suppressRequestFromDatabase(final HashMap<String, String> friendRequest, final Boolean addFriend, final Button newButton, final Boolean showMessage, final Boolean suppressLayout){
         final Context context = this;
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -386,23 +386,29 @@ public class NotificationPage extends Activity {
                                 }
                             }
                             Log.d("Success", "document successfully deleted");
-                            layout.removeView(newButton);
-                            LayoutInflater inflater = getLayoutInflater();
-                            View layout = inflater.inflate(R.layout.toast,
-                                    (ViewGroup) findViewById(R.id.custom_toast_container));
+                            if(suppressLayout) {
+                                layout.removeView(newButton);
+                            }
+                            if (showMessage) {
+                                LayoutInflater inflater = getLayoutInflater();
+                                View layout = inflater.inflate(R.layout.toast,
+                                        (ViewGroup) findViewById(R.id.custom_toast_container));
 
-                            TextView text = (TextView) layout.findViewById(R.id.text);
-                            if (addFriend) {
-                                text.setText(R.string.demande_accepte);
-                            } else {
-                                text.setText(R.string.demande_deleted);
+                                TextView text = (TextView) layout.findViewById(R.id.text);
+
+                                if (addFriend) {
+                                    text.setText(R.string.demande_accepte);
+                                } else {
+                                    text.setText(R.string.demande_deleted);
+                                }
+
+                                Toast toast = new Toast(getApplicationContext());
+                                toast.setGravity(Gravity.BOTTOM, 0, 0);
+                                toast.setDuration(Toast.LENGTH_LONG);
+                                toast.setView(layout);
+                                toast.show();
                             }
 
-                            Toast toast = new Toast(getApplicationContext());
-                            toast.setGravity(Gravity.BOTTOM, 0, 0);
-                            toast.setDuration(Toast.LENGTH_LONG);
-                            toast.setView(layout);
-                            toast.show();
                         } else {
                             Log.d("Error", "document NOT successfully deleted");
                         }

@@ -29,6 +29,7 @@
     <string name="supprimer_compte_question">Es-tu sûr de vouloir supprimer ton compte? Toutes tes données seront effacées.</string>
     <string name="supprimer">Supprimer</string>
     <string name="annuler">Annuler</string>
+    <string name="voir_ami">Amis</string>
 
     <string-array name="classes">
         <item>Troisieme</item>

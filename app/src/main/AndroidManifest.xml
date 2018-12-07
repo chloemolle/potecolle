@@ -62,6 +62,10 @@
         <activity android:name=".AddFriendsPage">
         </activity>
 
+
+        <activity android:name=".VoirAmiPage">
+        </activity>
+
     </application>
 
 </manifest>

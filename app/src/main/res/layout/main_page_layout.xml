@@ -130,6 +130,18 @@
         app:layout_constraintTop_toBottomOf="@id/parametre_button">
 
         <TextView
+            android:id="@+id/voir_ami"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/voir_ami"
+            tools:layout_editor_absoluteX="0dp"
+            android:textSize="20dp"
+            android:background="@drawable/box_pour_entoure"
+            android:padding="10dp"
+            android:textColor="@color/colorTheme"
+            tools:layout_editor_absoluteY="38dp" />
+
+        <TextView
             android:id="@+id/supprimer_compte"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
