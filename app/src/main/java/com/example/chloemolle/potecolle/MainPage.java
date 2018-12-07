@@ -156,61 +156,14 @@ public class MainPage extends Activity {
             }
         });
 
-        TextView supprimerCompte = (TextView) findViewById(R.id.supprimer_compte);
-        supprimerCompte.setOnClickListener(new View.OnClickListener() {
+        TextView configurerCompte = (TextView) findViewById(R.id.configurer_compte);
+        configurerCompte.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-                alertDialog.setPositiveButton(R.string.supprimer, new DialogInterface.OnClickListener() {
-
-
-                    public void onClick(DialogInterface dialog, int id) {
-                        userDB.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Log.d("Reussi", "User deleted");
-
-
-                                userFirebase.delete()
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                Log.d("Reussi", "User deleted");
-
-                                                Intent intent = new Intent(context, ConnexionPage.class);
-                                                startActivity(intent);
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.d("Fail", "User NOT deleted");
-                                            }
-                                        });
-
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.d("Fail", "User NOT deleted");
-                                    }
-                                });
-                    }
-                });
-                alertDialog.setNegativeButton(R.string.annuler, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-
-                alertDialog.setTitle("Suppression compte");
-                alertDialog.setMessage(R.string.supprimer_compte_question);
-                alertDialog.setCancelable(true);
-                alertDialog.create().show();
-
+                Intent intent = new Intent(v.getContext(), ConfigureComptePage.class);
+                startActivity(intent);
             }
         });
-
 
 
         notification.setOnClickListener(new View.OnClickListener() {

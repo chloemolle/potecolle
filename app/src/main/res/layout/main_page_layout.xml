@@ -142,10 +142,10 @@
             tools:layout_editor_absoluteY="38dp" />
 
         <TextView
-            android:id="@+id/supprimer_compte"
+            android:id="@+id/configurer_compte"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/supprimer_compte"
+            android:text="@string/configurer_compte"
             tools:layout_editor_absoluteX="0dp"
             android:textSize="20dp"
             android:background="@drawable/box_pour_entoure"

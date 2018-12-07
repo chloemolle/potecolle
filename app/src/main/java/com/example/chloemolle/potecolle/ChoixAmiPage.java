@@ -47,7 +47,6 @@ public class ChoixAmiPage extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choix_ami_page_layout);
-        final Context context = this;
         final Globals globalVariables = (Globals) getApplicationContext();
         User user = globalVariables.getUser();
         ArrayList<String> friends = user.getFriends();

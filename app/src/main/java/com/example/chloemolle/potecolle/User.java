@@ -71,4 +71,12 @@ public class User {
     public double getFormule() {
         return 1000 * Math.pow(2, this.getLevel() - 1);
     }
+
+    public void setClasse(String classe) {
+        this.classe = classe;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

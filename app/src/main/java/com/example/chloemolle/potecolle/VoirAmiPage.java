@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -60,10 +61,10 @@ public class VoirAmiPage extends Activity {
             textView.setText(R.string.add_friends);
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            params.setMargins(130,20,100,0);
+            params.gravity = Gravity.CENTER_HORIZONTAL;
             textView.setLayoutParams(params);
 
             layout.addView(textView);
