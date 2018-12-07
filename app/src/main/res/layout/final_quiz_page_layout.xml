@@ -25,15 +25,13 @@
 
         <LinearLayout
             android:id="@+id/linear_layout_reponse"
-            android:layout_width="368dp"
+            android:layout_width="match_parent"
             android:layout_height="371dp"
-            android:layout_margin="16dp"
             android:orientation="vertical"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fin_quiz_text"
-            tools:layout_editor_absoluteY="107dp"></LinearLayout>
+            app:layout_constraintTop_toBottomOf="@id/fin_quiz_text"></LinearLayout>
 
         <Button
             android:id="@+id/retour_main_page"

@@ -72,10 +72,10 @@ public class FinQuizPage extends Activity {
             llText.setOrientation(LinearLayout.VERTICAL);
             llText.setPadding(10, 10, 10, 10);
             LinearLayout.LayoutParams layoutParamsQuestion = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
             );
-            layoutParamsQuestion.setMargins(10, 10, 10, 0);
+            layoutParamsQuestion.setMargins(20, 10, 20, 10);
             llText.setLayoutParams(layoutParamsQuestion);
             TextView textQuestion = new TextView(this);
             textQuestion.setText("question: " + question);
@@ -88,6 +88,7 @@ public class FinQuizPage extends Activity {
                 textReponse.setTextColor(getResources().getColor(R.color.green));
                 llText.addView(textQuestion);
                 llText.addView(textReponse);
+                llText.setBackground(getResources().getDrawable(R.drawable.reponse_true));
             } else {
                 globalVariables.getCurrentGame().setReponsesTempsIndexScore0(i);
                 TextView textReponse = new TextView(this);
@@ -98,8 +99,8 @@ public class FinQuizPage extends Activity {
                 llText.addView(textQuestion);
                 llText.addView(textReponse);
                 llText.addView(textSolution);
+                llText.setBackground(getResources().getDrawable(R.drawable.reponse_false));
             }
-            llText.setBackground(getResources().getDrawable(R.drawable.parties_en_cours));
             ll.addView(llText);
         }
 
