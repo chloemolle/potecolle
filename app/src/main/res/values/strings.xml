@@ -11,6 +11,7 @@
     <string name="français">Français</string>
     <string name="next">Suivant</string>
     <string name="se_deconnecter">Se deconnecter</string>
+    <string name="configurer_compte">Mon compte</string>
     <string name="rester_connecter">Rester connecté</string>
     <string name="explication_ecriture">Voici ta page de brouillon ;)</string>
     <string name="retour_quiz">Retour au quiz</string>
@@ -25,6 +26,12 @@
     <string name="demande_non_accepte">Nous avons bien pris en compte votre refus</string>
     <string name="demande_deleted">Nous avons bien pris en compte votre suppression</string>
     <string name="no_notification">Vous n\'avez pas de notification !</string>
+    <string name="supprimer_compte">Supprimer le compte</string>
+    <string name="supprimer_compte_question">Es-tu sûr de vouloir supprimer ton compte? Toutes tes données seront effacées.</string>
+    <string name="supprimer">Supprimer</string>
+    <string name="annuler">Annuler</string>
+    <string name="voir_ami">Amis</string>
+    <string name="update">Update</string>
 
     <string-array name="classes">
         <item>Troisieme</item>

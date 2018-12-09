@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -60,11 +61,19 @@ public class NotificationPage extends Activity {
 
         final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
 
+        Button backButton = (Button) findViewById(R.id.retour_main_page_from_notification);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MainPage.class);
+                startActivity(intent);
+            }
+        });
 
 
-        for (String partie: parties) {
-            final String partieTmp = partie;
-            userDB.collection("Games").document(partieTmp)
+        for (final String partie: parties) {
+
+            userDB.collection("Games").document(partie)
                     .get()
                     .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
@@ -72,91 +81,57 @@ public class NotificationPage extends Activity {
                             if (documentSnapshot.exists()) {
                                 final Game game = documentSnapshot.toObject(Game.class);
 
-                                //On met à jour la partie suivant si l'adversaire a repondu aux questions
-                                db.collection("Users")
-                                        .document(game.getAdversaire())
-                                        .get()
-                                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    DocumentSnapshot document = task.getResult();
-                                                    db.collection("Users").document(document.getId())
-                                                            .collection("Games").document(partieTmp)
-                                                            .get()
-                                                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                @Override
-                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                    if (documentSnapshot.exists()) {
-                                                                        if (documentSnapshot.get("repondu").equals("true") && game.getRepondu().equals("true")) {
-                                                                            DocumentReference doc = userDB.collection("Games").document(partieTmp);
-                                                                            doc.update("fini", "true")
-                                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                        @Override
-                                                                                        public void onSuccess(Void aVoid) {
-                                                                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                                                                        }
-                                                                                    })
-                                                                                    .addOnFailureListener(new OnFailureListener() {
-                                                                                        @Override
-                                                                                        public void onFailure(@NonNull Exception e) {
-                                                                                            Log.w(TAG, "Error updating document", e);
-                                                                                        }
-                                                                                    });
+                                if (game.getFini().equals("true")){
+                                    createButton(game, layout, userDB);
+                                } else {
+
+                                    //On met à jour la partie suivant si l'adversaire a repondu aux questions
+                                    db.collection("Users")
+                                            .document(game.getAdversaire())
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        DocumentSnapshot document = task.getResult();
+
+                                                        db.collection("Users").document(document.getId())
+                                                                .collection("Games").document(partie)
+                                                                .get()
+                                                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                    @Override
+                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                        if (documentSnapshot.exists()) {
+                                                                            if (documentSnapshot.get("repondu").equals("true") && game.getRepondu().equals("true")) {
+                                                                                DocumentReference doc = userDB.collection("Games").document(partie);
+                                                                                doc.update("fini", "true")
+                                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onSuccess(Void aVoid) {
+                                                                                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                                                                            }
+                                                                                        })
+                                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                                            @Override
+                                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                                Log.w(TAG, "Error updating document", e);
+                                                                                            }
+                                                                                        });
+                                                                            }
+
+                                                                            createButton(game, layout, userDB);
                                                                         }
-
-                                                                        // on ajoute un bouton pour accéder à la partie (/!!!!\ à changer rapidement
-                                                                        Button newButton = new Button(context);
-
-                                                                        String repondu = game.getRepondu();
-                                                                        String fini = game.getFini();
-
-                                                                        String finiOuPas = (repondu.equals("true") && fini.equals("false"))?
-                                                                                "Attends qu'il réponde aux questions !" :
-                                                                                (repondu.equals("true") && fini.equals("true")) ?
-                                                                                        "regarde les résultats !" : "Réponds aux questions :) ";
-
-                                                                        newButton.setText(finiOuPas + "\n" + game.getAdversaire() + " " + game.getClasse() + "\n" + game.getMatiere() + " " + game.getSujet());
-                                                                        newButton.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-                                                                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                                                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                                                                LinearLayout.LayoutParams.WRAP_CONTENT
-                                                                        );
-                                                                        params.setMargins(25,25,25,0);
-                                                                        newButton.setPadding(100, 0, 100, 0);
-                                                                        newButton.setLayoutParams(params);
-                                                                        newButton.setTextColor(getResources().getColor(R.color.colorTheme));
-                                                                        newButton.setBackgroundColor(getResources().getColor(R.color.white));
-                                                                        if (repondu.equals("false")) {
-                                                                            newButton.setOnClickListener(new View.OnClickListener() {
-                                                                                public void onClick(View v) {
-                                                                                    globalVariables.setCurrentGame(game);
-                                                                                    Intent intent = new Intent(v.getContext(), LoadingQuizPage.class);
-                                                                                    startActivity(intent);
-                                                                                }
-                                                                            });
-                                                                        } else if (fini.equals("true")) {
-                                                                            newButton.setOnClickListener(new View.OnClickListener() {
-                                                                                public void onClick(View v) {
-                                                                                    globalVariables.setCurrentGame(game);
-                                                                                    Intent intent = new Intent(v.getContext(), ResultPage.class);
-                                                                                    startActivity(intent);
-                                                                                }
-                                                                            });
-                                                                        }
-
-                                                                        layout.addView(newButton);
-
                                                                     }
-                                                                }
-                                                            });
-                                                } else {
-                                                    Log.d(TAG, "Error getting documents: ", task.getException());
+                                                                });
+
+
+                                                    } else {
+                                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                                    }
+
                                                 }
-
-                                            }
-                                        });
-
+                                            });
+                                }
                             }
                         }
                     });
@@ -207,7 +182,7 @@ public class NotificationPage extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //On supprime la requête de notre database
-                                suppressRequestFromDatabase(friendRequest, false);
+                                suppressRequestFromDatabase(friendRequest, false, newButton, true, true);
 
                                 HashMap<String, Object> demandeAccepte = new HashMap<>();
                                 demandeAccepte.put("pending", "false");
@@ -261,7 +236,7 @@ public class NotificationPage extends Activity {
         newButton.setLayoutParams(params);
         newButton.setTextColor(getResources().getColor(R.color.colorTheme));
         newButton.setBackgroundColor(getResources().getColor(R.color.white));
-        suppressRequestFromDatabase(friendRequest, true);
+        suppressRequestFromDatabase(friendRequest, false, newButton, false, false);
         layout.addView(newButton);
     }
 
@@ -294,7 +269,37 @@ public class NotificationPage extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //On supprime la requête de notre database
-                                suppressRequestFromDatabase(friendRequest, true);
+                                suppressRequestFromDatabase(friendRequest, true, newButton, true, true);
+                                user.addPoints(100);
+
+                                HashMap<String, Object> updateUser = new HashMap<>();
+                                updateUser.put("level", user.getLevel());
+                                updateUser.put("pointsActuels", user.getPointsActuels());
+                                db.collection("Users").document(userFirebase.getEmail())
+                                        .update(updateUser)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Log.d("Success", "friend added");
+                                                } else {
+                                                    Log.d("Error", task.getException().getMessage());
+                                                }
+                                            }
+                                        });
+                                LayoutInflater inflater = getLayoutInflater();
+                                View layout = inflater.inflate(R.layout.toast,
+                                        (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                                TextView textToast = (TextView) layout.findViewById(R.id.text);
+                                textToast.setText("Bravo ! Vous avez gagné 100 points en ajoutant un ami!");
+                                Toast toast = new Toast(getApplicationContext());
+                                toast.setGravity(Gravity.BOTTOM, 0, 0);
+                                toast.setDuration(Toast.LENGTH_LONG);
+                                toast.setView(layout);
+                                toast.show();
+
+
 
                                 HashMap<String, Object> demandeAccepte = new HashMap<>();
                                 demandeAccepte.put("pending", "false");
@@ -321,7 +326,7 @@ public class NotificationPage extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //On supprime la requête de notre database
-                                suppressRequestFromDatabase(friendRequest, false);
+                                suppressRequestFromDatabase(friendRequest, false, newButton, true, true);
 
                                 //On supprime  celle du demandeur
                                 db.collection("Users").document(friendRequest.get("email"))
@@ -346,9 +351,8 @@ public class NotificationPage extends Activity {
     }
 
     // Supprime une requete de FriendRequests et ajoute ou non l'ami à notre base de donnée
-    public void suppressRequestFromDatabase(final HashMap<String, String> friendRequest, final Boolean addFriend){
+    public void suppressRequestFromDatabase(final HashMap<String, String> friendRequest, final Boolean addFriend, final Button newButton, final Boolean showMessage, final Boolean suppressLayout){
         final Context context = this;
-        final Button newButton = new Button(context);
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
@@ -382,28 +386,117 @@ public class NotificationPage extends Activity {
                                 }
                             }
                             Log.d("Success", "document successfully deleted");
-                            layout.removeView(newButton);
-                            LayoutInflater inflater = getLayoutInflater();
-                            View layout = inflater.inflate(R.layout.toast,
-                                    (ViewGroup) findViewById(R.id.custom_toast_container));
+                            if(suppressLayout) {
+                                layout.removeView(newButton);
+                            }
+                            if (showMessage) {
+                                LayoutInflater inflater = getLayoutInflater();
+                                View layout = inflater.inflate(R.layout.toast,
+                                        (ViewGroup) findViewById(R.id.custom_toast_container));
 
-                            TextView text = (TextView) layout.findViewById(R.id.text);
-                            if (addFriend) {
-                                text.setText(R.string.demande_accepte);
-                            } else {
-                                text.setText(R.string.demande_deleted);
+                                TextView text = (TextView) layout.findViewById(R.id.text);
+
+                                if (addFriend) {
+                                    text.setText(R.string.demande_accepte);
+                                } else {
+                                    text.setText(R.string.demande_deleted);
+                                }
+
+                                Toast toast = new Toast(getApplicationContext());
+                                toast.setGravity(Gravity.BOTTOM, 0, 0);
+                                toast.setDuration(Toast.LENGTH_LONG);
+                                toast.setView(layout);
+                                toast.show();
                             }
 
-                            Toast toast = new Toast(getApplicationContext());
-                            toast.setGravity(Gravity.BOTTOM, 0, 0);
-                            toast.setDuration(Toast.LENGTH_LONG);
-                            toast.setView(layout);
-                            toast.show();
                         } else {
                             Log.d("Error", "document NOT successfully deleted");
                         }
                     }
                 });
+
+    }
+
+    private void createButton(final Game game, final LinearLayout layout, final DocumentReference userDB){
+        final Context context = this;
+        final Globals globalVariables = (Globals) getApplicationContext();
+        // on ajoute un bouton pour accéder à la partie (/!!!!\ à changer rapidement
+        final Button newButton = new Button(this);
+
+        String repondu = game.getRepondu();
+        String fini = game.getFini();
+
+        String finiOuPas = (repondu.equals("true") && fini.equals("false"))?
+                "Attends qu'il réponde aux questions !" :
+                (repondu.equals("true") && fini.equals("true")) ?
+                        "regarde les résultats !" : "Réponds aux questions :) ";
+
+        newButton.setText(finiOuPas + "\n" + game.getAdversaire() + " " + game.getClasse() + "\n" + game.getMatiere() + " " + game.getSujet());
+        newButton.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(25,25,25,0);
+        newButton.setPadding(100, 0, 100, 0);
+        newButton.setLayoutParams(params);
+        newButton.setTextColor(getResources().getColor(R.color.colorTheme));
+        newButton.setBackgroundColor(getResources().getColor(R.color.white));
+        if (repondu.equals("false")) {
+            newButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    globalVariables.setCurrentGame(game);
+                    Intent intent = new Intent(v.getContext(), LoadingQuizPage.class);
+                    startActivity(intent);
+                }
+            });
+        } else if (fini.equals("true")) {
+            newButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    globalVariables.setCurrentGame(game);
+                    Intent intent = new Intent(v.getContext(), ResultPage.class);
+                    startActivity(intent);
+                }
+            });
+
+            newButton.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Veux-tu supprimer cette partie ?")
+                            .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    userDB.collection("Games")
+                                            .document(game.getId())
+                                            .delete()
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()){
+                                                        layout.removeView(newButton);
+                                                        Log.d("Success", "document successfully deleted");
+                                                    } else {
+                                                        Log.d("Error", "document NOT successfully deleted");
+                                                    }
+                                                }
+                                            });
+                                }
+                            })
+                            .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.d("Info","partie conservée");
+                                }
+                            }).show();
+                    return true;
+                }
+            });
+
+
+        }
+
+        layout.addView(newButton);
 
     }
 

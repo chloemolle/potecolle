@@ -16,7 +16,7 @@ public class User {
     private ArrayList<String> partiesEnCours;
     private ArrayList<HashMap<String, String>> friendRequests = new ArrayList<>();
     private Integer level;
-    private Integer pointsActuels;
+    private double pointsActuels;
 
     public User() {};
 
@@ -52,13 +52,13 @@ public class User {
         return level;
     }
 
-    public Integer getPointsActuels() {
+    public double getPointsActuels() {
         return pointsActuels;
     }
 
     public void addPoints(Integer points) {
-        Integer nextFloor = 500 * getLevel() * (getLevel() + 1);
-        Integer newPoints = getPointsActuels() + points;
+        double nextFloor = this.getFormule();
+        double newPoints = getPointsActuels() + points;
         if (newPoints >= nextFloor) {
             pointsActuels = newPoints - nextFloor;
             level ++;
@@ -66,5 +66,17 @@ public class User {
             pointsActuels = newPoints;
         }
         return;
+    }
+
+    public double getFormule() {
+        return 1000 * Math.pow(2, this.getLevel() - 1);
+    }
+
+    public void setClasse(String classe) {
+        this.classe = classe;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
