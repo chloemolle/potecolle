@@ -17,7 +17,7 @@
     <string name="retour_quiz">Retour au quiz</string>
     <string name="brouillon">brouillon</string>
     <string name="retourMain">Retour</string>
-    <string name="TimerQuestions">Souhaites-tu qu\'il y ait un temps limite pour répondre aux questions?</string>
+    <string name="TimerQuestions">Souhaites-tu qu\'il y ait un temps limite pour répondre aux questions ?</string>
     <string name="bienvenue">Bienvenue chez Potecolle ! Donne nous le nom sous lequel tu veux apparaître auprès de tes potes ! ;)</string>
     <string name="add_friends">Ajoute des amis pour jouer à plusieurs !</string>
     <string name="entrainer_seul">S\'entrainer seul</string>
@@ -27,7 +27,7 @@
     <string name="demande_deleted">Nous avons bien pris en compte votre suppression</string>
     <string name="no_notification">Vous n\'avez pas de notification !</string>
     <string name="supprimer_compte">Supprimer le compte</string>
-    <string name="supprimer_compte_question">Es-tu sûr de vouloir supprimer ton compte? Toutes tes données seront effacées.</string>
+    <string name="supprimer_compte_question">Es-tu sûr de vouloir supprimer ton compte ? Toutes tes données seront effacées.</string>
     <string name="supprimer">Supprimer</string>
     <string name="annuler">Annuler</string>
     <string name="voir_ami">Amis</string>

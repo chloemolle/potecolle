@@ -172,7 +172,7 @@ public class NotificationPage extends Activity {
         newButton.setPadding(100, 0, 100, 0);
         newButton.setLayoutParams(params);
         newButton.setTextColor(getResources().getColor(R.color.colorTheme));
-        newButton.setBackgroundColor(getResources().getColor(R.color.white));
+        newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
         newButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -235,7 +235,7 @@ public class NotificationPage extends Activity {
         newButton.setPadding(100, 0, 100, 0);
         newButton.setLayoutParams(params);
         newButton.setTextColor(getResources().getColor(R.color.colorTheme));
-        newButton.setBackgroundColor(getResources().getColor(R.color.white));
+        newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
         suppressRequestFromDatabase(friendRequest, false, newButton, false, false);
         layout.addView(newButton);
     }
@@ -260,7 +260,7 @@ public class NotificationPage extends Activity {
         newButton.setPadding(100, 0, 100, 0);
         newButton.setLayoutParams(params);
         newButton.setTextColor(getResources().getColor(R.color.colorTheme));
-        newButton.setBackgroundColor(getResources().getColor(R.color.white));
+        newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
         newButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -441,7 +441,7 @@ public class NotificationPage extends Activity {
         newButton.setPadding(100, 0, 100, 0);
         newButton.setLayoutParams(params);
         newButton.setTextColor(getResources().getColor(R.color.colorTheme));
-        newButton.setBackgroundColor(getResources().getColor(R.color.white));
+        newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
         if (repondu.equals("false")) {
             newButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
