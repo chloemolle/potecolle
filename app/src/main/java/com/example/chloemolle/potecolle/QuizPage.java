@@ -456,12 +456,13 @@ public class QuizPage extends Activity {
     @Override
     public void onBackPressed(){
         final Globals globalVariables = (Globals) getApplicationContext();
-        globalVariables.setReponseText("");
-        globalVariables.setBrouillonText("");
-        globalVariables.setCurrentQuestionNumero(globalVariables.getCurrentQuestionNumero() - 1);
-        Intent intent = new Intent(this, QuizPage.class);
-        startActivity(intent);
-
+        if (!globalVariables.getCurrentGame().getTimed().equals("true")) {
+            globalVariables.setReponseText("");
+            globalVariables.setBrouillonText("");
+            globalVariables.setCurrentQuestionNumero(globalVariables.getCurrentQuestionNumero() - 1);
+            Intent intent = new Intent(this, QuizPage.class);
+            startActivity(intent);
+        }
     }
 
 
