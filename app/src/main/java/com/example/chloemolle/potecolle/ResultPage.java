@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,17 +44,21 @@ public class ResultPage extends Activity {
         Integer votreScore = Integer.parseInt(votreScoreString);
         Integer sonScore = Integer.parseInt(sonScoreString);
 
-        String quiAGagne =  votreScore > sonScore ? " Vous avez gagné ! " :
-                votreScore == sonScore ? " Vous êtes à égalité ! " : " Vous avez perdu mais pas de soucis, vous pouvez le redéfier ! ";
-        text.setText("Voici les résultats !" + quiAGagne);
+        String quiAGagne =  votreScore > sonScore ? " VICTOIRE ! :D" :
+                votreScore == sonScore ? " EGALITE ! :)" : " Perdu :( \n Prends ta revanche ! ";
+        text.setText(quiAGagne);
+        text.setGravity(Gravity.CENTER);
+        text.setTextSize(30);
         text.setTextColor(getResources().getColor(R.color.colorTheme));
 
         TextView votreScoreText = (TextView) findViewById(R.id.result_quiz_text_votre_score);
-        votreScoreText.setText("Votre score " + game.getScore());
+        votreScoreText.setTextSize(20);
+        votreScoreText.setText("Votre score: " + game.getScore() + "/" + game.getQuestionsId().size());
         votreScoreText.setTextColor(getResources().getColor(R.color.colorTheme));
 
         TextView sonScoreText = (TextView) findViewById(R.id.result_quiz_text_son_score);
-        sonScoreText.setText("Son score " + game.getScoreOpponent());
+        sonScoreText.setTextSize(20);
+        sonScoreText.setText("Son score: " + game.getScoreOpponent() + "/" + game.getQuestionsId().size());
         sonScoreText.setTextColor(getResources().getColor(R.color.colorTheme));
 
 

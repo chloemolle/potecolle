@@ -107,16 +107,32 @@ public class FinQuizPage extends Activity {
         String textFin = "";
 
         if (score > 2) {
-            textFin += "Bravo ! Ton score: " + score + ".";
+            textFin += "Bravo !";
         } else {
-            textFin += "Ne baisse pas les bras ! Ton score: " + score + ".";
+            textFin += "Ne baisse pas les bras !";
         }
 
+        TextView scoreText = (TextView) findViewById(R.id.fin_quiz_text2);
+        scoreText.setText(score + "/" + globalVariables.getCurrentGame().getQuestionsId().size());
+        scoreText.setGravity(Gravity.CENTER);
+        scoreText.setTextSize(30);
+        scoreText.setTextColor(getResources().getColor(R.color.colorTheme));
+        TextView siNonSeul = (TextView) findViewById(R.id.text_reviens_plus_tard);
+
+        String textSiNonSeul = "";
         if (!globalVariables.getCurrentGame().getSeul()) {
-            textFin += " Reviens plus tard pour voir les résultats de ton pote";
+            textSiNonSeul += " Reviens plus tard pour voir les résultats de ton pote";
+            siNonSeul.setVisibility(View.VISIBLE);
+            siNonSeul.setGravity(Gravity.CENTER);
+            siNonSeul.setText(textSiNonSeul);
+            siNonSeul.setTextSize(20);
+        } else {
+            siNonSeul.setVisibility(View.GONE);
         }
 
+        text.setGravity(Gravity.CENTER);
         text.setText(textFin);
+        text.setTextSize(25);
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
         final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
