@@ -27,7 +27,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,6 +83,63 @@ public class ConfigureComptePage extends Activity {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(v.getContext());
                 alertDialog.setPositiveButton(R.string.supprimer, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+
+
+                        for (final String partie: globalVariables.getUser().getPartiesEnCours()) {
+                            userDB.collection("Games")
+                                    .document(partie)
+                                    .delete()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Log.d("réussi", "yeayyy");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d("fail", e.getMessage());
+                                        }
+                                    });
+                        }
+
+
+                        for (final HashMap<String, String> friendRequest: globalVariables.getUser().getFriendRequests()) {
+                            userDB.collection("FriendRequests")
+                                    .document(friendRequest.get("id"))
+                                    .delete()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            db.collection("Users").document(friendRequest.get("id"))
+                                                    .collection("friendRequests")
+                                                    .document(userFirebase.getEmail())
+                                                    .delete()
+                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            Log.d("reussi", "yes");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.d("fail", e.getMessage());
+                                                        }
+                                                    });
+                                            Log.d("réussi", "yeayyy");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d("fail", e.getMessage());
+                                        }
+                                    });
+                        }
+
+
+
                         userDB.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {

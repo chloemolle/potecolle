@@ -53,7 +53,7 @@ public class ChoixSujetPage extends Activity {
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar_sujets);
         progressBar.setVisibility(View.VISIBLE);
 
-        File cacheFile = new File(context.getCacheDir(), "sujets_" + globalVariables.getCurrentGame().getMatiere());
+        File cacheFile = new File(context.getCacheDir(), globalVariables.getUser().getClasse() + "_sujets_" + globalVariables.getCurrentGame().getMatiere());
 
         try {
             FileInputStream fis = new FileInputStream(cacheFile);
@@ -89,7 +89,7 @@ public class ChoixSujetPage extends Activity {
 
 
         ArrayList<String> data = new ArrayList<String>();
-        data.add("Troisieme");
+        data.add(globalVariables.getUser().getClasse());
         data.add(globalVariables.getCurrentGame().getMatiere());
 
         mFunctions
@@ -101,7 +101,7 @@ public class ChoixSujetPage extends Activity {
                         ArrayList<String> arr = (ArrayList<String>) task.getResult().getData();
                             FileWriter fw;
                             BufferedWriter bfw;
-                            File cacheFile = new File(context.getCacheDir(), "sujets_" + globalVariables.getCurrentGame().getMatiere());
+                            File cacheFile = new File(context.getCacheDir(), globalVariables.getUser().getClasse() + "_sujets_" + globalVariables.getCurrentGame().getMatiere());
                             try {
                                 fw = new FileWriter(cacheFile.getAbsoluteFile());
                                 bfw = new BufferedWriter(fw);
