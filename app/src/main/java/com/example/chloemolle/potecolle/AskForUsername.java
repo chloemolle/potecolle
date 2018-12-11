@@ -1,7 +1,9 @@
 package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,6 +42,12 @@ import java.util.Map;
  */
 
 public class AskForUsername extends Activity {
+
+
+    @Override
+    public void onBackPressed(){
+    }
+
 
     @Override
     public void onCreate(Bundle bundle) {
