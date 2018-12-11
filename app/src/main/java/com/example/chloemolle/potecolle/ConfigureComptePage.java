@@ -2,6 +2,7 @@ package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,10 +17,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,7 +33,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,6 +55,9 @@ public class ConfigureComptePage extends Activity {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final String userEmail = userFirebase.getEmail();
         final DocumentReference userDB = db.collection("Users").document(userEmail);
+        final ProgressBar progressBarCheckUsername = (ProgressBar) findViewById(R.id.progress_bar_check_username_configuration);
+
+        progressBarCheckUsername.setVisibility(View.GONE);
 
         final Globals globalVariables = (Globals) getApplicationContext();
 
@@ -192,45 +201,85 @@ public class ConfigureComptePage extends Activity {
             public void onClick(View v) {
                 final Spinner choixClasse = (Spinner) findViewById(R.id.spinner_classe_update);
 
-                EditText text = (EditText) findViewById(R.id.username_text);
-                String userClass = choixClasse.getSelectedItem().toString();
+                final EditText text = (EditText) findViewById(R.id.username_text);
+                final String userClass = choixClasse.getSelectedItem().toString();
                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
                 final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
                 final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
+                final Context context = v.getContext();
 
-                Map<String, Object> updateUser = new HashMap<>();
-                updateUser.put("username", text.getText().toString());
-                updateUser.put("classe", userClass);
-                updateUser.put("level", 1);
-                updateUser.put("pointsActuels", 0);
+                progressBarCheckUsername.setVisibility(View.VISIBLE);
 
-                User user = globalVariables.getUser();
-                user.setUsername(text.getText().toString());
-                user.setClasse(userClass);
-
-                userDB.update(updateUser)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                FirebaseFunctions mFunctions = FirebaseFunctions.getInstance();
+                mFunctions
+                        .getHttpsCallable("getUsers")
+                        .call("")
+                        .continueWith(new Continuation<HttpsCallableResult, String>() {
                             @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("Success", "update ok");
-                                LayoutInflater inflater = getLayoutInflater();
-                                View layout = inflater.inflate(R.layout.toast,
-                                        (ViewGroup) findViewById(R.id.custom_toast_container));
+                            public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                                final ArrayList<HashMap<String, String>> arr = (ArrayList<HashMap<String, String>>) task.getResult().getData();
+                                final ArrayList<Integer> indexesToRemove = new ArrayList<>();
+                                Boolean alreadyUsed = false;
+                                String username = text.getText().toString();
+                                for (final HashMap<String, String> ami : arr) {
+                                    final String usernameTemp = ami.get("username");
+                                    if (usernameTemp.toLowerCase().trim().equals(username.toLowerCase().trim())) {
+                                        alreadyUsed = true;
+                                        break;
+                                    }
+                                }
+                                if (!alreadyUsed) {
+                                    Map<String, Object> updateUser = new HashMap<>();
+                                    updateUser.put("username", text.getText().toString());
+                                    updateUser.put("classe", userClass);
+                                    updateUser.put("level", 1);
+                                    updateUser.put("pointsActuels", 0);
 
-                                TextView textToast = (TextView) layout.findViewById(R.id.text);
-                                textToast.setText("Nous avons bien pris en compte vos changements ! :)");
-                                Toast toast = new Toast(getApplicationContext());
-                                toast.setGravity(Gravity.BOTTOM, 0, 0);
-                                toast.setDuration(Toast.LENGTH_LONG);
-                                toast.setView(layout);
-                                toast.show();
+                                    User user = globalVariables.getUser();
+                                    user.setUsername(text.getText().toString());
+                                    user.setClasse(userClass);
 
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d("Failure", "update pas ok");
+                                    userDB.update(updateUser)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d("Success", "update ok");
+                                                    LayoutInflater inflater = getLayoutInflater();
+                                                    View layout = inflater.inflate(R.layout.toast,
+                                                            (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                                                    TextView textToast = (TextView) layout.findViewById(R.id.text);
+                                                    textToast.setText("Nous avons bien pris en compte vos changements ! :)");
+                                                    Toast toast = new Toast(getApplicationContext());
+                                                    toast.setGravity(Gravity.BOTTOM, 0, 0);
+                                                    toast.setDuration(Toast.LENGTH_LONG);
+                                                    toast.setView(layout);
+                                                    toast.show();
+                                                    progressBarCheckUsername.setVisibility(View.GONE);
+
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.d("Failure", "update pas ok");
+                                                }
+                                            });
+                                } else {
+                                    progressBarCheckUsername.setVisibility(View.GONE);
+                                    LayoutInflater inflater = getLayoutInflater();
+                                    View layout = inflater.inflate(R.layout.toast,
+                                            (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                                    TextView text = (TextView) layout.findViewById(R.id.text);
+                                    text.setText(R.string.username_already_used);
+                                    Toast toast = new Toast(getApplicationContext());
+                                    toast.setGravity(Gravity.BOTTOM, 0, 0);
+                                    toast.setDuration(Toast.LENGTH_LONG);
+                                    toast.setView(layout);
+                                    toast.show();
+                                }
+                                return "";
                             }
                         });
 

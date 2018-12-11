@@ -102,7 +102,7 @@ public class AddFriendsPage extends Activity {
                                                 if (friends.indexOf(email) >= 0 || emailFriendRequest.indexOf(email) >= 0) {
                                                     indexesToRemove.add(arr.indexOf(ami));
                                                 } else {
-                                                    users.add(ami.get("username") + "\n" + email);
+                                                    users.add(ami.get("username"));
                                                 }
                                             }
                                         })
@@ -114,7 +114,7 @@ public class AddFriendsPage extends Activity {
                                                     if (friends.indexOf(email) >= 0) {
                                                         indexesToRemove.add(arr.indexOf(ami));
                                                     } else {
-                                                        users.add(ami.get("username") + "\n" + email);
+                                                        users.add(ami.get("username"));
                                                     }
                                                 } else {
                                                     indexesToRemove.add(arr.indexOf(ami));
