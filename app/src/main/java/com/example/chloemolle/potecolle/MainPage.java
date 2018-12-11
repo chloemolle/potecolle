@@ -126,6 +126,7 @@ public class MainPage extends Activity {
         voirAmi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                linearLayout.setVisibility(View.GONE);
                 Intent intent = new Intent(v.getContext(), VoirAmiPage.class);
                 startActivity(intent);
             }
@@ -140,6 +141,7 @@ public class MainPage extends Activity {
                 alertDialog.setPositiveButton(R.string.se_deconnecter, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         FirebaseAuth.getInstance().signOut();
+                        linearLayout.setVisibility(View.GONE);
                         Intent intent = new Intent(context, ConnexionPage.class);
                         startActivity(intent);
                     }
@@ -160,6 +162,7 @@ public class MainPage extends Activity {
         configurerCompte.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                linearLayout.setVisibility(View.GONE);
                 Intent intent = new Intent(v.getContext(), ConfigureComptePage.class);
                 startActivity(intent);
             }

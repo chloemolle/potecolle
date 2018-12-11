@@ -62,7 +62,8 @@ public class ConfigureComptePage extends Activity {
         final Globals globalVariables = (Globals) getApplicationContext();
 
         EditText text = (EditText) findViewById(R.id.username_text);
-        text.setText(globalVariables.getUser().getUsername());
+        final String previousUserName = globalVariables.getUser().getUsername();
+        text.setText(previousUserName);
 
 
         Button backButton = (Button) findViewById(R.id.retour_main_page_from_configuration);
@@ -223,7 +224,7 @@ public class ConfigureComptePage extends Activity {
                                 String username = text.getText().toString();
                                 for (final HashMap<String, String> ami : arr) {
                                     final String usernameTemp = ami.get("username");
-                                    if (usernameTemp.toLowerCase().trim().equals(username.toLowerCase().trim())) {
+                                    if (!usernameTemp.toLowerCase().trim().equals(previousUserName.toLowerCase().trim()) && usernameTemp.toLowerCase().trim().equals(username.toLowerCase().trim())) {
                                         alreadyUsed = true;
                                         break;
                                     }
