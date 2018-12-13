@@ -199,6 +199,13 @@ public class FinQuizPage extends Activity {
         } else {
             //Ajoute les points
             Integer newLevelPoints = 25 + 10 * score;
+
+            if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+                for (Integer integer: globalVariables.getCurrentGame().getReponsesTemps()){
+                    newLevelPoints += integer;
+                }
+            }
+
             User userForLevel = globalVariables.getUser();
 
             Integer previousLevel = userForLevel.getLevel();
