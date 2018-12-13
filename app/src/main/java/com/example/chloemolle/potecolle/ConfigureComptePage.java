@@ -233,8 +233,6 @@ public class ConfigureComptePage extends Activity {
                                     Map<String, Object> updateUser = new HashMap<>();
                                     updateUser.put("username", text.getText().toString());
                                     updateUser.put("classe", userClass);
-                                    updateUser.put("level", 1);
-                                    updateUser.put("pointsActuels", 0);
 
                                     User user = globalVariables.getUser();
                                     user.setUsername(text.getText().toString());
