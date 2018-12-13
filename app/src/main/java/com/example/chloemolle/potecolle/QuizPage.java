@@ -133,20 +133,24 @@ public class QuizPage extends Activity {
             if (currentQuestion.getType().toString().contains("qcm")) {
 
 
-                ArrayList<String> propositions = currentQuestion.getProposition();
+                ArrayList<String> propositionsShuffled = currentQuestion.getProposition();
 
-                ArrayList<String> propositionsShuffled = new ArrayList<>();
-
-                while (propositions.size() != 0) {
-                    int index = (int) Math.floor(Math.random() * propositions.size());
-                    propositionsShuffled.add(propositionsShuffled.get(index));
-                    propositions.remove(index);
+                String answer = "";
+                if (globalVariables.getCurrentGame().getPlayer1Answers().size() > currentQuestionNumber) {
+                    answer = globalVariables.getCurrentGame().getPlayer1Answers().get(currentQuestionNumber);
                 }
+
 
                 final TextView prop1 = (TextView) findViewById(R.id.reponse_quiz1);
                 prop1.setPadding(20, 20, 20, 20);
                 prop1.setText(propositionsShuffled.get(0));
-                prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                if (answer.equals(prop1.getText().toString())) {
+                    prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
+                    prop1.setTextColor(getResources().getColor(R.color.white));
+                } else {
+                    prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                    prop1.setTextColor(getResources().getColor(R.color.black));
+                }
 
                 prop1.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
@@ -154,22 +158,20 @@ public class QuizPage extends Activity {
                         if (userAnswerText.isEmpty()) {
                             return;
                         }
-                        globalVariables.setBrouillonText("");
-                        globalVariables.setReponseText("");
-                        globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
-                        globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                        globalVariables.setTmpTime(30);
-                        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
-                            handler.removeCallbacks(runnable);
-                        }
-                        nextPage(v.getContext());
+                        qcmNext(userAnswerText, handler,runnable, v.getContext(), prop1);
                     }
                 });
 
                 final TextView prop2 = (TextView) findViewById(R.id.reponse_quiz2);
                 prop2.setPadding(20, 20, 20, 20);
                 prop2.setText(propositionsShuffled.get(1));
-                prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                if (answer.equals(prop2.getText().toString())) {
+                    prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
+                    prop2.setTextColor(getResources().getColor(R.color.white));
+                } else {
+                    prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                    prop2.setTextColor(getResources().getColor(R.color.black));
+                }
 
                 prop2.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
@@ -177,22 +179,20 @@ public class QuizPage extends Activity {
                         if (userAnswerText.isEmpty()) {
                             return;
                         }
-                        globalVariables.setBrouillonText("");
-                        globalVariables.setReponseText("");
-                        globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
-                        globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                        globalVariables.setTmpTime(30);
-                        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
-                            handler.removeCallbacks(runnable);
-                        }
-                        nextPage(v.getContext());
+                        qcmNext(userAnswerText, handler,runnable, v.getContext(), prop2);
                     }
                 });
 
                 final TextView prop3 = (TextView) findViewById(R.id.reponse_quiz3);
                 prop3.setPadding(20, 20, 20, 20);
                 prop3.setText(propositionsShuffled.get(2));
-                prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                if (answer.equals(prop3.getText().toString())) {
+                    prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
+                    prop3.setTextColor(getResources().getColor(R.color.white));
+                } else {
+                    prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                    prop3.setTextColor(getResources().getColor(R.color.black));
+                }
 
                 prop3.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
@@ -200,21 +200,19 @@ public class QuizPage extends Activity {
                         if (userAnswerText.isEmpty()) {
                             return;
                         }
-                        globalVariables.setBrouillonText("");
-                        globalVariables.setReponseText("");
-                        globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
-                        globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                        globalVariables.setTmpTime(30);
-                        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
-                            handler.removeCallbacks(runnable);
-                        }
-                        nextPage(v.getContext());
+                        qcmNext(userAnswerText, handler,runnable, v.getContext(), prop3);
                     }
                 });
 
                 final TextView prop4 = (TextView) findViewById(R.id.reponse_quiz4);
                 prop4.setPadding(20, 20, 20, 20);
-                prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                if (answer.equals(prop4.getText().toString())) {
+                    prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
+                    prop4.setTextColor(getResources().getColor(R.color.white));
+                } else {
+                    prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                    prop4.setTextColor(getResources().getColor(R.color.black));
+                }
                 prop4.setText(propositionsShuffled.get(3));
 
 
@@ -224,15 +222,7 @@ public class QuizPage extends Activity {
                         if (userAnswerText.isEmpty()) {
                             return;
                         }
-                        globalVariables.setBrouillonText("");
-                        globalVariables.setReponseText("");
-                        globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
-                        globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                        globalVariables.setTmpTime(30);
-                        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
-                            handler.removeCallbacks(runnable);
-                        }
-                        nextPage(v.getContext());
+                        qcmNext(userAnswerText, handler,runnable, v.getContext(), prop4);
                     }
                 });
             }
@@ -253,23 +243,26 @@ public class QuizPage extends Activity {
             });
 
 
-            ArrayList<String> propositions = currentQuestion.getProposition();
-
-            ArrayList<String> propositionsShuffled = new ArrayList<>();
-
-            while (propositions.size() != 0) {
-                int index = (int) Math.floor(Math.random() * propositions.size());
-                propositionsShuffled.add(propositions.get(index));
-                propositions.remove(index);
-            }
+            ArrayList<String> propositionsShuffled = currentQuestion.getProposition();
 
             final TextView question = (TextView) findViewById(R.id.question_quiz);
             question.setText(currentQuestion.getQuestion().toString());
+            String answer = "";
+            if (globalVariables.getCurrentGame().getPlayer1Answers().size() > currentQuestionNumber) {
+                answer = globalVariables.getCurrentGame().getPlayer1Answers().get(currentQuestionNumber);
+            }
 
             final TextView prop1 = (TextView) findViewById(R.id.reponse_quiz1);
             prop1.setPadding(20, 20, 20, 20);
             prop1.setText(propositionsShuffled.get(0));
-            prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+            String test = propositionsShuffled.get(0);
+            if (answer.equals(test)) {
+                prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
+                prop1.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                prop1.setTextColor(getResources().getColor(R.color.black));
+            }
 
             prop1.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -277,22 +270,21 @@ public class QuizPage extends Activity {
                     if (userAnswerText.isEmpty()) {
                         return;
                     }
-                    globalVariables.setBrouillonText("");
-                    globalVariables.setReponseText("");
-                    globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
-                    globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    globalVariables.setTmpTime(30);
-                    if (globalVariables.getCurrentGame().getTimed().equals("true")) {
-                        handler.removeCallbacks(runnable);
-                    }
-                    nextPage(v.getContext());
+                    qcmNext(userAnswerText, handler,runnable, v.getContext(), prop1);
+
                 }
             });
 
             final TextView prop2 = (TextView) findViewById(R.id.reponse_quiz2);
             prop2.setPadding(20, 20, 20, 20);
             prop2.setText(propositionsShuffled.get(1));
-            prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+            if (answer.equals(prop2.getText().toString())) {
+                prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
+                prop2.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                prop2.setTextColor(getResources().getColor(R.color.black));
+            }
 
             prop2.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -300,22 +292,21 @@ public class QuizPage extends Activity {
                     if (userAnswerText.isEmpty()) {
                         return;
                     }
-                    globalVariables.setBrouillonText("");
-                    globalVariables.setReponseText("");
-                    globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
-                    globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    globalVariables.setTmpTime(30);
-                    if (globalVariables.getCurrentGame().getTimed().equals("true")) {
-                        handler.removeCallbacks(runnable);
-                    }
-                    nextPage(v.getContext());
+                    qcmNext(userAnswerText, handler,runnable, v.getContext(), prop2);
+
                 }
             });
 
             final TextView prop3 = (TextView) findViewById(R.id.reponse_quiz3);
             prop3.setPadding(20, 20, 20, 20);
             prop3.setText(propositionsShuffled.get(2));
-            prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+            if (answer.equals(prop3.getText().toString())) {
+                prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
+                prop3.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                prop3.setTextColor(getResources().getColor(R.color.black));
+            }
 
             prop3.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -323,22 +314,21 @@ public class QuizPage extends Activity {
                     if (userAnswerText.isEmpty()) {
                         return;
                     }
-                    globalVariables.setBrouillonText("");
-                    globalVariables.setReponseText("");
-                    globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
-                    globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    globalVariables.setTmpTime(30);
-                    if (globalVariables.getCurrentGame().getTimed().equals("true")) {
-                        handler.removeCallbacks(runnable);
-                    }
-                    nextPage(v.getContext());
+                    qcmNext(userAnswerText, handler,runnable, v.getContext(), prop3);
+
                 }
             });
 
             final TextView prop4 = (TextView) findViewById(R.id.reponse_quiz4);
             prop4.setPadding(20, 20, 20, 20);
-            prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz));
             prop4.setText(propositionsShuffled.get(3));
+            if (answer.equals(prop4.getText().toString())) {
+                prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
+                prop4.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+                prop3.setTextColor(getResources().getColor(R.color.black));
+            }
 
 
             prop4.setOnClickListener(new View.OnClickListener() {
@@ -347,15 +337,7 @@ public class QuizPage extends Activity {
                     if (userAnswerText.isEmpty()) {
                         return;
                     }
-                    globalVariables.setBrouillonText("");
-                    globalVariables.setReponseText("");
-                    globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
-                    globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    globalVariables.setTmpTime(30);
-                    if (globalVariables.getCurrentGame().getTimed().equals("true")) {
-                        handler.removeCallbacks(runnable);
-                    }
-                    nextPage(v.getContext());
+                    qcmNext(userAnswerText, handler,runnable, v.getContext(), prop4);
                 }
             });
 
@@ -477,6 +459,41 @@ public class QuizPage extends Activity {
             pgBar.setProgress(globalVariables.getTmpTime());
         }
     }
+
+    private void qcmNext(String userAnswerText, Handler handler, Runnable runnable, Context context, TextView prop) {
+        Globals globalVariables = (Globals) getApplicationContext();
+        Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
+        globalVariables.setBrouillonText("");
+        globalVariables.setReponseText("");
+        globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
+        globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
+        globalVariables.setTmpTime(30);
+        final TextView prop1 = (TextView) findViewById(R.id.reponse_quiz1);
+        prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+        prop1.setTextColor(getResources().getColor(R.color.black));
+
+        final TextView prop2 = (TextView) findViewById(R.id.reponse_quiz2);
+        prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+        prop2.setTextColor(getResources().getColor(R.color.black));
+
+        final TextView prop3 = (TextView) findViewById(R.id.reponse_quiz3);
+        prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+        prop3.setTextColor(getResources().getColor(R.color.black));
+
+        final TextView prop4 = (TextView) findViewById(R.id.reponse_quiz4);
+        prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz));
+        prop4.setTextColor(getResources().getColor(R.color.black));
+
+
+        prop.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
+        prop.setTextColor(getResources().getColor(R.color.white));
+        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+            handler.removeCallbacks(runnable);
+        }
+        nextPage(context);
+
+    }
+
 
     @Override
     public void onBackPressed(){

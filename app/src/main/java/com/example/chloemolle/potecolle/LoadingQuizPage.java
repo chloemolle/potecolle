@@ -76,7 +76,14 @@ public class LoadingQuizPage extends Activity {
                                     });
                                 }
                                 if (propo != null && propo.size() > 0) {
-                                    question.setPropositions(propo);
+                                    ArrayList<String> propositionsShuffled = new ArrayList<>();
+
+                                    while (propo.size() != 0) {
+                                        int index = (int) Math.floor(Math.random() * propo.size());
+                                        propositionsShuffled.add(propo.get(index));
+                                        propo.remove(index);
+                                    }
+                                    question.setPropositions(propositionsShuffled);
                                 }
                                 globalVariables.getCurrentGame().addQuestions(question);
                                 Integer size = globalVariables.getCurrentGame().getQuestions().size();
