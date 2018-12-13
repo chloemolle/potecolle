@@ -200,7 +200,18 @@ public class ChoixSujetPage extends Activity {
                                                     });
                                                 }
                                                 ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
-                                                question.setPropositions(propositions);
+
+                                                if (propositions != null && propositions.size() > 0) {
+                                                    ArrayList<String> propositionsShuffled = new ArrayList<>();
+
+                                                    while (propositions.size() != 0) {
+                                                        int indexProp = (int) Math.floor(Math.random() * propositions.size());
+                                                        propositionsShuffled.add(propositions.get(indexProp));
+                                                        propositions.remove(indexProp);
+                                                    }
+                                                    question.setPropositions(propositionsShuffled);
+                                                }
+
                                                 questionsQuiz.add(randomInt, question);
                                                 questionsQuizId.add(randomInt, document.getId());
                                             } else {

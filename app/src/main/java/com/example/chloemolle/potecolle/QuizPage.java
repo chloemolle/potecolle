@@ -7,6 +7,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -36,12 +37,20 @@ public class QuizPage extends Activity {
 
         if (currentQuestion.getType().equals("image")) {
             setContentView(R.layout.image_page_layout);
+            EditText editText = (EditText) findViewById(R.id.user_answer);
+            if (currentQuestion.getKeyboardType().equals("numberSigned")) {
+                editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+            }
         } else if (currentQuestion.getType().equals("imageqcm")) {
             setContentView(R.layout.image_qcm_page_layout);
         } else if (currentQuestion.getType().equals("qcm") || currentQuestion.getType().equals("questionInversé")) {
             setContentView(R.layout.qcm_page_layout);
         } else {
             setContentView(R.layout.quiz_page_layout);
+            EditText editText = (EditText) findViewById(R.id.user_answer);
+            if (currentQuestion.getKeyboardType().equals("numberSigned")) {
+                editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+            }
         }
 
         if (globalVariables.getCurrentGame().getTimed().equals("true")) {
@@ -327,7 +336,7 @@ public class QuizPage extends Activity {
                 prop4.setTextColor(getResources().getColor(R.color.white));
             } else {
                 prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-                prop3.setTextColor(getResources().getColor(R.color.black));
+                prop4.setTextColor(getResources().getColor(R.color.black));
             }
 
 

@@ -18,6 +18,7 @@ public class Question {
     private Bitmap bmp;
     private Integer temps;
     private ArrayList<String> propositions = new ArrayList<>();
+    private String keyboardType;
 
     public Question(){};
 
@@ -68,5 +69,9 @@ public class Question {
 
     public Integer getTemps() {
         return temps;
+    }
+
+    public String getKeyboardType() {
+        return keyboardType;
     }
 }

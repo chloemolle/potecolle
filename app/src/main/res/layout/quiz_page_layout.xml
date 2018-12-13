@@ -27,7 +27,7 @@
         android:layout_marginBottom="80dp"
         android:ems="10"
         android:textSize="22sp"
-        android:inputType="textPersonName"
+        android:inputType="textNoSuggestions"
         android:imeOptions="actionNext"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
