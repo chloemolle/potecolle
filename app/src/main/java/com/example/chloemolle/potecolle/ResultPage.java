@@ -1,6 +1,7 @@
 package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +22,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 
@@ -72,7 +76,11 @@ public class ResultPage extends Activity {
                }
             }
 
+            Integer previousLevel = user.getLevel();
             user.addPoints(pointsToAdd);
+            if (previousLevel != user.getLevel()) {
+                openPopup();
+            }
             LayoutInflater inflater = getLayoutInflater();
             View layout = inflater.inflate(R.layout.toast,
                     (ViewGroup) findViewById(R.id.custom_toast_container));
@@ -113,6 +121,25 @@ public class ResultPage extends Activity {
             game.setScoreVu(true);
 
         }
+    }
+
+    private void openPopup() {
+        Globals globalVariables = (Globals) getApplicationContext();
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.popup_level_up);
+        Button retour = (Button) dialog.findViewById(R.id.retour_popup);
+        TextView textBravo = (TextView) dialog.findViewById(R.id.bravo_text);
+        textBravo.setText("Bravo !");
+        TextView text = (TextView) dialog.findViewById(R.id.level_up_text);
+        text.setText("Tu passes au niveau " + globalVariables.getUser().getLevel() + " ;)");
+        retour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     @Override

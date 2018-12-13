@@ -59,17 +59,17 @@ public class User {
     public void addPoints(Integer points) {
         double nextFloor = this.getFormule();
         double newPoints = getPointsActuels() + points;
-        if (newPoints >= nextFloor) {
-            pointsActuels = newPoints - nextFloor;
+        while (newPoints >= nextFloor) {
+            newPoints = newPoints - nextFloor;
             level ++;
-        } else {
-            pointsActuels = newPoints;
+            nextFloor = this.getFormule();
         }
+        pointsActuels = newPoints;
         return;
     }
 
     public double getFormule() {
-        return 1000 * Math.pow(2, this.getLevel() - 1);
+        return 250 * Math.pow(2, this.getLevel() - 1);
     }
 
     public void setClasse(String classe) {

@@ -1,6 +1,7 @@
 package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -199,7 +200,14 @@ public class FinQuizPage extends Activity {
             //Ajoute les points
             Integer newLevelPoints = 25 + 10 * score;
             User userForLevel = globalVariables.getUser();
+
+            Integer previousLevel = userForLevel.getLevel();
+
             userForLevel.addPoints(newLevelPoints);
+
+            if (previousLevel != userForLevel.getLevel()) {
+                openPopup();
+            }
 
             LayoutInflater inflater = getLayoutInflater();
             View layout = inflater.inflate(R.layout.toast,
@@ -241,6 +249,20 @@ public class FinQuizPage extends Activity {
         });
 
     }
+
+    private void openPopup() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.popup_level_up);
+        Button retour = (Button) findViewById(R.id.retour_popup);
+        retour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
 
     @Override
     public void onBackPressed(){

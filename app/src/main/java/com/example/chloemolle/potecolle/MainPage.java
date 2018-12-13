@@ -2,6 +2,7 @@ package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -308,7 +309,12 @@ public class MainPage extends Activity {
                                                     friendRequest.get("accepte").equals("true")) {
 
                                                 if (friendRequest.get("vu").equals("false")) {
+                                                    Integer previousLevel = user.getLevel();
                                                     user.addPoints(100);
+
+                                                    if(previousLevel != user.getLevel()) {
+                                                        openPopup();
+                                                    }
                                                     updateProgressBar();
                                                     LayoutInflater inflater = getLayoutInflater();
                                                     View layout = inflater.inflate(R.layout.toast,
@@ -443,6 +449,20 @@ public class MainPage extends Activity {
         avancement.setProgress((int) pointsActuelsDouble);
         avancement.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorTheme)));
     }
+
+    private void openPopup() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.popup_level_up);
+        Button retour = (Button) findViewById(R.id.retour_popup);
+        retour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
 
     @Override
     public void onBackPressed(){

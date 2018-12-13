@@ -2,6 +2,7 @@ package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -270,7 +271,12 @@ public class NotificationPage extends Activity {
                             public void onClick(DialogInterface dialog, int which) {
                                 //On supprime la requête de notre database
                                 suppressRequestFromDatabase(friendRequest, true, newButton, true, true);
+                                Integer previousLevel = user.getLevel();
                                 user.addPoints(100);
+
+                                if (previousLevel != user.getLevel()) {
+                                    openPopup();
+                                }
 
                                 HashMap<String, Object> updateUser = new HashMap<>();
                                 updateUser.put("level", user.getLevel());
@@ -514,6 +520,20 @@ public class NotificationPage extends Activity {
                     }
                 });
 
+    }
+
+
+    private void openPopup() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.popup_level_up);
+        Button retour = (Button) findViewById(R.id.retour_popup);
+        retour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
 

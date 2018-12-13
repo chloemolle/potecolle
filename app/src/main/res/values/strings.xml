@@ -33,6 +33,8 @@
     <string name="voir_ami">Amis</string>
     <string name="update">Update</string>
     <string name="username_already_used">Ce nom est déjà utilisé</string>
+    <string name="bravo">Bravo !</string>
+    <string name="got_it">Retour</string>
 
     <string-array name="classes">
         <item>Troisieme</item>
