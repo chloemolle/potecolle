@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
 /**
  * Created by chloemolle on 23/10/2018.
  */
@@ -129,9 +131,21 @@ public class QuizPage extends Activity {
 
 
             if (currentQuestion.getType().toString().contains("qcm")) {
+
+
+                ArrayList<String> propositions = currentQuestion.getProposition();
+
+                ArrayList<String> propositionsShuffled = new ArrayList<>();
+
+                while (propositions.size() != 0) {
+                    int index = (int) Math.floor(Math.random() * propositions.size());
+                    propositionsShuffled.add(propositionsShuffled.get(index));
+                    propositions.remove(index);
+                }
+
                 final TextView prop1 = (TextView) findViewById(R.id.reponse_quiz1);
                 prop1.setPadding(20, 20, 20, 20);
-                prop1.setText(currentQuestion.getProposition().get(0).toString());
+                prop1.setText(propositionsShuffled.get(0));
                 prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz));
 
                 prop1.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +168,7 @@ public class QuizPage extends Activity {
 
                 final TextView prop2 = (TextView) findViewById(R.id.reponse_quiz2);
                 prop2.setPadding(20, 20, 20, 20);
-                prop2.setText(currentQuestion.getProposition().get(1).toString());
+                prop2.setText(propositionsShuffled.get(1));
                 prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz));
 
                 prop2.setOnClickListener(new View.OnClickListener() {
@@ -177,7 +191,7 @@ public class QuizPage extends Activity {
 
                 final TextView prop3 = (TextView) findViewById(R.id.reponse_quiz3);
                 prop3.setPadding(20, 20, 20, 20);
-                prop3.setText(currentQuestion.getProposition().get(2).toString());
+                prop3.setText(propositionsShuffled.get(2));
                 prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz));
 
                 prop3.setOnClickListener(new View.OnClickListener() {
@@ -201,7 +215,7 @@ public class QuizPage extends Activity {
                 final TextView prop4 = (TextView) findViewById(R.id.reponse_quiz4);
                 prop4.setPadding(20, 20, 20, 20);
                 prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-                prop4.setText(currentQuestion.getProposition().get(3).toString());
+                prop4.setText(propositionsShuffled.get(3));
 
 
                 prop4.setOnClickListener(new View.OnClickListener() {
@@ -238,12 +252,23 @@ public class QuizPage extends Activity {
                 }
             });
 
+
+            ArrayList<String> propositions = currentQuestion.getProposition();
+
+            ArrayList<String> propositionsShuffled = new ArrayList<>();
+
+            while (propositions.size() != 0) {
+                int index = (int) Math.floor(Math.random() * propositions.size());
+                propositionsShuffled.add(propositions.get(index));
+                propositions.remove(index);
+            }
+
             final TextView question = (TextView) findViewById(R.id.question_quiz);
             question.setText(currentQuestion.getQuestion().toString());
 
             final TextView prop1 = (TextView) findViewById(R.id.reponse_quiz1);
             prop1.setPadding(20, 20, 20, 20);
-            prop1.setText(currentQuestion.getProposition().get(0).toString());
+            prop1.setText(propositionsShuffled.get(0));
             prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz));
 
             prop1.setOnClickListener(new View.OnClickListener() {
@@ -266,7 +291,7 @@ public class QuizPage extends Activity {
 
             final TextView prop2 = (TextView) findViewById(R.id.reponse_quiz2);
             prop2.setPadding(20, 20, 20, 20);
-            prop2.setText(currentQuestion.getProposition().get(1).toString());
+            prop2.setText(propositionsShuffled.get(1));
             prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz));
 
             prop2.setOnClickListener(new View.OnClickListener() {
@@ -289,7 +314,7 @@ public class QuizPage extends Activity {
 
             final TextView prop3 = (TextView) findViewById(R.id.reponse_quiz3);
             prop3.setPadding(20, 20, 20, 20);
-            prop3.setText(currentQuestion.getProposition().get(2).toString());
+            prop3.setText(propositionsShuffled.get(2));
             prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz));
 
             prop3.setOnClickListener(new View.OnClickListener() {
@@ -313,7 +338,7 @@ public class QuizPage extends Activity {
             final TextView prop4 = (TextView) findViewById(R.id.reponse_quiz4);
             prop4.setPadding(20, 20, 20, 20);
             prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-            prop4.setText(currentQuestion.getProposition().get(3).toString());
+            prop4.setText(propositionsShuffled.get(3));
 
 
             prop4.setOnClickListener(new View.OnClickListener() {
