@@ -164,6 +164,7 @@ public class FinQuizPage extends Activity {
 
 
             final Map<String, Object> updateOtherFields = new HashMap<>();
+            updateOtherFields.put("reponsesTempsOpponent", globalVariables.getCurrentGame().getReponsesTemps());
             updateOtherFields.put("scoreOpponent", scoreFinal.toString());
             updateOtherFields.put("fini", "true");
 

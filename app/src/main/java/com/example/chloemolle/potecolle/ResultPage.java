@@ -3,8 +3,10 @@ package com.example.chloemolle.potecolle;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -48,8 +51,42 @@ public class ResultPage extends Activity {
         Integer votreScore = Integer.parseInt(votreScoreString);
         Integer sonScore = Integer.parseInt(sonScoreString);
 
-        String quiAGagne =  votreScore > sonScore ? " VICTOIRE ! :D" :
-                votreScore == sonScore ? " EGALITE ! :)" : " Perdu :( \n Prends ta revanche ! ";
+        ArrayList<Integer> reponsesTempsOpponent = game.getReponsesTempsOpponent();
+        ArrayList<Integer> reponsesTemps = game.getReponsesTemps();
+
+
+        String quiAGagne = "";
+        String diffSeconds = "";
+        if (game.getTimed().equals("true")) {
+            Integer diff = 0;
+            if (votreScore > sonScore) {
+                quiAGagne =  " VICTOIRE ! :D" ;
+            } else if (votreScore < sonScore) {
+                quiAGagne =  " Perdu :( \n Prends ta revanche ! " ;
+            } else {
+                String diffTempsText = "";
+                for (int i = 0; i < reponsesTemps.size(); i ++) {
+                    diff += reponsesTemps.get(i) - reponsesTempsOpponent.get(i);
+                }
+                if (diff > 0) {
+                    quiAGagne =  " VICTOIRE ! :D" ;
+                    diffTempsText = "Vous avez le même score mais vous avez répondu plus rapidement que votre adversaire ;) (différence de " + diff + " secondes)";
+                    TextView textDiffTemps = (TextView) findViewById(R.id.text_diff_temps);
+                    textDiffTemps.setText(diffTempsText);
+                } else if (diff < 0) {
+                    quiAGagne =  " Perdu :( \n Prends ta revanche ! " ;
+                    diffTempsText = "Vous avez le même score mais vous avez répondu moins rapidement que votre adversaire (différence de " + Math.abs(diff) + " secondes)";
+                    TextView textDiffTemps = (TextView) findViewById(R.id.text_diff_temps);
+                    textDiffTemps.setText(diffTempsText);
+                } else {
+                    quiAGagne =  " EGALITE ! :)" ;
+                }
+            }
+
+        } else {
+            quiAGagne =  votreScore > sonScore ? " VICTOIRE ! :D" :
+                    votreScore == sonScore ? " EGALITE ! :)" : " Perdu :( \n Prends ta revanche ! ";
+        }
         text.setText(quiAGagne);
         text.setGravity(Gravity.CENTER);
         text.setTextSize(30);
@@ -57,12 +94,17 @@ public class ResultPage extends Activity {
 
         TextView votreScoreText = (TextView) findViewById(R.id.result_quiz_text_votre_score);
         votreScoreText.setTextSize(20);
-        votreScoreText.setText("Votre score: " + game.getScore() + "/" + game.getQuestionsId().size());
+        String textScore = "Votre score: " + game.getScore() + "/" + game.getQuestionsId().size();
+        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+            textScore += diffSeconds;
+        }
+        votreScoreText.setText(textScore);
         votreScoreText.setTextColor(getResources().getColor(R.color.colorTheme));
 
         TextView sonScoreText = (TextView) findViewById(R.id.result_quiz_text_son_score);
         sonScoreText.setTextSize(20);
-        sonScoreText.setText("Son score: " + game.getScoreOpponent() + "/" + game.getQuestionsId().size());
+        String textSonScore = "Son score: " + game.getScoreOpponent() + "/" + game.getQuestionsId().size();
+        sonScoreText.setText(textSonScore);
         sonScoreText.setTextColor(getResources().getColor(R.color.colorTheme));
 
 

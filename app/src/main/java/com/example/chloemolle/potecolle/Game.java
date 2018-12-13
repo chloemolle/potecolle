@@ -30,6 +30,7 @@ public class Game {
     private ArrayList<Question> questions= new ArrayList<>();
     private ArrayList<String> questionsId;
     private ArrayList<Integer> reponsesTemps = new ArrayList<>();
+    private ArrayList<Integer> reponsesTempsOpponent = new ArrayList<>();
     private ArrayList<String> player1Answers = new ArrayList<>();
     private ArrayList<String> player2Answers = new ArrayList<>();
     private String score;
@@ -280,6 +281,7 @@ public class Game {
         }
     }
 
-
-
+    public ArrayList<Integer> getReponsesTempsOpponent() {
+        return reponsesTempsOpponent;
+    }
 }
