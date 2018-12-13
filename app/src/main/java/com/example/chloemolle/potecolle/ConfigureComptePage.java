@@ -258,6 +258,9 @@ public class ConfigureComptePage extends Activity {
                                                     toast.show();
                                                     progressBarCheckUsername.setVisibility(View.GONE);
 
+                                                    Intent intent = new Intent(context, MainPage.class);
+                                                    startActivity(intent);
+
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
