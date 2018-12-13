@@ -88,7 +88,7 @@ public class VoirAmiPage extends Activity {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             final User user = documentSnapshot.toObject(User.class);
-                            createButtonWithPlayerName(user.getUsername(), email);
+                            createButtonWithPlayerName(user.getUsername(), email, user.getLevel());
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -103,7 +103,7 @@ public class VoirAmiPage extends Activity {
 
     }
 
-    public void createButtonWithPlayerName(final String name, final String email){
+    public void createButtonWithPlayerName(final String name, final String email, Integer level){
         final Globals globalVariables = (Globals) getApplicationContext();
         final Context context = this;
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -112,7 +112,7 @@ public class VoirAmiPage extends Activity {
 
 
         final Button newButton = new Button(context);
-        newButton.setText(name);
+        newButton.setText(name + "\nNiveau " + level.toString());
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
