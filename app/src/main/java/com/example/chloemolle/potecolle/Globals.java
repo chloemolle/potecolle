@@ -2,6 +2,8 @@ package com.example.chloemolle.potecolle;
 
 import android.app.Application;
 
+import com.google.firebase.firestore.DocumentReference;
+
 import java.util.Map;
 
 /**
@@ -11,6 +13,7 @@ import java.util.Map;
 public class Globals extends Application {
 
     private Game currentGame;
+    private DocumentReference userDB;
     private User user;
     private Integer currentQuestionNumero = 0;
     private String brouillonText = "";
@@ -87,4 +90,13 @@ public class Globals extends Application {
     public void setTest(Long test) {
         this.test = test;
     }
+
+    public DocumentReference getUserDB() {
+        return userDB;
+    }
+
+    public void setUserDB(DocumentReference userDB) {
+        this.userDB = userDB;
+    }
+
 }

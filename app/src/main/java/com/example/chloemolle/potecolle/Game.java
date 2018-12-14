@@ -25,8 +25,8 @@ public class Game {
     private String matiere;
     private String sujet;
     private String classe;
-    private String repondu;
-    private String fini;
+    private Boolean repondu;
+    private Boolean fini;
     private ArrayList<Question> questions= new ArrayList<>();
     private ArrayList<String> questionsId;
     private ArrayList<Integer> reponsesTemps = new ArrayList<>();
@@ -36,9 +36,10 @@ public class Game {
     private String score;
     private String id;
     private String scoreOpponent;
-    private String timed;
+    private Boolean timed;
     private Boolean seul = false;
     private Boolean scoreVu = false;
+    private Boolean vu = false;
 
     public Game () {
     }
@@ -191,19 +192,19 @@ public class Game {
         this.questionsId = questionsId;
     }
 
-    public String getRepondu() {
+    public Boolean getRepondu() {
         return repondu;
     }
 
-    public void setRepondu(String repondu) {
+    public void setRepondu(Boolean repondu) {
         this.repondu = repondu;
     }
 
-    public String getFini() {
+    public Boolean getFini() {
         return fini;
     }
 
-    public void setFini(String fini) {
+    public void setFini(Boolean fini) {
         this.fini = fini;
     }
 
@@ -231,11 +232,11 @@ public class Game {
         this.id = id;
     }
 
-    public String getTimed() {
+    public Boolean getTimed() {
         return timed;
     }
 
-    public void setTimed(String timed) {
+    public void setTimed(Boolean timed) {
         this.timed = timed;
     }
 
@@ -283,5 +284,21 @@ public class Game {
 
     public ArrayList<Integer> getReponsesTempsOpponent() {
         return reponsesTempsOpponent;
+    }
+
+    public void setVu(Boolean vu) {
+        this.vu = vu;
+    }
+
+    public Boolean getVu() {
+        return vu;
+    }
+
+    public void setScore(String score) {
+        this.score = score;
+    }
+
+    public void setScoreOpponent(String scoreOpponent) {
+        this.scoreOpponent = scoreOpponent;
     }
 }

@@ -8,13 +8,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -43,6 +46,9 @@ import java.util.Map;
 
 public class MainPage extends Activity {
 
+    public Handler handler;
+    public Runnable runnable;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,59 +57,9 @@ public class MainPage extends Activity {
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Globals globalVariables = (Globals) getApplicationContext();
-        final ImageButton notification = (ImageButton) findViewById(R.id.button_notification);
-        final ImageButton notificationOn = (ImageButton) findViewById(R.id.button_notification_on);
-
-        notification.setVisibility(View.GONE);
-        notificationOn.setVisibility(View.GONE);
 
         final String userEmail = userFirebase.getEmail();
-        final DocumentReference userDB = db.collection("Users").document(userEmail);
-
-
-
-
-
-//      A decommenter si on veut flusher la base de données des parties en cours
-/*
-            userDB.get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        ArrayList<String> arr = new ArrayList<>();
-                        userDB.update("partiesEnCours", arr);
-                        userDB.collection("Games").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        if (document.get("real") != null && document.get("real").equals("false")) {
-                                            continue;
-                                        } else {
-                                            userDB.collection("Games").document(document.getId()).delete()
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Log.w(TAG, "Error deleting document", e);
-                                                        }
-                                                    });
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
-                });*/
-
-    //FIN de ce qu'il faut décommenter
-
-
+        globalVariables.setUserDB(db.collection("Users").document(userEmail));
 
         final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layout_parametre);
 
@@ -142,6 +98,7 @@ public class MainPage extends Activity {
                 alertDialog.setPositiveButton(R.string.se_deconnecter, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         FirebaseAuth.getInstance().signOut();
+                        flushGlobalVariables();
                         linearLayout.setVisibility(View.GONE);
                         Intent intent = new Intent(context, ConnexionPage.class);
                         startActivity(intent);
@@ -170,24 +127,87 @@ public class MainPage extends Activity {
         });
 
 
-        notification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LayoutInflater inflater = getLayoutInflater();
-                View layout = inflater.inflate(R.layout.toast,
-                        (ViewGroup) findViewById(R.id.custom_toast_container));
 
-                TextView text = (TextView) layout.findViewById(R.id.text);
-                text.setText(R.string.no_notification);
 
-                Toast toast = new Toast(getApplicationContext());
-                toast.setGravity(Gravity.BOTTOM, 0, 0);
-                toast.setDuration(Toast.LENGTH_LONG);
-                toast.setView(layout);
-                toast.show();
+        setButtonVoirMesParties();
 
+
+        if(globalVariables.getUser() == null) {
+            this.handler = new Handler();
+            final int delay = 30000; //milliseconds
+            getUserInfo(true);
+            final Context self = this;
+            this.runnable = new Runnable(){
+                public void run() {
+                    getUserInfo(false);
+                    handler.postDelayed(this, delay);
+                }
+            };
+
+            handler.postDelayed(runnable, delay);
+        } else {
+            getUserInfo(false);
+        }
+    }
+
+    private void setButtonNotification() {
+        final ImageButton notification = (ImageButton) findViewById(R.id.button_notification);
+        final ImageButton notificationOn = (ImageButton) findViewById(R.id.button_notification_on);
+        Globals globalVariables = (Globals) getApplicationContext();
+
+        Boolean thereIsNotification = false;
+
+        for (FriendRequest friendRequest: globalVariables.getUser().getFriendRequests()) {
+            if (!friendRequest.getVu()) {
+                thereIsNotification = true;
+                break;
             }
-        });
+        }
+
+        if (!thereIsNotification) {
+            for (Game game: globalVariables.getUser().getPartiesEnCours()) {
+                if (!game.getVu()) {
+                    thereIsNotification = true;
+                }
+            }
+        }
+
+        if (thereIsNotification) {
+            notification.setVisibility(View.GONE);
+            notificationOn.setVisibility(View.VISIBLE);
+        } else {
+            notificationOn.setVisibility(View.GONE);
+            notification.setVisibility(View.VISIBLE);
+        }
+
+
+        if (globalVariables.getUser().getFriendRequests().size() > 0 || globalVariables.getUser().getPartiesEnCours().size() > 0) {
+            notification.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), NotificationPage.class);
+                    startActivity(intent);
+                }
+            });
+        } else {
+            notification.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    LayoutInflater inflater = getLayoutInflater();
+                    View layout = inflater.inflate(R.layout.toast,
+                            (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                    TextView text = (TextView) layout.findViewById(R.id.text);
+                    text.setText(R.string.no_notification);
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setGravity(Gravity.BOTTOM, 0, 0);
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(layout);
+                    toast.show();
+
+                }
+            });
+        }
 
         notificationOn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -195,20 +215,39 @@ public class MainPage extends Activity {
                 startActivity(intent);
             }
         });
+    }
 
 
+    private void setButtonVoirMesParties() {
+        Button voirPartie = (Button) findViewById(R.id.voir_mes_parties);
+        voirPartie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MesPartiesPage.class);
+                startActivity(intent);
+            }
+        });
+    }
 
+    private void getUserInfo(final Boolean createUser) {
+        final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final Globals globalVariables = (Globals) getApplicationContext();
 
+        final DocumentReference userDB = globalVariables.getUserDB();
 
         userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
                     //On récupère le nom du joueur
-                    Map<String, Object> test = documentSnapshot.getData();
-                    final User user = documentSnapshot.toObject(User.class);
-
-                    globalVariables.setUser(user);
+                    final User user;
+                    if (createUser) {
+                        user = documentSnapshot.toObject(User.class);
+                        globalVariables.setUser(user);
+                    } else {
+                        user = globalVariables.getUser();
+                    }
 
                     //delete friends
                     userDB.collection("FriendDeletion")
@@ -216,7 +255,7 @@ public class MainPage extends Activity {
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
+                                    if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
                                         List<DocumentSnapshot> docs = task.getResult().getDocuments();
                                         ArrayList<String> friends = user.getFriends();
                                         for (DocumentSnapshot doc: docs) {
@@ -288,27 +327,19 @@ public class MainPage extends Activity {
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if(task.isSuccessful()) {
                                         List<DocumentSnapshot> lists = task.getResult().getDocuments();
-                                        ArrayList<HashMap<String, String>> arrayListFriendsRequests = new ArrayList<>();
+                                        ArrayList<FriendRequest> arrayListFriendsRequests = new ArrayList<>();
                                         for(DocumentSnapshot doc: lists) {
-                                            HashMap<String, String> friendRequest = new HashMap<>();
-                                            friendRequest.put("id", doc.getId());
-                                            friendRequest.put("email", doc.getData().get("email").toString());
-                                            friendRequest.put("username", doc.getData().get("username").toString());
-                                            friendRequest.put("demande", doc.getData().get("demande").toString());
-                                            friendRequest.put("pending", doc.getData().get("pending").toString());
-                                            friendRequest.put("vu", doc.getData().get("vu").toString());
-                                            friendRequest.put("accepte", doc.getData().get("accepte").toString());
-
-                                            arrayListFriendsRequests.add(friendRequest);
+                                            FriendRequest tmp = doc.toObject(FriendRequest.class);
+                                            tmp.setId(doc.getId());
+                                            arrayListFriendsRequests.add(tmp);
                                         }
                                         user.setFriendRequests(arrayListFriendsRequests);
+                                        for (FriendRequest friendRequest: arrayListFriendsRequests) {
+                                            if (friendRequest.getDemande() &&
+                                                    !friendRequest.getPending() &&
+                                                    friendRequest.getAccepte()) {
 
-                                        for (HashMap<String, String> friendRequest: arrayListFriendsRequests) {
-                                            if (friendRequest.get("demande").equals("true") &&
-                                                    friendRequest.get("pending").equals("false") &&
-                                                    friendRequest.get("accepte").equals("true")) {
-
-                                                if (friendRequest.get("vu").equals("false")) {
+                                                if (!friendRequest.getVu()) {
                                                     Integer previousLevel = user.getLevel();
                                                     user.addPoints(100);
 
@@ -346,10 +377,10 @@ public class MainPage extends Activity {
 
 
                                                     HashMap<String, Object> updateFriendRequest = new HashMap<>();
-                                                    updateFriendRequest.put("vu", "true");
+                                                    updateFriendRequest.put("vu", true);
                                                     db.collection("Users").document(userFirebase.getEmail())
                                                             .collection("FriendRequests")
-                                                            .document(friendRequest.get("id"))
+                                                            .document(friendRequest.getId())
                                                             .update(updateFriendRequest)
                                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
@@ -374,21 +405,13 @@ public class MainPage extends Activity {
                                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                         if(task.isSuccessful()) {
                                                             List<DocumentSnapshot> lists = task.getResult().getDocuments();
-                                                            ArrayList<String> arrayListGames = new ArrayList<>();
+                                                            ArrayList<Game> arrayListGames = new ArrayList<>();
                                                             for(DocumentSnapshot doc: lists) {
-                                                                arrayListGames.add(doc.getId());
+                                                                arrayListGames.add(doc.toObject(Game.class));
                                                             }
                                                             user.setPartiesEnCours(arrayListGames);
-                                                            // On affiche un bouton par partie en cours
-
-                                                            if (arrayListGames.size() > 0 || user.getFriendRequests().size() > 0) {
-                                                                notification.setVisibility(View.GONE);
-                                                                notificationOn.setVisibility(View.VISIBLE);
-                                                            } else {
-                                                                notification.setVisibility(View.VISIBLE);
-                                                                notificationOn.setVisibility(View.GONE);
-                                                            }
-
+                                                            globalVariables.setUser(user);
+                                                            setButtonNotification();
                                                         } else {
                                                             Log.d("Error getting documents", task.getException().getMessage());
                                                         }
@@ -430,11 +453,11 @@ public class MainPage extends Activity {
         .addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d("Failure", "problème dans la requête du profil");
+                Log.d("Failure", e.getMessage());
             }
         });
-    }
 
+    }
 
     private void updateProgressBar() {
         Globals globalVariables = (Globals) getApplicationContext();
@@ -451,9 +474,15 @@ public class MainPage extends Activity {
     }
 
     private void openPopup() {
+        Globals globalVariables = (Globals) getApplicationContext();
         final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.popup_level_up);
-        Button retour = (Button) findViewById(R.id.retour_popup);
+        Button retour = (Button) dialog.findViewById(R.id.retour_popup);
+        TextView textBravo = (TextView) dialog.findViewById(R.id.bravo_text);
+        textBravo.setText("Bravo !");
+        TextView text = (TextView) dialog.findViewById(R.id.level_up_text);
+        text.setText("Tu passes au niveau " + globalVariables.getUser().getLevel() + " ;)");
         retour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -472,6 +501,7 @@ public class MainPage extends Activity {
             public void onClick(DialogInterface dialog, int id) {
                 FirebaseAuth test = FirebaseAuth.getInstance();
                 test.signOut();
+                flushGlobalVariables();
                 Intent intent = new Intent(context, ConnexionPage.class);
                 startActivity(intent);
             }
@@ -481,10 +511,28 @@ public class MainPage extends Activity {
             }
         });
 
+
         alertDialog.setTitle("Deconnexion");
         alertDialog.setMessage("Es-tu sur de vouloir te déconnecter?");
         alertDialog.setCancelable(true);
         alertDialog.create().show();
+    }
+
+
+    public void flushGlobalVariables() {
+        Globals globalVariables = (Globals) getApplicationContext();
+        globalVariables.setCurrentGame(null);
+        globalVariables.setUserDB(null);
+        globalVariables.setUser(null);
+        globalVariables.setCurrentQuestionNumero(0);
+        globalVariables.setBrouillonText("");
+        globalVariables.setReponseText("");
+        globalVariables.setDebug(true);
+        globalVariables.setTmpTime(0);
+        globalVariables.setTest(new Long(0));
+        if (handler != null) {
+            handler.removeCallbacks(runnable);
+        }
     }
 
 }

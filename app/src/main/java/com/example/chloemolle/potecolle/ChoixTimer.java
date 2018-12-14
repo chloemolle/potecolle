@@ -47,7 +47,7 @@ public class ChoixTimer extends Activity {
             public void onClick(View v) {
                 final Globals globalVariables = (Globals) getApplicationContext();
                 final Game currentGame = globalVariables.getCurrentGame();
-                currentGame.setTimed("true");
+                currentGame.setTimed(true);
                 globalVariables.setTmpTime(30);
                 if (!globalVariables.getCurrentGame().getSeul()){
                     setGame(true);
@@ -62,7 +62,7 @@ public class ChoixTimer extends Activity {
             public void onClick(View v) {
                 final Globals globalVariables = (Globals) getApplicationContext();
                 final Game currentGame = globalVariables.getCurrentGame();
-                currentGame.setTimed("false");
+                currentGame.setTimed(false);
                 if (!globalVariables.getCurrentGame().getSeul()){
                     setGame(false);
                 }
@@ -89,14 +89,14 @@ public class ChoixTimer extends Activity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
                     //Creating the document
-                    HashMap<String,String> newGame = new HashMap<>();
+                    HashMap<String,Object> newGame = new HashMap<>();
                     newGame.put("timed", currentGame.getTimed());
                     newGame.put("adversaire", currentGame.getAdversaire());
                     newGame.put("classe", currentGame.getClasse());
                     newGame.put("matiere", currentGame.getMatiere());
                     newGame.put("sujet", currentGame.getSujet());
-                    newGame.put("fini", "false");
-                    newGame.put("repondu", "false");
+                    newGame.put("fini", false);
+                    newGame.put("repondu", false);
                     newGame.put("id", currentGame.getId());
                     userDB.collection("Games").document(currentGame.getId())
                             .set(newGame)
@@ -145,15 +145,16 @@ public class ChoixTimer extends Activity {
                             DocumentSnapshot document = task.getResult();
                             final DocumentReference opponentDB = db.collection("Users").document(document.getId());
                             //Creating the document
-                            HashMap<String,String> newGame = new HashMap<>();
+                            HashMap<String,Object> newGame = new HashMap<>();
                             newGame.put("timed", currentGame.getTimed());
                             newGame.put("adversaire", userAuth.getEmail());
                             newGame.put("classe", currentGame.getClasse());
                             newGame.put("matiere", currentGame.getMatiere());
                             newGame.put("sujet", currentGame.getSujet());
-                            newGame.put("fini", "false");
-                            newGame.put("repondu", "false");
+                            newGame.put("fini", false);
+                            newGame.put("repondu", false);
                             newGame.put("id", currentGame.getId());
+                            newGame.put("vu", false);
                             opponentDB.collection("Games").document(currentGame.getId())
                                     .set(newGame)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {

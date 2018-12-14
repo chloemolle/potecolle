@@ -95,9 +95,9 @@ public class ConfigureComptePage extends Activity {
                     public void onClick(DialogInterface dialog, int id) {
 
 
-                        for (final String partie: globalVariables.getUser().getPartiesEnCours()) {
+                        for (final Game partie: globalVariables.getUser().getPartiesEnCours()) {
                             userDB.collection("Games")
-                                    .document(partie)
+                                    .document(partie.getId())
                                     .delete()
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
@@ -114,14 +114,14 @@ public class ConfigureComptePage extends Activity {
                         }
 
 
-                        for (final HashMap<String, String> friendRequest: globalVariables.getUser().getFriendRequests()) {
+                        for (final FriendRequest friendRequest: globalVariables.getUser().getFriendRequests()) {
                             userDB.collection("FriendRequests")
-                                    .document(friendRequest.get("id"))
+                                    .document(friendRequest.getId())
                                     .delete()
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            db.collection("Users").document(friendRequest.get("id"))
+                                            db.collection("Users").document(friendRequest.getId())
                                                     .collection("friendRequests")
                                                     .document(userFirebase.getEmail())
                                                     .delete()

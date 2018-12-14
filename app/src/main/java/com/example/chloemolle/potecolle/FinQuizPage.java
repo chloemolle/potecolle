@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -143,7 +144,8 @@ public class FinQuizPage extends Activity {
 
             Map<String, Object> updateFields = new HashMap<>();
             updateFields.put("score", scoreFinal.toString());
-            updateFields.put("repondu", "true");
+            updateFields.put("repondu", true);
+            updateFields.put("vu", true);
             updateFields.put("reponsesTemps", globalVariables.getCurrentGame().getReponsesTemps());
 
 
@@ -166,7 +168,8 @@ public class FinQuizPage extends Activity {
             final Map<String, Object> updateOtherFields = new HashMap<>();
             updateOtherFields.put("reponsesTempsOpponent", globalVariables.getCurrentGame().getReponsesTemps());
             updateOtherFields.put("scoreOpponent", scoreFinal.toString());
-            updateOtherFields.put("fini", "true");
+            updateOtherFields.put("fini", true);
+            updateOtherFields.put("vu", false);
 
 
             db.collection("Users")
@@ -201,7 +204,7 @@ public class FinQuizPage extends Activity {
             //Ajoute les points
             Integer newLevelPoints = 25 + 10 * score;
 
-            if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+            if (globalVariables.getCurrentGame().getTimed()) {
                 for (Integer integer: globalVariables.getCurrentGame().getReponsesTemps()){
                     newLevelPoints += integer;
                 }
@@ -259,9 +262,15 @@ public class FinQuizPage extends Activity {
     }
 
     private void openPopup() {
+        Globals globalVariables = (Globals) getApplicationContext();
         final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.popup_level_up);
-        Button retour = (Button) findViewById(R.id.retour_popup);
+        Button retour = (Button) dialog.findViewById(R.id.retour_popup);
+        TextView textBravo = (TextView) dialog.findViewById(R.id.bravo_text);
+        textBravo.setText("Bravo !");
+        TextView text = (TextView) dialog.findViewById(R.id.level_up_text);
+        text.setText("Tu passes au niveau " + globalVariables.getUser().getLevel() + " ;)");
         retour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

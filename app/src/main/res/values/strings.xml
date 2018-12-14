@@ -35,6 +35,8 @@
     <string name="username_already_used">Ce nom est déjà utilisé</string>
     <string name="bravo">Bravo !</string>
     <string name="got_it">Retour</string>
+    <string name="voir_mes_parties">Mes parties</string>
+
 
     <string-array name="classes">
         <item>Troisieme</item>

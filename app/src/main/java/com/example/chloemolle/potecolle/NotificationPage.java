@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -48,7 +49,6 @@ public class NotificationPage extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notification_page_layout);
 
-
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -58,7 +58,7 @@ public class NotificationPage extends Activity {
         final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
 
         final User user = globalVariables.getUser();
-        ArrayList<String> parties = user.getPartiesEnCours();
+        ArrayList<Game> parties = user.getPartiesEnCours();
 
         final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
 
@@ -72,9 +72,9 @@ public class NotificationPage extends Activity {
         });
 
 
-        for (final String partie: parties) {
+        for (final Game partie: parties) {
 
-            userDB.collection("Games").document(partie)
+            userDB.collection("Games").document(partie.getId())
                     .get()
                     .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
@@ -82,10 +82,9 @@ public class NotificationPage extends Activity {
                             if (documentSnapshot.exists()) {
                                 final Game game = documentSnapshot.toObject(Game.class);
 
-                                if (game.getFini().equals("true")){
+                                if (game.getFini()){
                                     createButton(game, layout, userDB);
                                 } else {
-
                                     //On met à jour la partie suivant si l'adversaire a repondu aux questions
                                     db.collection("Users")
                                             .document(game.getAdversaire())
@@ -97,14 +96,14 @@ public class NotificationPage extends Activity {
                                                         DocumentSnapshot document = task.getResult();
 
                                                         db.collection("Users").document(document.getId())
-                                                                .collection("Games").document(partie)
+                                                                .collection("Games").document(partie.getId())
                                                                 .get()
                                                                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                                     @Override
                                                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                                         if (documentSnapshot.exists()) {
                                                                             if (documentSnapshot.get("repondu").equals("true") && game.getRepondu().equals("true")) {
-                                                                                DocumentReference doc = userDB.collection("Games").document(partie);
+                                                                                DocumentReference doc = userDB.collection("Games").document(partie.getId());
                                                                                 doc.update("fini", "true")
                                                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                             @Override
@@ -139,11 +138,11 @@ public class NotificationPage extends Activity {
 
         }
 
-        ArrayList<HashMap<String, String>> friendRequests = user.getFriendRequests();
+        ArrayList<FriendRequest> friendRequests = user.getFriendRequests();
 
-        for (final HashMap<String, String> friendRequest: friendRequests) {
-            if (friendRequest.get("demande").equals("true")) {
-                if (friendRequest.get("pending").equals("true")) {
+        for (final FriendRequest friendRequest: friendRequests) {
+            if (friendRequest.getDemande()) {
+                if (friendRequest.getPending()) {
                     addButtonFriendRequestSent(friendRequest);
                 } else {
                     addButtonFriendRequestAccepted(friendRequest);
@@ -154,16 +153,14 @@ public class NotificationPage extends Activity {
         }
     }
 
-    private void addButtonFriendRequestSent(final HashMap<String, String> friendRequest){
+    private void addButtonFriendRequestSent(final FriendRequest friendRequest){
         final Context context = this;
         final Button newButton = new Button(context);
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
-        final Globals globalVariables = (Globals) getApplicationContext();
 
-
-        newButton.setText("Vous avez envoyé une demande d'ami à: " + friendRequest.get("username"));
+        newButton.setText("Vous avez envoyé une demande d'ami à: " + friendRequest.getUsername());
         newButton.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -178,7 +175,7 @@ public class NotificationPage extends Activity {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Veux-tu annuler ta demande d'ami à " + friendRequest.get("username"))
+                builder.setMessage("Veux-tu annuler ta demande d'ami à " + friendRequest.getUsername())
                         .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -186,11 +183,11 @@ public class NotificationPage extends Activity {
                                 suppressRequestFromDatabase(friendRequest, false, newButton, true, true);
 
                                 HashMap<String, Object> demandeAccepte = new HashMap<>();
-                                demandeAccepte.put("pending", "false");
-                                demandeAccepte.put("accepte", "true");
+                                demandeAccepte.put("pending", false);
+                                demandeAccepte.put("accepte", true);
 
                                 //On supprime  celle du demandeur
-                                db.collection("Users").document(friendRequest.get("email"))
+                                db.collection("Users").document(friendRequest.getEmail())
                                         .collection("FriendRequests")
                                         .document(userFirebase.getEmail())
                                         .delete()
@@ -217,16 +214,13 @@ public class NotificationPage extends Activity {
         layout.addView(newButton);
     }
 
-    private void addButtonFriendRequestAccepted(final HashMap<String, String> friendRequest){
+    private void addButtonFriendRequestAccepted(final FriendRequest friendRequest){
         final Context context = this;
         final Button newButton = new Button(context);
-        final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
-        final Globals globalVariables = (Globals) getApplicationContext();
 
 
-        newButton.setText(friendRequest.get("username") + " a accepté votre demande !");
+        newButton.setText(friendRequest.getUsername() + " a accepté votre demande !");
         newButton.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -241,7 +235,7 @@ public class NotificationPage extends Activity {
         layout.addView(newButton);
     }
 
-    private void addButtonFriendRequestReceived(final HashMap<String, String> friendRequest){
+    private void addButtonFriendRequestReceived(final FriendRequest friendRequest){
         final Context context = this;
         final Button newButton = new Button(context);
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
@@ -250,8 +244,28 @@ public class NotificationPage extends Activity {
         final Globals globalVariables = (Globals) getApplicationContext();
         final User user = globalVariables.getUser();
 
+        if (!friendRequest.getVu()) {
+            globalVariables.getUserDB().collection("FriendRequests")
+                    .document(friendRequest.getId())
+                    .update("vu", true)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Log.d("Reussi", "update réussi");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Fail", e.getMessage());
+                        }
+                    });
+            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
+        } else {
+            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure_deja_vu));
+        }
 
-        newButton.setText(friendRequest.get("username") + " souhaiterait devenir votre ami !");
+        newButton.setText(friendRequest.getUsername() + " souhaiterait devenir votre ami !");
         newButton.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -261,11 +275,10 @@ public class NotificationPage extends Activity {
         newButton.setPadding(100, 0, 100, 0);
         newButton.setLayoutParams(params);
         newButton.setTextColor(getResources().getColor(R.color.colorTheme));
-        newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
         newButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Veux-tu ajouter " + friendRequest.get("username") + " à tes amis?")
+                builder.setMessage("Veux-tu ajouter " + friendRequest.getUsername() + " à tes amis?")
                         .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -308,11 +321,11 @@ public class NotificationPage extends Activity {
 
 
                                 HashMap<String, Object> demandeAccepte = new HashMap<>();
-                                demandeAccepte.put("pending", "false");
-                                demandeAccepte.put("accepte", "true");
+                                demandeAccepte.put("pending", false);
+                                demandeAccepte.put("accepte", true);
 
                                 //On met à jour celle de notre pote
-                                db.collection("Users").document(friendRequest.get("email"))
+                                db.collection("Users").document(friendRequest.getEmail())
                                         .collection("FriendRequests")
                                         .document(userFirebase.getEmail())
                                         .update(demandeAccepte)
@@ -335,7 +348,7 @@ public class NotificationPage extends Activity {
                                 suppressRequestFromDatabase(friendRequest, false, newButton, true, true);
 
                                 //On supprime  celle du demandeur
-                                db.collection("Users").document(friendRequest.get("email"))
+                                db.collection("Users").document(friendRequest.getEmail())
                                         .collection("FriendRequests")
                                         .document(userFirebase.getEmail())
                                         .delete()
@@ -357,7 +370,7 @@ public class NotificationPage extends Activity {
     }
 
     // Supprime une requete de FriendRequests et ajoute ou non l'ami à notre base de donnée
-    public void suppressRequestFromDatabase(final HashMap<String, String> friendRequest, final Boolean addFriend, final Button newButton, final Boolean showMessage, final Boolean suppressLayout){
+    public void suppressRequestFromDatabase(final FriendRequest friendRequest, final Boolean addFriend, final Button newButton, final Boolean showMessage, final Boolean suppressLayout){
         final Context context = this;
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -367,7 +380,7 @@ public class NotificationPage extends Activity {
 
         db.collection("Users").document(userFirebase.getEmail())
                 .collection("FriendRequests")
-                .document(friendRequest.get("email"))
+                .document(friendRequest.getEmail())
                 .delete()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -375,8 +388,8 @@ public class NotificationPage extends Activity {
                         if (task.isSuccessful()){
                             if(addFriend) {
                                 ArrayList<String> friends = user.getFriends();
-                                if (friends.indexOf(friendRequest.get("email")) == -1) {
-                                    friends.add(friendRequest.get("email"));
+                                if (friends.indexOf(friendRequest.getEmail()) == -1) {
+                                    friends.add(friendRequest.getEmail());
                                     db.collection("Users").document(userFirebase.getEmail())
                                             .update("friends", friends)
                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -429,12 +442,12 @@ public class NotificationPage extends Activity {
         // on ajoute un bouton pour accéder à la partie (/!!!!\ à changer rapidement
         final Button newButton = new Button(this);
 
-        final String repondu = game.getRepondu();
-        final String fini = game.getFini();
+        final Boolean repondu = game.getRepondu();
+        final Boolean fini = game.getFini();
 
-        final String finiOuPas = (repondu.equals("true") && fini.equals("false"))?
+        final String finiOuPas = (repondu && !fini)?
                 "Attends qu'il réponde aux questions !" :
-                (repondu.equals("true") && fini.equals("true")) ?
+                (repondu && fini) ?
                         "regarde les résultats !" : "Réponds aux questions :) ";
 
 
@@ -454,8 +467,29 @@ public class NotificationPage extends Activity {
                         newButton.setPadding(100, 0, 100, 0);
                         newButton.setLayoutParams(params);
                         newButton.setTextColor(getResources().getColor(R.color.colorTheme));
-                        newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
-                        if (repondu.equals("false")) {
+
+                        if (!game.getVu()) {
+                            globalVariables.getUserDB().collection("Games")
+                                    .document(game.getId())
+                                    .update("vu", true)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Log.d("Reussi", "update réussi");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d("Fail", e.getMessage());
+                                        }
+                                    });
+                            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
+                        } else {
+                            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure_deja_vu));
+                        }
+
+                        if (!repondu) {
                             newButton.setOnClickListener(new View.OnClickListener() {
                                 public void onClick(View v) {
                                     globalVariables.setCurrentGame(game);
@@ -463,7 +497,7 @@ public class NotificationPage extends Activity {
                                     startActivity(intent);
                                 }
                             });
-                        } else if (fini.equals("true")) {
+                        } else if (fini) {
                             newButton.setOnClickListener(new View.OnClickListener() {
                                 public void onClick(View v) {
                                     globalVariables.setCurrentGame(game);
@@ -524,9 +558,15 @@ public class NotificationPage extends Activity {
 
 
     private void openPopup() {
+        Globals globalVariables = (Globals) getApplicationContext();
         final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.popup_level_up);
-        Button retour = (Button) findViewById(R.id.retour_popup);
+        Button retour = (Button) dialog.findViewById(R.id.retour_popup);
+        TextView textBravo = (TextView) dialog.findViewById(R.id.bravo_text);
+        textBravo.setText("Bravo !");
+        TextView text = (TextView) dialog.findViewById(R.id.level_up_text);
+        text.setText("Tu passes au niveau " + globalVariables.getUser().getLevel() + " ;)");
         retour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -5,10 +5,12 @@
     <color name="colorPrimaryDark">#ff9918</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorTheme">#ff9918</color>
+    <color name="colorThemeOpacity">#78ff9918</color>
     <color name="white">#FFF</color>
     <color name="black">#000000</color>
     <color name="red">#ff7676</color>
     <color name="green">#00B000</color>
     <color name="grey">#dcdcdc</color>
+    <color name="greyOpacity">#32dcdcdc</color>
 
 </resources>

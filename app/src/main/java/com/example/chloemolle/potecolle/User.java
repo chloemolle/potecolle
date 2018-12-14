@@ -13,8 +13,8 @@ public class User {
     private String classe;
     private String username;
     private ArrayList<String> friends;
-    private ArrayList<String> partiesEnCours;
-    private ArrayList<HashMap<String, String>> friendRequests = new ArrayList<>();
+    private ArrayList<Game> partiesEnCours = new ArrayList<>();
+    private ArrayList<FriendRequest> friendRequests = new ArrayList<>();
     private Integer level;
     private double pointsActuels;
 
@@ -32,19 +32,19 @@ public class User {
         return username;
     }
 
-    public ArrayList<String> getPartiesEnCours() {
+    public ArrayList<Game> getPartiesEnCours() {
         return partiesEnCours;
     }
 
-    public void setPartiesEnCours(ArrayList<String> partiesEnCours) {
+    public void setPartiesEnCours(ArrayList<Game> partiesEnCours) {
         this.partiesEnCours = partiesEnCours;
     }
 
-    public ArrayList<HashMap<String, String>> getFriendRequests() {
+    public ArrayList<FriendRequest> getFriendRequests() {
         return friendRequests;
     }
 
-    public void setFriendRequests(ArrayList<HashMap<String, String>> friendRequests) {
+    public void setFriendRequests(ArrayList<FriendRequest> friendRequests) {
         this.friendRequests = friendRequests;
     }
 

@@ -7,19 +7,35 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.firebase.ui.auth.AuthUI.TAG;
 
 /**
  * Created by chloemolle on 23/10/2018.
@@ -442,12 +458,43 @@ public class QuizPage extends Activity {
 
     }
 
-    public void nextPage(Context c) {
-        Globals globalVariables = (Globals) getApplicationContext();
+    public void nextPage(final Context c) {
+        final Globals globalVariables = (Globals) getApplicationContext();
         Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
         if (currentQuestionNumber == 4) {
-            Intent intent = new Intent(c, FinQuizPage.class);
-            startActivity(intent);
+            final FirebaseFirestore db = FirebaseFirestore.getInstance();
+            final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
+            final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+
+            userDB.collection("Games")
+                    .document(globalVariables.getCurrentGame().getId())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()) {
+                                Game game = task.getResult().toObject(Game.class);
+                                if (game.getFini()) {
+                                    updateUserGame();
+                                    game.setScoreOpponent(game.getScoreOpponent());
+                                    globalVariables.setCurrentQuestionNumero(0);
+                                    Intent intent = new Intent(c, ResultPage.class);
+                                    startActivity(intent);
+                                } else {
+                                    Intent intent = new Intent(c, FinQuizPage.class);
+                                    startActivity(intent);
+                                }
+                            } else {
+                                Log.d("Fail", task.getException().getMessage());
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("fail", e.getMessage());
+                        }
+                    });
         } else {
             globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
             Intent intent = new Intent(c, QuizPage.class);
@@ -458,7 +505,7 @@ public class QuizPage extends Activity {
     private void setProgressBar() {
         Globals globalVariables = (Globals) getApplicationContext();
         ProgressBar pgBar = (ProgressBar) findViewById(R.id.progressBarTimer);
-        if (globalVariables.getCurrentGame().getTimed().equals("false")) {
+        if (!globalVariables.getCurrentGame().getTimed()) {
             pgBar.setVisibility(View.GONE);
         } else {
             pgBar.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
@@ -503,7 +550,6 @@ public class QuizPage extends Activity {
 
     }
 
-
     @Override
     public void onBackPressed(){
         final Globals globalVariables = (Globals) getApplicationContext();
@@ -513,6 +559,96 @@ public class QuizPage extends Activity {
             globalVariables.setCurrentQuestionNumero(globalVariables.getCurrentQuestionNumero() - 1);
             Intent intent = new Intent(this, QuizPage.class);
             startActivity(intent);
+        }
+    }
+
+    public void updateUserGame() {
+        final Globals globalVariables = (Globals) getApplicationContext();
+        ArrayList<String> player1Answers = globalVariables.getCurrentGame().getPlayer1Answers();
+        ArrayList<Question> realAnswers = globalVariables.getCurrentGame().getQuestions();
+
+        Integer score = 0;
+        for (Integer i = 0; i < player1Answers.size(); i++) {
+            String playerAnswer = player1Answers.get(i);
+            Object answer = realAnswers.get(i).getReponse();
+            String realAnswer = "";
+            try {
+                realAnswer = answer.toString();
+            } catch (Exception e) {
+                Log.e("ERROR", "probleme" + realAnswers.get(i));
+            }
+
+            if (playerAnswer.replaceAll("\\s", "").equalsIgnoreCase(realAnswer.replaceAll("\\s", ""))) {
+                score++;
+                globalVariables.getCurrentGame().setReponsesTempsIndexScore(i);
+            }
+        }
+
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
+        final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+        final Integer scoreFinal = score;
+        globalVariables.getCurrentGame().setScore(score.toString());
+        if (!globalVariables.getCurrentGame().getSeul()) {
+
+            Map<String, Object> updateFields = new HashMap<>();
+            updateFields.put("score", scoreFinal.toString());
+            updateFields.put("repondu", true);
+            updateFields.put("vu", true);
+            updateFields.put("reponsesTemps", globalVariables.getCurrentGame().getReponsesTemps());
+
+
+            userDB.collection("Games").document(globalVariables.getCurrentGame().getId())
+                    .update(updateFields)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error updating document", e);
+                        }
+                    });
+
+
+            final Map<String, Object> updateOtherFields = new HashMap<>();
+            updateOtherFields.put("reponsesTempsOpponent", globalVariables.getCurrentGame().getReponsesTemps());
+            updateOtherFields.put("scoreOpponent", scoreFinal.toString());
+            updateOtherFields.put("fini", true);
+            updateOtherFields.put("vu", false);
+
+
+            db.collection("Users")
+                    .document(globalVariables.getCurrentGame().getAdversaire())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                final DocumentReference opponentDB = db.collection("Users").document(document.getId());
+                                opponentDB.collection("Games")
+                                        .document(globalVariables.getCurrentGame().getId())
+                                        .update(updateOtherFields)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Error updating document", e);
+                                            }
+                                        });
+                            }
+
+                        }
+                    });
         }
     }
 

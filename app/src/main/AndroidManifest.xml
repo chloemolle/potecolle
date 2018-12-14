@@ -68,6 +68,9 @@
         <activity android:name=".ConfigureComptePage">
         </activity>
 
+        <activity android:name=".MesPartiesPage">
+        </activity>
+
     </application>
 
 </manifest>

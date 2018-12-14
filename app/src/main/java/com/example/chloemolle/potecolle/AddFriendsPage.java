@@ -94,15 +94,19 @@ public class AddFriendsPage extends Activity {
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                List<DocumentSnapshot> listFriendRequests = task.getResult().getDocuments();
-                                                ArrayList<String> emailFriendRequest = new ArrayList<>();
-                                                for (DocumentSnapshot friendRequest : listFriendRequests) {
-                                                    emailFriendRequest.add(friendRequest.get("email").toString());
-                                                }
-                                                if (friends.indexOf(email) >= 0 || emailFriendRequest.indexOf(email) >= 0) {
-                                                    indexesToRemove.add(arr.indexOf(ami));
+                                                if(task.isSuccessful()) {
+                                                    List<DocumentSnapshot> listFriendRequests = task.getResult().getDocuments();
+                                                    ArrayList<String> emailFriendRequest = new ArrayList<>();
+                                                    for (DocumentSnapshot friendRequest : listFriendRequests) {
+                                                        emailFriendRequest.add(friendRequest.get("email").toString());
+                                                    }
+                                                    if (friends.indexOf(email) >= 0 || emailFriendRequest.indexOf(email) >= 0) {
+                                                        indexesToRemove.add(arr.indexOf(ami));
+                                                    } else {
+                                                        users.add(ami.get("username"));
+                                                    }
                                                 } else {
-                                                    users.add(ami.get("username"));
+                                                    Log.d("Fail", task.getException().getMessage());
                                                 }
                                             }
                                         })
@@ -164,13 +168,13 @@ public class AddFriendsPage extends Activity {
 
 
 
-                                HashMap<String, String> hashMap = new HashMap<String, String>();
+                                HashMap<String, Object> hashMap = new HashMap<>();
                                 hashMap.put("email", userAuth.getEmail());
                                 hashMap.put("username", user.getUsername());
-                                hashMap.put("demande", "false");
-                                hashMap.put("pending", "false");
-                                hashMap.put("accepte", "false");
-                                hashMap.put("vu", "false");
+                                hashMap.put("demande", false);
+                                hashMap.put("pending", false);
+                                hashMap.put("accepte", false);
+                                hashMap.put("vu", false);
 
 
 
@@ -207,13 +211,13 @@ public class AddFriendsPage extends Activity {
 
 
                                 //Fill in your database
-                                HashMap<String, String> addFriendRequest = new HashMap<String, String>();
+                                HashMap<String, Object> addFriendRequest = new HashMap<>();
                                 hashMap.put("email", email);
                                 hashMap.put("username", ami.get("username"));
-                                hashMap.put("demande", "true");
-                                hashMap.put("pending", "true");
-                                hashMap.put("accepte", "false");
-                                hashMap.put("vu", "false");
+                                hashMap.put("demande", true);
+                                hashMap.put("pending", true);
+                                hashMap.put("accepte", false);
+                                hashMap.put("vu", true);
 
 
                                 db.collection("Users").document(userAuth.getEmail())
