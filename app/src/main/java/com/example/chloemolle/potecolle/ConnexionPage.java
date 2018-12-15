@@ -30,6 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +115,9 @@ public class ConnexionPage extends Activity {
                                     Map<String, Object> new_user = new HashMap<>();
                                     new_user.put("classe", "Troisieme");
                                     new_user.put("friends", new ArrayList<String>());
-
+                                    new_user.put("username", email);
+                                    new_user.put("level", 1);
+                                    new_user.put("pointsActuels", 0);
 
                                     db.collection("Users").document(email)
                                             .set(new_user)
