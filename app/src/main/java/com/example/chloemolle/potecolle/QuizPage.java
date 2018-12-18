@@ -66,6 +66,20 @@ public class QuizPage extends Activity {
             setContentView(R.layout.image_qcm_page_layout);
         } else if (currentQuestion.getType().equals("qcm") || currentQuestion.getType().equals("questionInversé")) {
             setContentView(R.layout.qcm_page_layout);
+            if (currentQuestionNumber < globalVariables.getCurrentGame().getPlayer1Answers().size()) {
+                ImageButton bouton = (ImageButton) findViewById(R.id.next_quiz);
+                bouton.setAlpha((float) 1.0);
+                bouton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                            globalVariables.setBrouillonText("");
+                            if (globalVariables.getCurrentGame().getTimed()) {
+                                handler.removeCallbacks(runnable);
+                            }
+                            nextPage(v.getContext());
+                    }
+                });
+            }
         } else {
             setContentView(R.layout.quiz_page_layout);
             EditText editText = (EditText) findViewById(R.id.user_answer);
