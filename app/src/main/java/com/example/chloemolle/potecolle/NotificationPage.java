@@ -160,7 +160,7 @@ public class NotificationPage extends Activity {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
 
-        newButton.setText("Vous avez envoyé une demande d'ami à: " + friendRequest.getUsername());
+        newButton.setText(friendRequest.getUsername() + ": demande envoyé !");
         newButton.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -448,7 +448,7 @@ public class NotificationPage extends Activity {
         final String finiOuPas = (repondu && !fini)?
                 "Attends qu'il réponde aux questions !" :
                 (repondu && fini) ?
-                        "regarde les résultats !" : "Réponds aux questions :) ";
+                        "Regarde les résultats !" : "Réponds aux questions :) ";
 
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
