@@ -12,6 +12,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -43,6 +45,9 @@ import static com.firebase.ui.auth.AuthUI.TAG;
 
 public class QuizPage extends Activity {
 
+    private Handler handler;
+    private Runnable runnable;
+    private Boolean enteredToBackground = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,19 +74,19 @@ public class QuizPage extends Activity {
             }
         }
 
-        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+        if (globalVariables.getCurrentGame().getTimed()) {
             ImageButton boutonPrecedent = (ImageButton) findViewById(R.id.retour_precedent_quiz);
             boutonPrecedent.setVisibility(View.GONE);
         }
 
         final ProgressBar pgBar = (ProgressBar) findViewById(R.id.progressBarTimer);
-        final Handler handler = new Handler();
+        this.handler = new Handler();
         final int delay = 1000; //milliseconds
 
         final EditText userAnswer = (EditText) findViewById(R.id.user_answer);
 
-        final Runnable runnable = new Runnable(){
-            public void run(){
+        this.runnable = new Runnable() {
+            public void run() {
                 //do something
                 globalVariables.setTmpTime(globalVariables.getTmpTime() - 1);
                 if (globalVariables.getTmpTime() == 0) {
@@ -109,12 +114,12 @@ public class QuizPage extends Activity {
             }
         };
 
-        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
-            handler.postDelayed(runnable, delay);
+        if (globalVariables.getCurrentGame().getTimed()) {
+            this.handler.postDelayed(this.runnable, delay);
         }
 
 
-        if (currentQuestion.getType().toString().contains("image")){
+        if (currentQuestion.getType().toString().contains("image")) {
             setRetourButton();
             setProgressBar();
 
@@ -122,7 +127,7 @@ public class QuizPage extends Activity {
             boutonBrouillon.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), EcriturePage.class);
-                    if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+                    if (globalVariables.getCurrentGame().getTimed()) {
                         handler.removeCallbacks(runnable);
                     }
                     startActivity(intent);
@@ -142,7 +147,7 @@ public class QuizPage extends Activity {
                         globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
                         globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
                         globalVariables.setTmpTime(30);
-                        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+                        if (globalVariables.getCurrentGame().getTimed()) {
                             handler.removeCallbacks(runnable);
                         }
                         nextPage(v.getContext());
@@ -183,7 +188,7 @@ public class QuizPage extends Activity {
                         if (userAnswerText.isEmpty()) {
                             return;
                         }
-                        qcmNext(userAnswerText, handler,runnable, v.getContext(), prop1);
+                        qcmNext(userAnswerText, handler, runnable, v.getContext(), prop1);
                     }
                 });
 
@@ -204,7 +209,7 @@ public class QuizPage extends Activity {
                         if (userAnswerText.isEmpty()) {
                             return;
                         }
-                        qcmNext(userAnswerText, handler,runnable, v.getContext(), prop2);
+                        qcmNext(userAnswerText, handler, runnable, v.getContext(), prop2);
                     }
                 });
 
@@ -225,7 +230,7 @@ public class QuizPage extends Activity {
                         if (userAnswerText.isEmpty()) {
                             return;
                         }
-                        qcmNext(userAnswerText, handler,runnable, v.getContext(), prop3);
+                        qcmNext(userAnswerText, handler, runnable, v.getContext(), prop3);
                     }
                 });
 
@@ -247,7 +252,7 @@ public class QuizPage extends Activity {
                         if (userAnswerText.isEmpty()) {
                             return;
                         }
-                        qcmNext(userAnswerText, handler,runnable, v.getContext(), prop4);
+                        qcmNext(userAnswerText, handler, runnable, v.getContext(), prop4);
                     }
                 });
             }
@@ -260,7 +265,7 @@ public class QuizPage extends Activity {
             boutonBrouillon.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), EcriturePage.class);
-                    if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+                    if (globalVariables.getCurrentGame().getTimed()) {
                         handler.removeCallbacks(runnable);
                     }
                     startActivity(intent);
@@ -295,7 +300,7 @@ public class QuizPage extends Activity {
                     if (userAnswerText.isEmpty()) {
                         return;
                     }
-                    qcmNext(userAnswerText, handler,runnable, v.getContext(), prop1);
+                    qcmNext(userAnswerText, handler, runnable, v.getContext(), prop1);
 
                 }
             });
@@ -317,7 +322,7 @@ public class QuizPage extends Activity {
                     if (userAnswerText.isEmpty()) {
                         return;
                     }
-                    qcmNext(userAnswerText, handler,runnable, v.getContext(), prop2);
+                    qcmNext(userAnswerText, handler, runnable, v.getContext(), prop2);
 
                 }
             });
@@ -339,7 +344,7 @@ public class QuizPage extends Activity {
                     if (userAnswerText.isEmpty()) {
                         return;
                     }
-                    qcmNext(userAnswerText, handler,runnable, v.getContext(), prop3);
+                    qcmNext(userAnswerText, handler, runnable, v.getContext(), prop3);
 
                 }
             });
@@ -362,7 +367,7 @@ public class QuizPage extends Activity {
                     if (userAnswerText.isEmpty()) {
                         return;
                     }
-                    qcmNext(userAnswerText, handler,runnable, v.getContext(), prop4);
+                    qcmNext(userAnswerText, handler, runnable, v.getContext(), prop4);
                 }
             });
 
@@ -383,7 +388,7 @@ public class QuizPage extends Activity {
             boutonBrouillon.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     globalVariables.setReponseText(userAnswer.getText().toString());
-                    if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+                    if (globalVariables.getCurrentGame().getTimed()) {
                         handler.removeCallbacks(runnable);
                     }
                     Intent intent = new Intent(v.getContext(), EcriturePage.class);
@@ -404,7 +409,7 @@ public class QuizPage extends Activity {
                     globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
                     globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
                     globalVariables.setTmpTime(30);
-                    if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+                    if (globalVariables.getCurrentGame().getTimed()) {
                         handler.removeCallbacks(runnable);
                     }
                     nextPage(v.getContext());
@@ -423,7 +428,7 @@ public class QuizPage extends Activity {
                     globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
                     globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
                     globalVariables.setTmpTime(30);
-                    if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+                    if (globalVariables.getCurrentGame().getTimed()) {
                         handler.removeCallbacks(runnable);
                     }
                     nextPage(v.getContext());
@@ -439,7 +444,7 @@ public class QuizPage extends Activity {
         final Globals globalVariables = (Globals) getApplicationContext();
         ImageButton bouton = (ImageButton) findViewById(R.id.retour_precedent_quiz);
         final Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
-        if(currentQuestionNumber == 0) {
+        if (currentQuestionNumber == 0) {
             bouton.setAlpha((float) 0.5);
         }
         if (currentQuestionNumber > 0) {
@@ -462,39 +467,44 @@ public class QuizPage extends Activity {
         final Globals globalVariables = (Globals) getApplicationContext();
         Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
         if (currentQuestionNumber == 4) {
-            final FirebaseFirestore db = FirebaseFirestore.getInstance();
-            final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-            final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+            if(globalVariables.getCurrentGame().getSeul()) {
+                Intent intent = new Intent(c, FinQuizPage.class);
+                startActivity(intent);
+            } else {
+                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
+                final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
 
-            userDB.collection("Games")
-                    .document(globalVariables.getCurrentGame().getId())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()) {
-                                Game game = task.getResult().toObject(Game.class);
-                                if (game.getFini()) {
-                                    updateUserGame();
-                                    game.setScoreOpponent(game.getScoreOpponent());
-                                    globalVariables.setCurrentQuestionNumero(0);
-                                    Intent intent = new Intent(c, ResultPage.class);
-                                    startActivity(intent);
+                userDB.collection("Games")
+                        .document(globalVariables.getCurrentGame().getId())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    Game game = task.getResult().toObject(Game.class);
+                                    if (game.getFini()) {
+                                        updateUserGame();
+                                        game.setScoreOpponent(game.getScoreOpponent());
+                                        globalVariables.setCurrentQuestionNumero(0);
+                                        Intent intent = new Intent(c, ResultPage.class);
+                                        startActivity(intent);
+                                    } else {
+                                        Intent intent = new Intent(c, FinQuizPage.class);
+                                        startActivity(intent);
+                                    }
                                 } else {
-                                    Intent intent = new Intent(c, FinQuizPage.class);
-                                    startActivity(intent);
+                                    Log.d("Fail", task.getException().getMessage());
                                 }
-                            } else {
-                                Log.d("Fail", task.getException().getMessage());
                             }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("fail", e.getMessage());
-                        }
-                    });
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d("fail", e.getMessage());
+                            }
+                        });
+            }
         } else {
             globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
             Intent intent = new Intent(c, QuizPage.class);
@@ -543,7 +553,7 @@ public class QuizPage extends Activity {
 
         prop.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
         prop.setTextColor(getResources().getColor(R.color.white));
-        if (globalVariables.getCurrentGame().getTimed().equals("true")) {
+        if (globalVariables.getCurrentGame().getTimed()) {
             handler.removeCallbacks(runnable);
         }
         nextPage(context);
@@ -551,9 +561,9 @@ public class QuizPage extends Activity {
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         final Globals globalVariables = (Globals) getApplicationContext();
-        if (!globalVariables.getCurrentGame().getTimed().equals("true")) {
+        if (!globalVariables.getCurrentGame().getTimed()) {
             globalVariables.setReponseText("");
             globalVariables.setBrouillonText("");
             globalVariables.setCurrentQuestionNumero(globalVariables.getCurrentQuestionNumero() - 1);
@@ -651,6 +661,49 @@ public class QuizPage extends Activity {
                     });
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        this.enteredToBackground = true;
+        final Globals globalVariables = (Globals) getApplicationContext();
+        if (globalVariables.getCurrentGame().getTimed()) {
+            if (this.handler != null) {
+                this.handler.removeCallbacks(this.runnable);
+            }
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        final Globals globalVariables = (Globals) getApplicationContext();
+        if (globalVariables.getCurrentGame().getTimed() && enteredToBackground) {
+            Intent intent = new Intent(this, MainPage.class);
+            startActivity(intent);
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.toast,
+                    (ViewGroup) findViewById(R.id.custom_toast_container));
+
+            TextView text = (TextView) layout.findViewById(R.id.text);
+
+            if(globalVariables.getCurrentGame().getSeul()) {
+                text.setText(R.string.stop_partie_seul);
+            } else {
+                text.setText(R.string.stop_partie);
+            }
+
+            Toast toast = new Toast(getApplicationContext());
+            toast.setGravity(Gravity.BOTTOM, 0, 0);
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.setView(layout);
+            toast.show();
+
+        }
+        this.enteredToBackground = false;
+    }
+
 
 
 }

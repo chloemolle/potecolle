@@ -10,6 +10,7 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -53,13 +54,14 @@ public class MainPage extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_page_layout);
-
-        final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Globals globalVariables = (Globals) getApplicationContext();
 
+        final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final String userEmail = userFirebase.getEmail();
         globalVariables.setUserDB(db.collection("Users").document(userEmail));
+
+
 
         final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layout_parametre);
 
@@ -72,6 +74,17 @@ public class MainPage extends Activity {
                 if (linearLayout.getVisibility() == View.GONE) {
                     linearLayout.setVisibility(View.VISIBLE);
                 } else {
+                    linearLayout.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
+        ConstraintLayout constraintLayout = (ConstraintLayout) findViewById(R.id.layout_main_background);
+        constraintLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (linearLayout.getVisibility() == View.VISIBLE) {
                     linearLayout.setVisibility(View.GONE);
                 }
             }
@@ -133,21 +146,22 @@ public class MainPage extends Activity {
 
 
         if(globalVariables.getUser() == null) {
-            this.handler = new Handler();
-            final int delay = 30000; //milliseconds
             getUserInfo(true);
-            final Context self = this;
-            this.runnable = new Runnable(){
-                public void run() {
-                    getUserInfo(false);
-                    handler.postDelayed(this, delay);
-                }
-            };
-
-            handler.postDelayed(runnable, delay);
         } else {
             getUserInfo(false);
         }
+        this.handler = new Handler();
+        final int delay = 30000; //milliseconds
+        final Context self = this;
+        this.runnable = new Runnable(){
+            public void run() {
+                getUserInfo(false);
+                handler.postDelayed(this, delay);
+            }
+        };
+
+        handler.postDelayed(runnable, delay);
+
     }
 
     private void setButtonNotification() {
@@ -234,7 +248,14 @@ public class MainPage extends Activity {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Globals globalVariables = (Globals) getApplicationContext();
 
-        final DocumentReference userDB = globalVariables.getUserDB();
+        final DocumentReference userDB;
+        if (globalVariables.getUserDB() == null) {
+            final String userEmail = userFirebase.getEmail();
+            userDB = db.collection("Users").document(userEmail);
+            globalVariables.setUserDB(userDB);
+        } else {
+            userDB = globalVariables.getUserDB();
+        }
 
         userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -532,6 +553,32 @@ public class MainPage extends Activity {
         globalVariables.setTest(new Long(0));
         if (handler != null) {
             handler.removeCallbacks(runnable);
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.toast,
+                    (ViewGroup) findViewById(R.id.custom_toast_container));
+
+            TextView text = (TextView) layout.findViewById(R.id.text);
+            text.setText("Tout va bien");
+
+            Toast toast = new Toast(getApplicationContext());
+            toast.setGravity(Gravity.BOTTOM, 0, 0);
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.setView(layout);
+            toast.show();
+        } else {
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.toast,
+                    (ViewGroup) findViewById(R.id.custom_toast_container));
+
+            TextView text = (TextView) layout.findViewById(R.id.text);
+            text.setText("probleme de handler");
+
+            Toast toast = new Toast(getApplicationContext());
+            toast.setGravity(Gravity.BOTTOM, 0, 0);
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.setView(layout);
+            toast.show();
+
         }
     }
 
