@@ -34,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 import static com.firebase.ui.auth.AuthUI.TAG;
@@ -88,7 +89,7 @@ public class ChoixSujetPage extends Activity {
         final Context context = this;
 
 
-        ArrayList<String> data = new ArrayList<String>();
+        ArrayList<String> data = new ArrayList<>();
         data.add(globalVariables.getUser().getClasse());
         data.add(globalVariables.getCurrentGame().getMatiere());
 
@@ -144,8 +145,18 @@ public class ChoixSujetPage extends Activity {
         newButton.setTextColor(getResources().getColor(R.color.white));
         newButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), ChoixAmiPage.class);
+                Intent intent;
+                if (globalVariables.getCurrentGame().getRevanche()) {
+                    intent = new Intent(v.getContext(), ChoixTimer.class);
+                } else {
+                    intent = new Intent(v.getContext(), ChoixAmiPage.class);
+                }
                 globalVariables.getCurrentGame().setSujet(name_sujet);
+                Date date = new Date();
+                Long tmp = date.getTime();
+                final String id = tmp.toString();
+                globalVariables.getCurrentGame().setId(id);
+
 
                 //Creation des questions pour le quiz
                 db.collection(classe).document(matiere).collection(name_sujet).get()

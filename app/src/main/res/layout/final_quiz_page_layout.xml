@@ -62,18 +62,17 @@
         android:id="@+id/retour_main_page"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/button_with_radius"
         android:text="@string/retourMain"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scroll_view_response"
-        app:layout_constraintVertical_bias="0.498" />
+        app:layout_constraintVertical_bias="1.0" />
+
 
     <TextView
         android:id="@+id/text_reviens_plus_tard"

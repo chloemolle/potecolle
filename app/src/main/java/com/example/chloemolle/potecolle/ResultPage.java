@@ -54,6 +54,15 @@ public class ResultPage extends Activity {
         ArrayList<Integer> reponsesTempsOpponent = game.getReponsesTempsOpponent();
         ArrayList<Integer> reponsesTemps = game.getReponsesTemps();
 
+        Button revanche = (Button) findViewById(R.id.revanche);
+        revanche.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                globalVariables.setCurrentGame(new Game(globalVariables.getUser().getUsername(), globalVariables.getCurrentGame().getPlayer2(), globalVariables.getCurrentGame().getAdversaire(), globalVariables.getUser().getClasse(), true));
+                Intent intent = new Intent(v.getContext(), ChoixMatierePage.class);
+                startActivity(intent);
+            }
+        });
+
 
         String quiAGagne = "";
         String diffSeconds = "";

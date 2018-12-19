@@ -27,6 +27,7 @@ public class Game {
     private String classe;
     private Boolean repondu;
     private Boolean fini;
+    private Boolean revanche = false;
     private ArrayList<Question> questions= new ArrayList<>();
     private ArrayList<String> questionsId;
     private ArrayList<Integer> reponsesTemps = new ArrayList<>();
@@ -47,6 +48,14 @@ public class Game {
     public Game (String _player1, String _classe) {
         this.player1 = _player1;
         this.classe = _classe;
+    }
+
+    public Game (String _player1, String _player2, String _player2Email, String _classe, Boolean _revanche) {
+        this.player1 = _player1;
+        this.classe = _classe;
+        this.player2 = _player2;
+        this.adversaire = _player2Email;
+        this.revanche = _revanche;
     }
 
     public Game (String _player1, String _player2, String _classe, String _matiere, String _sujet) {
@@ -300,5 +309,13 @@ public class Game {
 
     public void setScoreOpponent(String scoreOpponent) {
         this.scoreOpponent = scoreOpponent;
+    }
+
+    public Boolean getRevanche() {
+        return revanche;
+    }
+
+    public void setRevanche(Boolean revanche) {
+        this.revanche = revanche;
     }
 }

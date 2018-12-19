@@ -515,6 +515,13 @@ public class MainPage extends Activity {
 
 
     @Override
+    public void finish(){
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    @Override
     public void onBackPressed(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         final Context context = this;
@@ -552,7 +559,7 @@ public class MainPage extends Activity {
         globalVariables.setTmpTime(0);
         globalVariables.setTest(new Long(0));
         if (handler != null) {
-            handler.removeCallbacks(runnable);
+            handler.removeCallbacksAndMessages(null);
             LayoutInflater inflater = getLayoutInflater();
             View layout = inflater.inflate(R.layout.toast,
                     (ViewGroup) findViewById(R.id.custom_toast_container));

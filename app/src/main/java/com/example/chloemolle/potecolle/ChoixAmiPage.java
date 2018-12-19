@@ -98,11 +98,6 @@ public class ChoixAmiPage extends Activity {
                 globalVariables.getCurrentGame().setPlayer2("");
                 globalVariables.getCurrentGame().setAdversaire("");
                 globalVariables.getCurrentGame().setSeul(true);
-                Date date = new Date();
-                Long tmp = date.getTime();
-                final String id = tmp.toString();
-                globalVariables.getCurrentGame().setId(id);
-
                 startActivity(intent);
             }
         });
@@ -164,11 +159,6 @@ public class ChoixAmiPage extends Activity {
                 Intent intent = new Intent(v.getContext(), ChoixTimer.class);
                 globalVariables.getCurrentGame().setPlayer2(name);
                 globalVariables.getCurrentGame().setAdversaire(email);
-                Date date = new Date();
-                Long tmp = date.getTime();
-                final String id = tmp.toString();
-                globalVariables.getCurrentGame().setId(id);
-
                 startActivity(intent);
             }
         });
