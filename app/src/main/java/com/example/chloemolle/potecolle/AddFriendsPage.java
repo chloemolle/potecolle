@@ -1,6 +1,7 @@
 package com.example.chloemolle.potecolle;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -43,21 +44,25 @@ import static com.firebase.ui.auth.AuthUI.TAG;
 
 public class AddFriendsPage extends Activity {
 
+    private FirebaseFirestore db;
+    private FirebaseUser userAuth;
+    private ArrayAdapter<String> users;
+    private Globals globalVariables;
+
     @Override
     public void onCreate(Bundle bundle){
         super.onCreate(bundle);
         setContentView(R.layout.add_friends_page_layout);
+        this.db = FirebaseFirestore.getInstance();
+        this.userAuth = FirebaseAuth.getInstance().getCurrentUser();
+        this.users = new ArrayAdapter<>(this, R.layout.layout_text_view);
+        this.globalVariables = (Globals) getApplicationContext();
 
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-        final ArrayAdapter<String> users = new ArrayAdapter<String>(this, R.layout.layout_text_view);
-        final Globals globalVariables = (Globals) getApplicationContext();
+        setSearchFriends();
+        getUsers();
+    }
 
-
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBarAddFriends);
-        progressBar.setVisibility(View.VISIBLE);
-
-
+    public void setSearchFriends() {
         SearchView searchView = (SearchView) findViewById(R.id.add_friends_search);
         searchView.setQueryHint("Chercher un ami");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -68,12 +73,15 @@ public class AddFriendsPage extends Activity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
                 users.getFilter().filter(newText);
-
                 return false;
             }
         });
+    }
+
+    public void getUsers(){
+        final ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarAddFriends);
+        progressBar.setVisibility(View.VISIBLE);
 
         FirebaseFunctions mFunctions = FirebaseFunctions.getInstance();
         mFunctions
@@ -82,168 +90,127 @@ public class AddFriendsPage extends Activity {
                 .continueWith(new Continuation<HttpsCallableResult, String>() {
                     @Override
                     public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                        final ArrayList<HashMap<String, String>> arr = (ArrayList<HashMap<String, String>>) task.getResult().getData();
-                        final ArrayList<Integer> indexesToRemove = new ArrayList<>();
-                        for (final HashMap<String, String> ami : arr) {
-                            final String email = ami.get("email");
-                            if (!userAuth.getEmail().equals(email)) {
-                                final ArrayList<String> friends = globalVariables.getUser().getFriends();
-                                db.collection("Users").document(userAuth.getEmail())
-                                        .collection("FriendRequests")
-                                        .get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if(task.isSuccessful()) {
-                                                    List<DocumentSnapshot> listFriendRequests = task.getResult().getDocuments();
-                                                    ArrayList<String> emailFriendRequest = new ArrayList<>();
-                                                    for (DocumentSnapshot friendRequest : listFriendRequests) {
-                                                        emailFriendRequest.add(friendRequest.get("email").toString());
-                                                    }
-                                                    if (friends.indexOf(email) >= 0 || emailFriendRequest.indexOf(email) >= 0) {
-                                                        indexesToRemove.add(arr.indexOf(ami));
-                                                    } else {
-                                                        users.add(ami.get("username"));
-                                                    }
-                                                } else {
-                                                    Log.d("Fail", task.getException().getMessage());
-                                                }
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.d("Fail", e.getMessage());
-                                                if (!userAuth.getEmail().equals(email)) {
-                                                    if (friends.indexOf(email) >= 0) {
-                                                        indexesToRemove.add(arr.indexOf(ami));
-                                                    } else {
-                                                        users.add(ami.get("username"));
-                                                    }
-                                                } else {
-                                                    indexesToRemove.add(arr.indexOf(ami));
-                                                }
-                                            }
-                                        });
-                            } else {
-                                indexesToRemove.add(arr.indexOf(ami));
-
-                            }
-                        }
-                        for (Integer indexToRemove: indexesToRemove) {
-                            arr.remove(arr.get(indexToRemove));
-                        }
-                        final ArrayList<HashMap<String, String>> newArr = arr;
-                        final ListView listView = (ListView) findViewById(R.id.add_friends_list);
-                        listView.setAdapter(users);
-                        progressBar.setVisibility(View.GONE);
-                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-
-                                final View view = v;
-                                // Fill in the friend database
-                                HashMap<String, String> ami = newArr.get(position);
-                                String email = ami.get("email");
-                                User user = globalVariables.getUser();
-
-                                ArrayList<String> friends = user.getFriends();
-                                if (friends.indexOf(email) == -1) {
-                                    HashMap<String, Object> updateUser = new HashMap<>();
-                                    updateUser.put("friends", friends);
-                                    friends.add(email);
-                                    db.collection("Users").document(userAuth.getEmail())
-                                            .update(updateUser)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        Log.d("Success", "friend added");
-                                                    } else {
-                                                        Log.d("Error", task.getException().getMessage());
-                                                    }
-                                                }
-                                            });
-                                }
-
-
-
-                                HashMap<String, Object> hashMap = new HashMap<>();
-                                hashMap.put("email", userAuth.getEmail());
-                                hashMap.put("username", user.getUsername());
-                                hashMap.put("demande", false);
-                                hashMap.put("pending", false);
-                                hashMap.put("accepte", false);
-                                hashMap.put("vu", false);
-
-
-
-                                db.collection("Users").document(email)
-                                        .collection("FriendRequests")
-                                        .document(userAuth.getEmail())
-                                        .set(hashMap)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Log.d(TAG, "DocumentSnapshot successfully written!");
-                                                LayoutInflater inflater = getLayoutInflater();
-                                                View layout = inflater.inflate(R.layout.toast,
-                                                        (ViewGroup) findViewById(R.id.custom_toast_container));
-
-                                                TextView text = (TextView) layout.findViewById(R.id.text);
-                                                text.setText(R.string.demande_envoye);
-
-                                                Toast toast = new Toast(getApplicationContext());
-                                                toast.setGravity(Gravity.BOTTOM, 0, 0);
-                                                toast.setDuration(Toast.LENGTH_LONG);
-                                                toast.setView(layout);
-                                                toast.show();
-                                                Intent intent = new Intent(view.getContext(), MainPage.class);
-                                                startActivity(intent);
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w(TAG, "Error writing document", e);
-                                            }
-                                        });
-
-
-                                //Fill in your database
-                                HashMap<String, Object> addFriendRequest = new HashMap<>();
-                                hashMap.put("email", email);
-                                hashMap.put("username", ami.get("username"));
-                                hashMap.put("demande", true);
-                                hashMap.put("pending", true);
-                                hashMap.put("accepte", false);
-                                hashMap.put("vu", true);
-
-
-                                db.collection("Users").document(userAuth.getEmail())
-                                        .collection("FriendRequests")
-                                        .document(email)
-                                        .set(hashMap)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Log.w(TAG, "Friend request added to your database");
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w(TAG, "Error writing document", e);
-                                            }
-                                        });
-
-                            }
-                        });
-
+                        dealWithUsers(task, progressBar);
                         return "";
                     }
                 });
 
-
     }
+
+    public void dealWithUsers(Task<HttpsCallableResult> task, final ProgressBar progressBar){
+
+        final ArrayList<HashMap<String, String>> arr = (ArrayList<HashMap<String, String>>) task.getResult().getData();
+
+        for (final HashMap<String, String> ami : arr) {
+            if (dealWithOneUser(ami)) {
+                arr.remove(ami);
+            }
+        }
+
+        final ListView listView = (ListView) findViewById(R.id.add_friends_list);
+        listView.setAdapter(users);
+        progressBar.setVisibility(View.GONE);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+
+                final View view = v;
+                // Fill in the friend database
+                HashMap<String, String> ami = arr.get(position);
+                String email = ami.get("email");
+                User user = globalVariables.getUser();
+
+                ArrayList<String> friends = user.getFriends();
+
+                //On vérifie encore qu'il n'est pas dans nos potes
+                if (friends.indexOf(email) == -1) {
+                    HashMap<String, Object> updateUser = new HashMap<>();
+                    friends.add(email);
+                    updateUser.put("friends", friends);
+                    //On l'ajoute à nos amis
+                    db.collection("Users").document(userAuth.getEmail())
+                            .update(updateUser)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d("Success", "friend added");
+                                    } else {
+                                        Log.d("Error", task.getException().getMessage());
+                                    }
+                                }
+                            });
+                }
+
+
+                //On met à jour la friendRequest de notre ami et la notre
+                fillDatabase(email, userAuth.getEmail(), user.getUsername(), false, false, false, false, getApplicationContext(), getResources().getString(R.string.demande_envoye));
+                fillDatabase(userAuth.getEmail(), email, ami.get("username"), true, true, false, true, getApplicationContext(), "");
+
+
+            }
+        });
+    }
+
+    public Boolean dealWithOneUser(final HashMap<String, String> ami){
+        final String email = ami.get("email");
+        //Si l'ami n'est pas nous même
+        if (!userAuth.getEmail().equals(email)) {
+            final ArrayList<String> friends = globalVariables.getUser().getFriends();
+            ArrayList<FriendRequest> listFriendRequests = globalVariables.getUser().getFriendRequests();
+            ArrayList<String> emailFriendRequest = new ArrayList<>();
+            for (FriendRequest friendRequest : listFriendRequests) {
+                emailFriendRequest.add(friendRequest.getEmail());
+            }
+            if (friends.indexOf(email) >= 0 || emailFriendRequest.indexOf(email) >= 0) {
+                return true;
+            } else {
+                users.add(ami.get("username"));
+                return false;
+            }
+
+        } else {
+            // On l'enlève parce que c'est nous même
+            return true;
+        }
+    }
+
+    public void fillDatabase(String monEmail, String emailAdv, String username, Boolean demande, Boolean pending, Boolean accepte, Boolean vu, final Context context, final String forToast) {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("email", emailAdv);
+        hashMap.put("username", username);
+        hashMap.put("demande", demande);
+        hashMap.put("pending", pending);
+        hashMap.put("accepte", accepte);
+        hashMap.put("vu", vu);
+
+        db.collection("Users").document(monEmail)
+                .collection("FriendRequests")
+                .document(emailAdv)
+                .set(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+
+                        if (!forToast.equals("")) {
+                            LayoutInflater inflater = getLayoutInflater();
+                            View layout = inflater.inflate(R.layout.toast,
+                                    (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                            Globals.makeToast(forToast, layout, getApplicationContext());
+                        }
+                        Intent intent = new Intent(context, MainPage.class);
+                        startActivity(intent);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+    }
+
+
 }

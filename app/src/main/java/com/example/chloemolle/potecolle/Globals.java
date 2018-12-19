@@ -1,6 +1,13 @@
 package com.example.chloemolle.potecolle;
 
 import android.app.Application;
+import android.content.Context;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.DocumentReference;
 
@@ -97,6 +104,20 @@ public class Globals extends Application {
 
     public void setUserDB(DocumentReference userDB) {
         this.userDB = userDB;
+    }
+
+
+    public static void makeToast(String textAAfficher, View layout, Context context) {
+
+        TextView text = (TextView) layout.findViewById(R.id.text);
+        text.setText(textAAfficher);
+
+        Toast toast = new Toast(context);
+        toast.setGravity(Gravity.BOTTOM, 0, 0);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
+
     }
 
 }

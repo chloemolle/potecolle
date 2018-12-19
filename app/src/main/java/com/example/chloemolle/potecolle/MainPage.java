@@ -144,12 +144,8 @@ public class MainPage extends Activity {
 
         setButtonVoirMesParties();
 
+        getUserInfo(globalVariables.getUser() == null);
 
-        if(globalVariables.getUser() == null) {
-            getUserInfo(true);
-        } else {
-            getUserInfo(false);
-        }
         this.handler = new Handler();
         final int delay = 30000; //milliseconds
         final Context self = this;
