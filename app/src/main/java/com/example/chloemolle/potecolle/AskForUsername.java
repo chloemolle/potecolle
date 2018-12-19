@@ -43,38 +43,25 @@ import java.util.Map;
 
 public class AskForUsername extends Activity {
 
-
     @Override
     public void onBackPressed(){
     }
-
 
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.ask_for_username_page);
 
-        final Spinner choixClasse = (Spinner) findViewById(R.id.spinner_classe);
-        ArrayAdapter<CharSequence> adapterFamily = ArrayAdapter.createFromResource(this,
-                R.array.classes, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapterFamily.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        choixClasse.setAdapter(adapterFamily);
-
         final ProgressBar progressBarCheckUsername = (ProgressBar) findViewById(R.id.progress_bar_check_username);
         progressBarCheckUsername.setVisibility(View.GONE);
 
+        final Spinner choixClasse = setSpinner();
 
         Button nextPage = (Button) findViewById(R.id.ok);
         nextPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final EditText text = (EditText) findViewById(R.id.username_text);
-                final String userClass = choixClasse.getSelectedItem().toString();
-                final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
-                final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
                 final Context context = v.getContext();
                 progressBarCheckUsername.setVisibility(View.VISIBLE);
 
@@ -86,37 +73,8 @@ public class AskForUsername extends Activity {
                         .continueWith(new Continuation<HttpsCallableResult, String>() {
                             @Override
                             public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                                final ArrayList<HashMap<String, String>> arr = (ArrayList<HashMap<String, String>>) task.getResult().getData();
-                                final ArrayList<Integer> indexesToRemove = new ArrayList<>();
-                                Boolean alreadyUsed = false;
-                                String username = text.getText().toString();
-                                for (final HashMap<String, String> ami : arr) {
-                                    final String usernameTemp = ami.get("username");
-                                    if (usernameTemp.toLowerCase().trim().equals(username.toLowerCase().trim())) {
-                                        alreadyUsed = true;
-                                        break;
-                                    }
-                                }
-                                if (!alreadyUsed) {
-                                    Map<String, Object> updateUser = new HashMap<>();
-                                    updateUser.put("username", text.getText().toString());
-                                    updateUser.put("classe", userClass);
-                                    updateUser.put("level", 1);
-                                    updateUser.put("pointsActuels", 0);
-
-                                    userDB.update(updateUser)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Log.d("Success", "update ok");
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.d("Failure", "update pas ok");
-                                                }
-                                            });
+                                if (!checkIfAlreadyUsed(task, text)) {
+                                    updateUser(choixClasse);
                                     Intent intent = new Intent(context, MainPage.class);
                                     startActivity(intent);
                                 } else {
@@ -125,13 +83,7 @@ public class AskForUsername extends Activity {
                                     View layout = inflater.inflate(R.layout.toast,
                                             (ViewGroup) findViewById(R.id.custom_toast_container));
 
-                                    TextView text = (TextView) layout.findViewById(R.id.text);
-                                    text.setText(R.string.username_already_used);
-                                    Toast toast = new Toast(getApplicationContext());
-                                    toast.setGravity(Gravity.BOTTOM, 0, 0);
-                                    toast.setDuration(Toast.LENGTH_LONG);
-                                    toast.setView(layout);
-                                    toast.show();
+                                    Globals.makeToast(getResources().getString(R.string.username_already_used), layout, getApplicationContext());
                                 }
                                 return "";
                             }
@@ -139,4 +91,56 @@ public class AskForUsername extends Activity {
             }
         });
     }
+
+    public Boolean checkIfAlreadyUsed(Task<HttpsCallableResult> task, EditText text) {
+        final ArrayList<HashMap<String, String>> arr = (ArrayList<HashMap<String, String>>) task.getResult().getData();
+        String username = text.getText().toString();
+        for (final HashMap<String, String> user : arr) {
+            final String usernameTemp = user.get("username");
+            if (usernameTemp.toLowerCase().trim().equals(username.toLowerCase().trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Spinner setSpinner(){
+        Spinner choixClasse = (Spinner) findViewById(R.id.spinner_classe);
+        ArrayAdapter<CharSequence> adapterFamily = ArrayAdapter.createFromResource(this,
+                R.array.classes, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapterFamily.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        choixClasse.setAdapter(adapterFamily);
+        return choixClasse;
+    }
+
+    public void updateUser(Spinner choixClasse) {
+        final EditText text = (EditText) findViewById(R.id.username_text);
+        final String userClass = choixClasse.getSelectedItem().toString();
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
+        final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
+
+        Map<String, Object> updateUser = new HashMap<>();
+        updateUser.put("username", text.getText().toString());
+        updateUser.put("classe", userClass);
+        updateUser.put("level", 1);
+        updateUser.put("pointsActuels", 0);
+
+        userDB.update(updateUser)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Success", "update ok");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Failure", "update pas ok");
+                    }
+                });
+    }
+
 }
