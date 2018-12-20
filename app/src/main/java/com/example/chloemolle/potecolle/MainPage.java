@@ -147,12 +147,14 @@ public class MainPage extends Activity {
         getUserInfo(globalVariables.getUser() == null);
 
         this.handler = new Handler();
-        final int delay = 30000; //milliseconds
+        final int delay = 100000; //milliseconds
         final Context self = this;
         this.runnable = new Runnable(){
             public void run() {
-                getUserInfo(false);
-                handler.postDelayed(this, delay);
+                Boolean test = getUserInfo(false);
+                if (test) {
+                    handler.postDelayed(this, delay);
+                }
             }
         };
 
@@ -239,19 +241,25 @@ public class MainPage extends Activity {
         });
     }
 
-    private void getUserInfo(final Boolean createUser) {
+    private Boolean getUserInfo(final Boolean createUser) {
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Globals globalVariables = (Globals) getApplicationContext();
 
         final DocumentReference userDB;
-        if (globalVariables.getUserDB() == null) {
-            final String userEmail = userFirebase.getEmail();
-            userDB = db.collection("Users").document(userEmail);
-            globalVariables.setUserDB(userDB);
-        } else {
-            userDB = globalVariables.getUserDB();
+        try {
+            if (globalVariables.getUserDB() == null) {
+                final String userEmail = userFirebase.getEmail();
+                userDB = db.collection("Users").document(userEmail);
+                globalVariables.setUserDB(userDB);
+            } else {
+                userDB = globalVariables.getUserDB();
+            }
+        } catch (Exception e) {
+            Log.d("exception", e.getMessage());
+            return false;
         }
+
 
         userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -260,10 +268,12 @@ public class MainPage extends Activity {
                     //On récupère le nom du joueur
                     final User user;
                     if (createUser) {
+                        Log.d("INFO", "on a bien créé un user");
                         user = documentSnapshot.toObject(User.class);
                         globalVariables.setUser(user);
                     } else {
                         user = globalVariables.getUser();
+                        Log.d("INFO", "on a récupéré un user");
                     }
 
                     //delete friends
@@ -329,8 +339,17 @@ public class MainPage extends Activity {
 
                     //Init view
                     TextView studentName = (TextView) findViewById(R.id.student_name);
-                    String userName = user.getUsername();
-                    studentName.setText("Salut " + userName + " !");
+
+                    try {
+                        String userName = user.getUsername();
+                        studentName.setText("Salut " + userName + " !");
+                    } catch (Exception e) {
+                        Log.d("Exception", e.getMessage());
+                        Log.d("INFO", globalVariables.getUser().getUsername());
+                        Log.d("INFO - CreateUser", createUser.toString());
+
+                    }
+
 
                     TextView level = (TextView) findViewById(R.id.niveau);
                     level.setText("Niveau " + user.getLevel().toString());
@@ -473,6 +492,7 @@ public class MainPage extends Activity {
                 Log.d("Failure", e.getMessage());
             }
         });
+        return true;
 
     }
 

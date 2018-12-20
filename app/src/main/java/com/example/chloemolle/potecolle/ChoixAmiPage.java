@@ -48,6 +48,7 @@ public class ChoixAmiPage extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choix_ami_page_layout);
         final Globals globalVariables = (Globals) getApplicationContext();
+
         User user = globalVariables.getUser();
         ArrayList<String> friends = user.getFriends();
         final LinearLayout layout = (LinearLayout) findViewById(R.id.linear_layout_ami);
@@ -111,7 +112,6 @@ public class ChoixAmiPage extends Activity {
         User user = globalVariables.getUser();
         ArrayList<String> friends = user.getFriends();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final Context context = this;
 
         for (String friend: friends) {
             final String email = friend;

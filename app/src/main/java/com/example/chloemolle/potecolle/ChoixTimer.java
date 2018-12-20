@@ -41,7 +41,6 @@ public class ChoixTimer extends Activity {
         Button boutonOui = (Button) findViewById(R.id.button_timer);
         Button boutonNon = (Button) findViewById(R.id.button_no_timer);
 
-
         boutonOui.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,8 +70,6 @@ public class ChoixTimer extends Activity {
             }
         });
 
-
-
     }
 
     public void setGame(final Boolean isTimer){
@@ -84,114 +81,61 @@ public class ChoixTimer extends Activity {
         final String opponentUsername = currentGame.getAdversaire();
 
         //set game for user
-        userDB.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    //Creating the document
-                    HashMap<String,Object> newGame = new HashMap<>();
-                    newGame.put("timed", currentGame.getTimed());
-                    newGame.put("adversaire", currentGame.getAdversaire());
-                    newGame.put("classe", currentGame.getClasse());
-                    newGame.put("matiere", currentGame.getMatiere());
-                    newGame.put("sujet", currentGame.getSujet());
-                    newGame.put("fini", false);
-                    newGame.put("repondu", false);
-                    newGame.put("id", currentGame.getId());
-                    userDB.collection("Games").document(currentGame.getId())
-                            .set(newGame)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "DocumentSnapshot successfully written!");
-                                    ArrayList<String> questionsId = currentGame.getQuestionsId();
-                                    userDB.collection("Games").document(currentGame.getId())
-                                            .update("questionsId", questionsId)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.w(TAG, "Error updating document", e);
-                                                }
-                                            });
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w(TAG, "Error writing document", e);
-                                }
-                            });
-
-                } else {
-                    Log.d(TAG, "No such document");
-                }
-            }
-        });
+        setGameForOneUser(userAuth.getEmail(), true, currentGame.getAdversaire());
 
         //set game for opponent
-        db.collection("Users")
-                .document(opponentUsername)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            final DocumentReference opponentDB = db.collection("Users").document(document.getId());
-                            //Creating the document
-                            HashMap<String,Object> newGame = new HashMap<>();
-                            newGame.put("timed", currentGame.getTimed());
-                            newGame.put("adversaire", userAuth.getEmail());
-                            newGame.put("classe", currentGame.getClasse());
-                            newGame.put("matiere", currentGame.getMatiere());
-                            newGame.put("sujet", currentGame.getSujet());
-                            newGame.put("fini", false);
-                            newGame.put("repondu", false);
-                            newGame.put("id", currentGame.getId());
-                            newGame.put("vu", false);
-                            opponentDB.collection("Games").document(currentGame.getId())
-                                    .set(newGame)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, "DocumentSnapshot successfully written!");
-                                            Log.d(TAG, "DocumentSnapshot successfully written!");
-                                            ArrayList<String> questionsId = currentGame.getQuestionsId();
-                                            opponentDB.collection("Games").document(currentGame.getId())
-                                                    .update("questionsId", questionsId)
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Log.w(TAG, "Error updating document", e);
-                                                        }
-                                                    });
-
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error writing document", e);
-                                        }
-                                    });
-                        } else {
-                            Log.d(TAG, task.getException().getMessage());
-                        }
-
-                    }
-                });
+        setGameForOneUser(opponentUsername, false, userAuth.getEmail());
     }
 
+    public void setGameForOneUser(final String monMail, final Boolean vu, String adversaire) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Globals globalVariables = (Globals) getApplicationContext();
+        final Game currentGame = globalVariables.getCurrentGame();
+
+        HashMap<String,Object> newGame = new HashMap<>();
+        newGame.put("timed", currentGame.getTimed());
+        newGame.put("adversaire", adversaire);
+        newGame.put("classe", currentGame.getClasse());
+        newGame.put("matiere", currentGame.getMatiere());
+        newGame.put("sujet", currentGame.getSujet());
+        newGame.put("fini", false);
+        newGame.put("repondu", false);
+        newGame.put("vu", vu);
+        newGame.put("id", currentGame.getId());
+
+        db.collection("Users")
+                .document(monMail)
+                .collection("Games")
+                .document(currentGame.getId())
+                .set(newGame)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        ArrayList<String> questionsId = currentGame.getQuestionsId();
+                        db.collection("Users")
+                                .document(monMail).collection("Games").document(currentGame.getId())
+                                .update("questionsId", questionsId)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error updating document", e);
+                                    }
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+
+            }
 }

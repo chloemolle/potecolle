@@ -32,29 +32,6 @@ public class ChoixMatierePage extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choix_matiere_page_layout);
-/*
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-*/
-        // Create a storage reference from our app
-/*
-        StorageReference storageRef = storage.getReference();
-        StorageReference mountainImagesRef = storageRef.child("maths/maths.png");
-        mountainImagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                // Use the bytes to display the image
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-
-                imageButton.setImageBitmap(Bitmap.createScaledBitmap(bmp, imageButton.getWidth(),
-                        imageButton.getHeight(), false));
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-            }
-        });
-*/
 
         final Globals globalVariables = (Globals) getApplicationContext();
         final Button bouton = (Button) findViewById(R.id.maths_button);

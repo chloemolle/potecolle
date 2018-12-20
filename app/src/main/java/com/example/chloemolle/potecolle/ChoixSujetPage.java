@@ -77,8 +77,6 @@ public class ChoixSujetPage extends Activity {
             goWithTheDatabase();
         }
 
-
-
     }
 
     private void goWithTheDatabase(){
@@ -123,16 +121,36 @@ public class ChoixSujetPage extends Activity {
         return;
     }
 
-    private void createButtonWithNameForSubject(String name) {
+    private void createButtonWithNameForSubject(final String name) {
         final LinearLayout layout = (LinearLayout) findViewById(R.id.linear_layout_sujet);
-        final Context context = this;
         final Globals globalVariables = (Globals) getApplicationContext();
-        final String name_sujet = name;
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final String classe = globalVariables.getCurrentGame().getClasse();
-        final String matiere = globalVariables.getCurrentGame().getMatiere();
 
-        Button newButton = new Button(context);
+        Button newButton = createButton(name);
+        newButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent;
+                if (globalVariables.getCurrentGame().getRevanche()) {
+                    intent = new Intent(v.getContext(), ChoixTimer.class);
+                } else {
+                    intent = new Intent(v.getContext(), ChoixAmiPage.class);
+                }
+                globalVariables.getCurrentGame().setSujet(name);
+                Date date = new Date();
+                Long tmp = date.getTime();
+                final String id = tmp.toString();
+                globalVariables.getCurrentGame().setId(id);
+
+                //Creation des questions pour le quiz
+                createQuestion(name);
+                startActivity(intent);
+            }
+        });
+        layout.addView(newButton);
+        return;
+    }
+
+    public Button createButton(String name_sujet) {
+        Button newButton = new Button(this);
         newButton.setText(name_sujet);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -143,116 +161,88 @@ public class ChoixSujetPage extends Activity {
         newButton.setBackground(getResources().getDrawable(R.drawable.button_with_radius));
 
         newButton.setTextColor(getResources().getColor(R.color.white));
-        newButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent;
-                if (globalVariables.getCurrentGame().getRevanche()) {
-                    intent = new Intent(v.getContext(), ChoixTimer.class);
-                } else {
-                    intent = new Intent(v.getContext(), ChoixAmiPage.class);
-                }
-                globalVariables.getCurrentGame().setSujet(name_sujet);
-                Date date = new Date();
-                Long tmp = date.getTime();
-                final String id = tmp.toString();
-                globalVariables.getCurrentGame().setId(id);
-
-
-                //Creation des questions pour le quiz
-                db.collection(classe).document(matiere).collection(name_sujet).get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    ArrayList<Question> questionsQuiz = new ArrayList<>();
-                                    ArrayList<String> questionsQuizId = new ArrayList<>();
-                                    Integer nbQuestionDisponible = task.getResult().size();
-                                    ArrayList<Integer> questionToFetch = new ArrayList<>();
-                                    if (nbQuestionDisponible > 5) {
-                                        Random r = new Random();
-                                        while (questionToFetch.size() != 5) {
-                                            Integer tmp = r.nextInt(nbQuestionDisponible);
-                                            if (questionToFetch.indexOf(tmp) == -1) {
-                                                questionToFetch.add(tmp);
-                                            }
-                                        }
-                                    } else {
-                                        questionToFetch = new ArrayList<>();
-                                        questionToFetch.add(0);
-                                        questionToFetch.add(1);
-                                        questionToFetch.add(2);
-                                        questionToFetch.add(3);
-                                        questionToFetch.add(4);
-                                    }
-                                    Integer index = 0;
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        if (questionToFetch.indexOf(index) != -1) {
-                                            if (questionsQuiz.size() > 0) {
-                                                Random r = new Random();
-                                                Integer randomInt = r.nextInt(questionsQuiz.size());
-                                                final Question question = document.toObject(Question.class);
-                                                if (question.getType().toString().contains("image")){
-                                                    FirebaseStorage storage = FirebaseStorage.getInstance();
-                                                    // Create a storage reference from our app
-                                                    StorageReference storageRef = storage.getReference();
-                                                    StorageReference mountainImagesRef = storageRef.child(question.getImage());
-                                                    mountainImagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                                        @Override
-                                                        public void onSuccess(byte[] bytes) {
-                                                            // Use the bytes to display the image
-                                                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                                            question.setBmp(bmp);
-                                                        }
-                                                    }).addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception exception) {
-                                                            // Handle any errors
-                                                        }
-                                                    });
-                                                }
-                                                ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
-
-                                                if (propositions != null && propositions.size() > 0) {
-                                                    ArrayList<String> propositionsShuffled = new ArrayList<>();
-
-                                                    while (propositions.size() != 0) {
-                                                        int indexProp = (int) Math.floor(Math.random() * propositions.size());
-                                                        propositionsShuffled.add(propositions.get(indexProp));
-                                                        propositions.remove(indexProp);
-                                                    }
-                                                    question.setPropositions(propositionsShuffled);
-                                                }
-
-                                                questionsQuiz.add(randomInt, question);
-                                                questionsQuizId.add(randomInt, document.getId());
-                                            } else {
-                                                Question question = document.toObject(Question.class);
-                                                ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
-                                                question.setPropositions(propositions);
-                                                questionsQuiz.add(question);
-                                                questionsQuizId.add(document.getId());
-                                            }
-                                        }
-                                        index ++;
-                                    }
-                                    globalVariables.getCurrentGame().setQuestions(questionsQuiz);
-                                    globalVariables.getCurrentGame().setQuestionsId(questionsQuizId);
-                                    Log.d("Information", "Voici les questions: " + questionsQuiz.toString());
-                                } else {
-                                    Log.d(TAG, "Error getting documents: ", task.getException());
-                                }
-                            }
-                        });
-
-
-
-
-                startActivity(intent);
-            }
-        });
-        layout.addView(newButton);
-        return;
+        return newButton;
     }
 
+    public void createQuestion(String name_sujet) {
+        final Globals globalVariables = (Globals) getApplicationContext();
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final String classe = globalVariables.getCurrentGame().getClasse();
+        final String matiere = globalVariables.getCurrentGame().getMatiere();
+
+        db.collection(classe).document(matiere).collection(name_sujet).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            ArrayList<Question> questionsQuiz = new ArrayList<>();
+                            ArrayList<String> questionsQuizId = new ArrayList<>();
+                            Integer nbQuestionDisponible = task.getResult().size();
+                            ArrayList<Integer> questionToFetch = new ArrayList<>();
+                            Random r = new Random();
+                            while (questionToFetch.size() != 5) {
+                                Integer tmp = r.nextInt(nbQuestionDisponible);
+                                if (questionToFetch.indexOf(tmp) == -1) {
+                                    questionToFetch.add(tmp);
+                                }
+                            }
+                            Integer index = 0;
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if (questionToFetch.indexOf(index) != -1) {
+                                    final Question question = document.toObject(Question.class);
+                                    if (question.getType().toString().contains("image")){
+                                        getImage(question);
+                                    }
+                                    ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
+
+                                    if (propositions != null && propositions.size() > 0) {
+                                        setPropositions(question, propositions);
+                                    }
+
+                                    questionsQuiz.add(question);
+                                    questionsQuizId.add(document.getId());
+                                }
+                                index ++;
+                            }
+                            globalVariables.getCurrentGame().setQuestions(questionsQuiz);
+                            globalVariables.getCurrentGame().setQuestionsId(questionsQuizId);
+                            Log.d("Information", "Voici les questions: " + questionsQuiz.toString());
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public void getImage(final Question question){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        // Create a storage reference from our app
+        StorageReference storageRef = storage.getReference();
+        StorageReference mountainImagesRef = storageRef.child(question.getImage());
+        mountainImagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                // Use the bytes to display the image
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                question.setBmp(bmp);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+    }
+
+    public void setPropositions(Question question, ArrayList<String> propositions) {
+        ArrayList<String> propositionsShuffled = new ArrayList<>();
+
+        while (propositions.size() != 0) {
+            int indexProp = (int) Math.floor(Math.random() * propositions.size());
+            propositionsShuffled.add(propositions.get(indexProp));
+            propositions.remove(indexProp);
+        }
+        question.setPropositions(propositionsShuffled);
+    }
 
 }
