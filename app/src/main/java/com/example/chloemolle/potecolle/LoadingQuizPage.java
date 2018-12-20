@@ -86,7 +86,6 @@ public class LoadingQuizPage extends Activity {
                                     question.setPropositions(propositionsShuffled);
                                 }
                                 globalVariables.getCurrentGame().addQuestions(question);
-                                Integer size = globalVariables.getCurrentGame().getQuestions().size();
                                 if (globalVariables.getCurrentGame().getQuestions().size() == 5) {
                                     Intent intent = new Intent(self, QuizPage.class);
                                     startActivity(intent);

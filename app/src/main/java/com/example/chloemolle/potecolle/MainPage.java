@@ -61,172 +61,29 @@ public class MainPage extends Activity {
         final String userEmail = userFirebase.getEmail();
         globalVariables.setUserDB(db.collection("Users").document(userEmail));
 
-
-
         final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layout_parametre);
 
         linearLayout.setVisibility(View.GONE);
 
-        ImageButton parametre = (ImageButton) findViewById(R.id.parametre_button);
-        parametre.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (linearLayout.getVisibility() == View.GONE) {
-                    linearLayout.setVisibility(View.VISIBLE);
-                } else {
-                    linearLayout.setVisibility(View.GONE);
-                }
-            }
-        });
 
-
-        ConstraintLayout constraintLayout = (ConstraintLayout) findViewById(R.id.layout_main_background);
-        constraintLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (linearLayout.getVisibility() == View.VISIBLE) {
-                    linearLayout.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        final Context context = this;
-
-        TextView voirAmi = (TextView) findViewById(R.id.voir_ami);
-        voirAmi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearLayout.setVisibility(View.GONE);
-                Intent intent = new Intent(v.getContext(), VoirAmiPage.class);
-                startActivity(intent);
-            }
-        });
-
-
-        TextView seDeconnecter = (TextView) findViewById(R.id.se_deconnecter);
-        seDeconnecter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-                alertDialog.setPositiveButton(R.string.se_deconnecter, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        FirebaseAuth.getInstance().signOut();
-                        flushGlobalVariables();
-                        linearLayout.setVisibility(View.GONE);
-                        Intent intent = new Intent(context, ConnexionPage.class);
-                        startActivity(intent);
-                    }
-                });
-                alertDialog.setNegativeButton(R.string.rester_connecter, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-
-                alertDialog.setTitle("Deconnexion");
-                alertDialog.setMessage("Es-tu sur de vouloir te déconnecter?");
-                alertDialog.setCancelable(true);
-                alertDialog.create().show();
-            }
-        });
-
-        TextView configurerCompte = (TextView) findViewById(R.id.configurer_compte);
-        configurerCompte.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearLayout.setVisibility(View.GONE);
-                Intent intent = new Intent(v.getContext(), ConfigureComptePage.class);
-                startActivity(intent);
-            }
-        });
-
-
-
+        setMenuAppearance(linearLayout);
+        setButtonOfMenu(linearLayout);
 
         setButtonVoirMesParties();
 
         getUserInfo(globalVariables.getUser() == null);
 
-        this.handler = new Handler();
-        final int delay = 100000; //milliseconds
-        final Context self = this;
-        this.runnable = new Runnable(){
-            public void run() {
-                Boolean test = getUserInfo(false);
-                if (test) {
-                    handler.postDelayed(this, delay);
-                }
-            }
-        };
-
-        handler.postDelayed(runnable, delay);
+        setHandler();
 
     }
 
     private void setButtonNotification() {
         final ImageButton notification = (ImageButton) findViewById(R.id.button_notification);
         final ImageButton notificationOn = (ImageButton) findViewById(R.id.button_notification_on);
-        Globals globalVariables = (Globals) getApplicationContext();
 
-        Boolean thereIsNotification = false;
+        checkForNotification(notification, notificationOn);
+        setOnClickListenerOfNotification(notification, notificationOn);
 
-        for (FriendRequest friendRequest: globalVariables.getUser().getFriendRequests()) {
-            if (!friendRequest.getVu()) {
-                thereIsNotification = true;
-                break;
-            }
-        }
-
-        if (!thereIsNotification) {
-            for (Game game: globalVariables.getUser().getPartiesEnCours()) {
-                if (!game.getVu()) {
-                    thereIsNotification = true;
-                }
-            }
-        }
-
-        if (thereIsNotification) {
-            notification.setVisibility(View.GONE);
-            notificationOn.setVisibility(View.VISIBLE);
-        } else {
-            notificationOn.setVisibility(View.GONE);
-            notification.setVisibility(View.VISIBLE);
-        }
-
-
-        if (globalVariables.getUser().getFriendRequests().size() > 0 || globalVariables.getUser().getPartiesEnCours().size() > 0) {
-            notification.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), NotificationPage.class);
-                    startActivity(intent);
-                }
-            });
-        } else {
-            notification.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    LayoutInflater inflater = getLayoutInflater();
-                    View layout = inflater.inflate(R.layout.toast,
-                            (ViewGroup) findViewById(R.id.custom_toast_container));
-
-                    TextView text = (TextView) layout.findViewById(R.id.text);
-                    text.setText(R.string.no_notification);
-
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setGravity(Gravity.BOTTOM, 0, 0);
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(layout);
-                    toast.show();
-
-                }
-            });
-        }
-
-        notificationOn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), NotificationPage.class);
-                startActivity(intent);
-            }
-        });
     }
 
 
@@ -277,54 +134,7 @@ public class MainPage extends Activity {
                     }
 
                     //delete friends
-                    userDB.collection("FriendDeletion")
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
-                                        List<DocumentSnapshot> docs = task.getResult().getDocuments();
-                                        ArrayList<String> friends = user.getFriends();
-                                        for (DocumentSnapshot doc: docs) {
-                                            friends.remove(doc.get("email"));
-                                            userDB.collection("FriendDeletion")
-                                                    .document(doc.getId())
-                                                    .delete()
-                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            Log.d("Sucess", "sucess");
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Log.d("Fail", e.getMessage());
-                                                        }
-                                                    });
-                                        }
-                                        userDB.update("friends", friends)
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        Log.d("Success", "friends deleted");
-
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.d("fail", e.getMessage());
-                                                    }
-                                                });
-                                    }
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("fail", e.getMessage());
-                        }
-                    });
+                    deleteFriend(userDB, user);
 
                     final Button startGame = (Button) findViewById(R.id.lancer_partie);
                     //on crée le bouton pour démarrer une partie
@@ -356,120 +166,8 @@ public class MainPage extends Activity {
 
                     updateProgressBar();
 
-                    userDB.collection("FriendRequests")
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if(task.isSuccessful()) {
-                                        List<DocumentSnapshot> lists = task.getResult().getDocuments();
-                                        ArrayList<FriendRequest> arrayListFriendsRequests = new ArrayList<>();
-                                        for(DocumentSnapshot doc: lists) {
-                                            FriendRequest tmp = doc.toObject(FriendRequest.class);
-                                            tmp.setId(doc.getId());
-                                            arrayListFriendsRequests.add(tmp);
-                                        }
-                                        user.setFriendRequests(arrayListFriendsRequests);
-                                        for (FriendRequest friendRequest: arrayListFriendsRequests) {
-                                            if (friendRequest.getDemande() &&
-                                                    !friendRequest.getPending() &&
-                                                    friendRequest.getAccepte()) {
 
-                                                if (!friendRequest.getVu()) {
-                                                    Integer previousLevel = user.getLevel();
-                                                    user.addPoints(100);
-
-                                                    if(previousLevel != user.getLevel()) {
-                                                        openPopup();
-                                                    }
-                                                    updateProgressBar();
-                                                    LayoutInflater inflater = getLayoutInflater();
-                                                    View layout = inflater.inflate(R.layout.toast,
-                                                            (ViewGroup) findViewById(R.id.custom_toast_container));
-
-                                                    TextView textToast = (TextView) layout.findViewById(R.id.text);
-                                                    textToast.setText("Bravo ! Vous avez gagné 100 points en ajoutant un ami!");
-                                                    Toast toast = new Toast(getApplicationContext());
-                                                    toast.setGravity(Gravity.BOTTOM, 0, 0);
-                                                    toast.setDuration(Toast.LENGTH_LONG);
-                                                    toast.setView(layout);
-                                                    toast.show();
-
-                                                    HashMap<String, Object> updateUser = new HashMap<>();
-                                                    updateUser.put("level", user.getLevel());
-                                                    updateUser.put("pointsActuels", user.getPointsActuels());
-                                                    db.collection("Users").document(userFirebase.getEmail())
-                                                            .update(updateUser)
-                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<Void> task) {
-                                                                    if (task.isSuccessful()) {
-                                                                        Log.d("Success", "friend added");
-                                                                    } else {
-                                                                        Log.d("Error", task.getException().getMessage());
-                                                                    }
-                                                                }
-                                                            });
-
-
-                                                    HashMap<String, Object> updateFriendRequest = new HashMap<>();
-                                                    updateFriendRequest.put("vu", true);
-                                                    db.collection("Users").document(userFirebase.getEmail())
-                                                            .collection("FriendRequests")
-                                                            .document(friendRequest.getId())
-                                                            .update(updateFriendRequest)
-                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<Void> task) {
-                                                                    if (task.isSuccessful()) {
-                                                                        Log.d("Success", "update");
-                                                                    } else {
-                                                                        Log.d("Error", task.getException().getMessage());
-                                                                    }
-                                                                }
-                                                            });
-
-
-                                                }
-                                            }
-                                        }
-
-                                        userDB.collection("Games")
-                                                .get()
-                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                        if(task.isSuccessful()) {
-                                                            List<DocumentSnapshot> lists = task.getResult().getDocuments();
-                                                            ArrayList<Game> arrayListGames = new ArrayList<>();
-                                                            for(DocumentSnapshot doc: lists) {
-                                                                arrayListGames.add(doc.toObject(Game.class));
-                                                            }
-                                                            user.setPartiesEnCours(arrayListGames);
-                                                            globalVariables.setUser(user);
-                                                            setButtonNotification();
-                                                        } else {
-                                                            Log.d("Error getting documents", task.getException().getMessage());
-                                                        }
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.d("Error getting documents", e.getMessage());
-                                                    }
-                                                });
-                                    } else {
-                                        Log.d("Error getting documents", task.getException().getMessage());
-                                    }
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d("Error getting documents", e.getMessage());
-                                }
-                            });
+                    getFriendRequestsAndGames(userDB);
 
 
                     Button addFriends = (Button) findViewById(R.id.add_friends);
@@ -532,6 +230,7 @@ public class MainPage extends Activity {
 
     @Override
     public void finish(){
+        super.finish();
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
         }
@@ -604,5 +303,328 @@ public class MainPage extends Activity {
 
         }
     }
+
+    public void setButtonOfMenu(final LinearLayout linearLayout) {
+        final Context context = this;
+
+        TextView voirAmi = (TextView) findViewById(R.id.voir_ami);
+        voirAmi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayout.setVisibility(View.GONE);
+                Intent intent = new Intent(v.getContext(), VoirAmiPage.class);
+                startActivity(intent);
+            }
+        });
+
+
+        TextView seDeconnecter = (TextView) findViewById(R.id.se_deconnecter);
+        seDeconnecter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                alertDialog.setPositiveButton(R.string.se_deconnecter, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        FirebaseAuth.getInstance().signOut();
+                        flushGlobalVariables();
+                        linearLayout.setVisibility(View.GONE);
+                        Intent intent = new Intent(context, ConnexionPage.class);
+                        startActivity(intent);
+                    }
+                });
+                alertDialog.setNegativeButton(R.string.rester_connecter, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+
+                alertDialog.setTitle("Deconnexion");
+                alertDialog.setMessage("Es-tu sur de vouloir te déconnecter?");
+                alertDialog.setCancelable(true);
+                alertDialog.create().show();
+            }
+        });
+
+        TextView configurerCompte = (TextView) findViewById(R.id.configurer_compte);
+        configurerCompte.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayout.setVisibility(View.GONE);
+                Intent intent = new Intent(v.getContext(), ConfigureComptePage.class);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    public void setMenuAppearance(final LinearLayout linearLayout) {
+
+        ImageButton parametre = (ImageButton) findViewById(R.id.parametre_button);
+        parametre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (linearLayout.getVisibility() == View.GONE) {
+                    linearLayout.setVisibility(View.VISIBLE);
+                } else {
+                    linearLayout.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
+        ConstraintLayout constraintLayout = (ConstraintLayout) findViewById(R.id.layout_main_background);
+        constraintLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (linearLayout.getVisibility() == View.VISIBLE) {
+                    linearLayout.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    public void setHandler() {
+        this.handler = new Handler();
+        final int delay = 100000; //milliseconds
+        final Context self = this;
+        this.runnable = new Runnable(){
+            public void run() {
+                Boolean test = getUserInfo(false);
+                if (test) {
+                    handler.postDelayed(this, delay);
+                }
+            }
+        };
+
+        handler.postDelayed(runnable, delay);
+    }
+
+    public void setOnClickListenerOfNotification(ImageButton notification, ImageButton notificationOn) {
+        Globals globalVariables = (Globals) getApplicationContext();
+        if (globalVariables.getUser().getFriendRequests().size() > 0 || globalVariables.getUser().getPartiesEnCours().size() > 0) {
+            notification.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), NotificationPage.class);
+                    startActivity(intent);
+                }
+            });
+        } else {
+            notification.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    LayoutInflater inflater = getLayoutInflater();
+                    View layout = inflater.inflate(R.layout.toast,
+                            (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                    Globals.makeToast(getResources().getString(R.string.no_notification), layout, v.getContext());
+                }
+            });
+        }
+
+        notificationOn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), NotificationPage.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void checkForNotification(ImageButton notification, ImageButton notificationOn) {
+        Globals globalVariables = (Globals) getApplicationContext();
+        Boolean thereIsNotification = false;
+        for (FriendRequest friendRequest: globalVariables.getUser().getFriendRequests()) {
+            if (!friendRequest.getVu()) {
+                thereIsNotification = true;
+                break;
+            }
+        }
+
+        if (!thereIsNotification) {
+            for (Game game: globalVariables.getUser().getPartiesEnCours()) {
+                if (!game.getVu()) {
+                    thereIsNotification = true;
+                }
+            }
+        }
+
+        if (thereIsNotification) {
+            notification.setVisibility(View.GONE);
+            notificationOn.setVisibility(View.VISIBLE);
+        } else {
+            notificationOn.setVisibility(View.GONE);
+            notification.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    public void deleteFriend(final DocumentReference userDB, final User user) {
+        userDB.collection("FriendDeletion")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult().getDocuments().size() > 0) {
+                            List<DocumentSnapshot> docs = task.getResult().getDocuments();
+                            ArrayList<String> friends = user.getFriends();
+                            for (DocumentSnapshot doc: docs) {
+                                friends.remove(doc.get("email"));
+                                userDB.collection("FriendDeletion")
+                                        .document(doc.getId())
+                                        .delete()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Log.d("Sucess", "sucess");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d("Fail", e.getMessage());
+                                            }
+                                        });
+                            }
+                            userDB.update("friends", friends)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Log.d("Success", "friends deleted");
+
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d("fail", e.getMessage());
+                                        }
+                                    });
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("fail", e.getMessage());
+            }
+        });
+
+    }
+
+    public void getFriendRequestsAndGames(final DocumentReference userDB) {
+        final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final Globals globalVariables = (Globals) getApplicationContext();
+        final User user = globalVariables.getUser();
+
+        userDB.collection("FriendRequests")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            List<DocumentSnapshot> lists = task.getResult().getDocuments();
+                            ArrayList<FriendRequest> arrayListFriendsRequests = new ArrayList<>();
+                            for(DocumentSnapshot doc: lists) {
+                                FriendRequest tmp = doc.toObject(FriendRequest.class);
+                                tmp.setId(doc.getId());
+                                arrayListFriendsRequests.add(tmp);
+                            }
+                            user.setFriendRequests(arrayListFriendsRequests);
+                            for (FriendRequest friendRequest: arrayListFriendsRequests) {
+                                if (friendRequest.getDemande() &&
+                                        !friendRequest.getPending() &&
+                                        friendRequest.getAccepte()) {
+
+                                    if (!friendRequest.getVu()) {
+                                        Integer previousLevel = user.getLevel();
+                                        user.addPoints(100);
+
+                                        if(previousLevel != user.getLevel()) {
+                                            openPopup();
+                                        }
+                                        updateProgressBar();
+                                        LayoutInflater inflater = getLayoutInflater();
+                                        View layout = inflater.inflate(R.layout.toast,
+                                                (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                                        Globals.makeToast("Bravo ! Vous avez gagné 100 points en ajoutant un ami!", layout, getApplicationContext());
+
+                                        HashMap<String, Object> updateUser = new HashMap<>();
+                                        updateUser.put("level", user.getLevel());
+                                        updateUser.put("pointsActuels", user.getPointsActuels());
+                                        db.collection("Users").document(userFirebase.getEmail())
+                                                .update(updateUser)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Log.d("Success", "friend added");
+                                                        } else {
+                                                            Log.d("Error", task.getException().getMessage());
+                                                        }
+                                                    }
+                                                });
+
+
+                                        HashMap<String, Object> updateFriendRequest = new HashMap<>();
+                                        updateFriendRequest.put("vu", true);
+                                        db.collection("Users").document(userFirebase.getEmail())
+                                                .collection("FriendRequests")
+                                                .document(friendRequest.getId())
+                                                .update(updateFriendRequest)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Log.d("Success", "update");
+                                                        } else {
+                                                            Log.d("Error", task.getException().getMessage());
+                                                        }
+                                                    }
+                                                });
+
+
+                                    }
+                                }
+                            }
+
+                            userDB.collection("Games")
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if(task.isSuccessful()) {
+                                                List<DocumentSnapshot> lists = task.getResult().getDocuments();
+                                                ArrayList<Game> arrayListGames = new ArrayList<>();
+                                                for(DocumentSnapshot doc: lists) {
+                                                    arrayListGames.add(doc.toObject(Game.class));
+                                                }
+                                                user.setPartiesEnCours(arrayListGames);
+                                                globalVariables.setUser(user);
+                                                setButtonNotification();
+                                            } else {
+                                                Log.d("Error getting documents", task.getException().getMessage());
+                                            }
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d("Error getting documents", e.getMessage());
+                                        }
+                                    });
+                        } else {
+                            Log.d("Error getting documents", task.getException().getMessage());
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Error getting documents", e.getMessage());
+                    }
+                });
+
+    }
+
+
 
 }

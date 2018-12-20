@@ -195,7 +195,7 @@ public class ResultPage extends Activity {
 
     @Override
     public void onBackPressed(){
-        Intent intent = new Intent(this, NotificationPage.class);
+        Intent intent = new Intent(this, MainPage.class);
         startActivity(intent);
     }
 
