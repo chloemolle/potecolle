@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -140,7 +139,7 @@ public class QuizPage extends Activity {
             ImageButton boutonBrouillon = (ImageButton) findViewById(R.id.brouillon_button);
             boutonBrouillon.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), EcriturePage.class);
+                    Intent intent = new Intent(v.getContext(), BrouillonPage.class);
                     if (globalVariables.getCurrentGame().getTimed()) {
                         handler.removeCallbacks(runnable);
                     }
@@ -278,7 +277,7 @@ public class QuizPage extends Activity {
             ImageButton boutonBrouillon = (ImageButton) findViewById(R.id.brouillon_button);
             boutonBrouillon.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), EcriturePage.class);
+                    Intent intent = new Intent(v.getContext(), BrouillonPage.class);
                     if (globalVariables.getCurrentGame().getTimed()) {
                         handler.removeCallbacks(runnable);
                     }
@@ -405,7 +404,7 @@ public class QuizPage extends Activity {
                     if (globalVariables.getCurrentGame().getTimed()) {
                         handler.removeCallbacks(runnable);
                     }
-                    Intent intent = new Intent(v.getContext(), EcriturePage.class);
+                    Intent intent = new Intent(v.getContext(), BrouillonPage.class);
                     startActivity(intent);
                 }
             });

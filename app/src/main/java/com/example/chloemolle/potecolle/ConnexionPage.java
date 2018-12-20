@@ -95,50 +95,10 @@ public class ConnexionPage extends Activity {
                 ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleLarge);
                 progressBar.setVisibility(View.VISIBLE);
                 layout.addView(progressBar);
-                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                final String email = user.getEmail();
-                final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                db.collection("Users")
-                        .document(email)
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful() && task.getResult().getData() != null) {
-                                    Map<String, Object> doc = task.getResult().getData();
-                                    Intent intent = new Intent(ConnexionPage.context, MainPage.class);
-                                    startActivity(intent);
 
-                                } else {
-                                    Log.d(TAG, "Creating new user: ", task.getException());
-                                    Map<String, Object> new_user = new HashMap<>();
-                                    new_user.put("classe", "Troisieme");
-                                    new_user.put("friends", new ArrayList<String>());
-                                    new_user.put("username", email);
-                                    new_user.put("level", 1);
-                                    new_user.put("pointsActuels", 0);
+                createUser();
 
-                                    db.collection("Users").document(email)
-                                            .set(new_user)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
-                                                    Intent intent = new Intent(ConnexionPage.context, AskForUsername.class);
-                                                    startActivity(intent);
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.w(TAG, "Error writing document", e);
-                                                }
-                                            });
-
-                                }
-                            }
-                        });
 
             } else {
                 // Sign in failed. If response is null the user canceled the
@@ -147,6 +107,54 @@ public class ConnexionPage extends Activity {
                 // ...
             }
         }
+    }
+
+
+    public void createUser() {
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final String email = user.getEmail();
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("Users")
+                .document(email)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful() && task.getResult().getData() != null) {
+                            Map<String, Object> doc = task.getResult().getData();
+                            Intent intent = new Intent(ConnexionPage.context, MainPage.class);
+                            startActivity(intent);
+
+                        } else {
+                            Log.d(TAG, "Creating new user: ", task.getException());
+                            Map<String, Object> new_user = new HashMap<>();
+                            new_user.put("classe", "Troisieme");
+                            new_user.put("friends", new ArrayList<String>());
+                            new_user.put("username", email);
+                            new_user.put("level", 1);
+                            new_user.put("pointsActuels", 0);
+
+                            db.collection("Users").document(email)
+                                    .set(new_user)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "DocumentSnapshot successfully written!");
+                                            Intent intent = new Intent(ConnexionPage.context, AskForUsername.class);
+                                            startActivity(intent);
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error writing document", e);
+                                        }
+                                    });
+
+                        }
+                    }
+                });
     }
 
     @Override

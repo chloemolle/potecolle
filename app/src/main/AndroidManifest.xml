@@ -44,7 +44,7 @@
         <activity android:name=".ResultPage">
         </activity>
 
-        <activity android:name=".EcriturePage">
+        <activity android:name=".BrouillonPage">
         </activity>
 
         <activity android:name=".LoadingQuizPage">

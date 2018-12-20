@@ -17,31 +17,70 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 /**
  * Created by chloemolle on 30/10/2018.
  */
 
-public class EcriturePage extends Activity {
+public class BrouillonPage extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ecriture_page_layout);
-        Intent intent = getIntent();
+        setContentView(R.layout.brouillon_page_layout);
 
         final Globals globalVariables = (Globals) getApplicationContext();
         setProgressBar();
-        final int delay = 1000; //milliseconds
-        final ProgressBar pgBar = (ProgressBar) findViewById(R.id.progressBarTimer);
 
         final EditText brouillon = (EditText) findViewById(R.id.ecriture);
         brouillon.setText(globalVariables.getBrouillonText());
-        ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.layout_brouillon);
         final Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
         final Question currentQuestion = globalVariables.getCurrentGame().getQuestions().get(currentQuestionNumber);
 
+        setQuestion(currentQuestion);
+
+
+        final Handler handler = setHandler(currentQuestion, currentQuestionNumber);
+
+        Button retourQuiz = (Button) findViewById(R.id.retour_quiz);
+        retourQuiz.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                globalVariables.setBrouillonText(brouillon.getText().toString());
+                handler.removeCallbacksAndMessages(null);
+                Intent intent = new Intent(v.getContext(), QuizPage.class);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    private void setProgressBar() {
+        Globals globalVariables = (Globals) getApplicationContext();
+        ProgressBar pgBar = (ProgressBar) findViewById(R.id.progressBarTimer);
+        if (globalVariables.getCurrentGame().getTimed().equals("false")) {
+            pgBar.setVisibility(View.GONE);
+        } else {
+            pgBar.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
+            pgBar.setMax(30);
+            pgBar.setProgress(globalVariables.getTmpTime());
+        }
+
+    }
+
+    public void nextPage(Context c) {
+        Globals globalVariables = (Globals) getApplicationContext();
+        Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
+        if (currentQuestionNumber == 4) {
+            Intent intent = new Intent(c, FinQuizPage.class);
+            startActivity(intent);
+        } else {
+            globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
+            Intent intent = new Intent(c, QuizPage.class);
+            startActivity(intent);
+        }
+    }
+
+    public void setQuestion(Question currentQuestion){
+        ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.layout_brouillon);
         if (currentQuestion.getType().toString().contains("image")) {
             final ImageView imageView = (ImageView) findViewById(R.id.brouillon_question_quiz);
             imageView.setImageBitmap(Bitmap.createScaledBitmap(currentQuestion.getBmp(), 200,
@@ -59,12 +98,18 @@ public class EcriturePage extends Activity {
             imageView.setVisibility(View.GONE);
         }
 
+    }
+
+    public Handler setHandler(final Question currentQuestion, final Integer currentQuestionNumber){
+        final Globals globalVariables = (Globals) getApplicationContext();
+        final int delay = 1000; //milliseconds
+        final ProgressBar pgBar = (ProgressBar) findViewById(R.id.progressBarTimer);
+
         final Handler handler = new Handler();
 
         final Runnable runnable = new Runnable(){
             public void run(){
                 //do something
-                int test = globalVariables.getTmpTime();
                 globalVariables.setTmpTime(globalVariables.getTmpTime() - 1);
                 if (globalVariables.getTmpTime() == 0) {
                     if (currentQuestion.getType().equals("qcm") || currentQuestion.getType().equals("questionInversé")) {
@@ -92,49 +137,7 @@ public class EcriturePage extends Activity {
 
         handler.postDelayed(runnable, delay);
 
-
-
-
-        Button retourQuiz = (Button) findViewById(R.id.retour_quiz);
-        retourQuiz.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                globalVariables.setBrouillonText(brouillon.getText().toString());
-                handler.removeCallbacks(runnable);
-                Intent intent = new Intent(v.getContext(), QuizPage.class);
-                startActivity(intent);
-            }
-        });
-
+        return handler;
     }
-
-    private void setProgressBar() {
-        Globals globalVariables = (Globals) getApplicationContext();
-        ProgressBar pgBar = (ProgressBar) findViewById(R.id.progressBarTimer);
-        if (globalVariables.getCurrentGame().getTimed().equals("false")) {
-            pgBar.setVisibility(View.GONE);
-        } else {
-            pgBar.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
-            pgBar.setMax(30);
-            Log.d("ProgressBar", "SetMaxto 30");
-            Log.d("ProgressBar", "current is " + globalVariables.getTmpTime());
-            pgBar.setProgress(globalVariables.getTmpTime());
-        }
-
-    }
-
-    public void nextPage(Context c) {
-        Globals globalVariables = (Globals) getApplicationContext();
-        Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
-        if (currentQuestionNumber == 4) {
-            Intent intent = new Intent(c, FinQuizPage.class);
-            startActivity(intent);
-        } else {
-            globalVariables.setCurrentQuestionNumero(currentQuestionNumber + 1);
-            Intent intent = new Intent(c, QuizPage.class);
-            startActivity(intent);
-        }
-    }
-
-
 
 }
