@@ -15,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -55,6 +56,10 @@ public class QuizPage extends Activity {
         final Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
         final Question currentQuestion = globalVariables.getCurrentGame().getQuestions().get(currentQuestionNumber);
 
+        if (globalVariables.getCurrentGame().getTimed()) {
+            globalVariables.setTmpTime(30);
+        }
+
         if (currentQuestion.getType().equals("image")) {
             setContentView(R.layout.image_page_layout);
             EditText editText = (EditText) findViewById(R.id.user_answer);
@@ -66,7 +71,7 @@ public class QuizPage extends Activity {
         } else if (currentQuestion.getType().equals("qcm") || currentQuestion.getType().equals("questionInversé")) {
             setContentView(R.layout.qcm_page_layout);
             if (currentQuestionNumber < globalVariables.getCurrentGame().getPlayer1Answers().size()) {
-                ImageButton bouton = (ImageButton) findViewById(R.id.next_quiz);
+                Button bouton = (Button) findViewById(R.id.next_quiz);
                 bouton.setAlpha((float) 1.0);
                 bouton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -88,7 +93,7 @@ public class QuizPage extends Activity {
         }
 
         if (globalVariables.getCurrentGame().getTimed()) {
-            ImageButton boutonPrecedent = (ImageButton) findViewById(R.id.retour_precedent_quiz);
+            Button boutonPrecedent = (Button) findViewById(R.id.retour_precedent_quiz);
             boutonPrecedent.setVisibility(View.GONE);
         }
 
@@ -148,7 +153,7 @@ public class QuizPage extends Activity {
             });
 
             if (currentQuestion.getType().equals("image")) {
-                ImageButton bouton = (ImageButton) findViewById(R.id.next_quiz);
+                Button bouton = (Button) findViewById(R.id.next_quiz);
                 bouton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         String userAnswerText = userAnswer.getText().toString();
@@ -395,7 +400,7 @@ public class QuizPage extends Activity {
             }
 
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
-            ImageButton bouton = (ImageButton) findViewById(R.id.next_quiz);
+            Button bouton = (Button) findViewById(R.id.next_quiz);
             userAnswer.setText(globalVariables.getReponseText());
             ImageButton boutonBrouillon = (ImageButton) findViewById(R.id.brouillon_button);
             boutonBrouillon.setOnClickListener(new View.OnClickListener() {
@@ -455,7 +460,7 @@ public class QuizPage extends Activity {
 
     private void setRetourButton() {
         final Globals globalVariables = (Globals) getApplicationContext();
-        ImageButton bouton = (ImageButton) findViewById(R.id.retour_precedent_quiz);
+        Button bouton = (Button) findViewById(R.id.retour_precedent_quiz);
         final Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
         if (currentQuestionNumber == 0) {
             bouton.setAlpha((float) 0.5);

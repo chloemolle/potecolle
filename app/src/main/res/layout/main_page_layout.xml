@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_main_background"
@@ -7,186 +8,237 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-
-    <ImageButton
-        android:id="@+id/button_notification"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:visibility="gone"
-        android:background="@drawable/notif2_new"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <ImageButton
-        android:id="@+id/button_notification_on"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:visibility="gone"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/notification_on"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <Button
-        android:id="@+id/lancer_partie"
-        android:layout_width="287dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_with_radius"
-        android:text="@string/start_game"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.317" />
-
-    <Button
-        android:id="@+id/add_friends"
-        android:layout_width="213dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/button_with_radius"
-        android:text="@string/ajout_ami"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/voir_mes_parties"
-        app:layout_constraintVertical_bias="0.049" />
-
-    <Button
-        android:id="@+id/voir_mes_parties"
-        android:layout_width="213dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/button_with_radius"
-        android:text="@string/voir_mes_parties"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lancer_partie"
-        app:layout_constraintVertical_bias="0.06" />
-
-    <TextView
-        android:id="@+id/student_name"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center_horizontal"
-        android:textColor="@color/colorTheme"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/lancer_partie"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        android:id="@+id/constraint_layout_id">
 
-    <ProgressBar
-        android:id="@+id/progressBarAvancement"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/niveau" />
+        <ImageButton
+            android:id="@+id/button_notification"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/notif2_new"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/niveau"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:textSize="20dp"
-        android:textColor="@color/colorTheme"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_friends" />
 
-    <TextView
-        android:id="@+id/avancement"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="92dp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBarAvancement" />
+        <ImageButton
+            android:id="@+id/button_notification_on"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/notification_on"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/parametre_button"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/parametre"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/layout_parametre"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="5dp"
-        android:orientation="vertical"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/parametre_button">
-
-        <TextView
-            android:id="@+id/voir_ami"
+        <LinearLayout
+            android:id="@+id/duel_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/voir_ami"
-            tools:layout_editor_absoluteX="0dp"
-            android:textSize="20dp"
-            android:background="@drawable/box_pour_entoure"
-            android:padding="10dp"
-            android:textColor="@color/colorTheme"
-            tools:layout_editor_absoluteY="38dp" />
+            android:layout_marginTop="28dp"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/student_name">
 
-        <TextView
-            android:id="@+id/configurer_compte"
+            <ImageView
+                android:id="@+id/duel_image"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/duel" />
+
+            <Button
+                android:id="@+id/lancer_partie"
+                android:layout_width="146dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="28dp"
+                android:background="@drawable/button_with_radius"
+                android:text="@string/start_duel"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/s_entrainer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/configurer_compte"
-            tools:layout_editor_absoluteX="0dp"
-            android:textSize="20dp"
-            android:background="@drawable/box_pour_entoure"
-            android:padding="10dp"
-            android:textColor="@color/colorTheme"
-            tools:layout_editor_absoluteY="38dp" />
+            android:layout_marginTop="28dp"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/duel_layout">
 
-        <TextView
-            android:id="@+id/se_deconnecter"
+            <ImageView
+                android:id="@+id/entrainement_image"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/entrainement" />
+
+            <Button
+                android:id="@+id/s_entrainer"
+                android:layout_width="142dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="28dp"
+                android:background="@drawable/box_pour_entoure"
+                android:text="@string/start_solo"
+                android:textColor="@color/colorTheme" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/game_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/box_pour_entoure"
-            android:text="@string/se_deconnecter"
-            android:textSize="20dp"
-            android:padding="10dp"
-            android:textColor="@color/colorTheme"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="58dp" />
-    </LinearLayout>
+            android:layout_marginTop="28dp"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s_entrainer_layout">
 
-</android.support.constraint.ConstraintLayout>
+            <ImageView
+                android:id="@+id/game_image"
+                android:layout_width="45dp"
+                android:layout_height="35dp"
+                android:background="@drawable/games" />
+
+            <Button
+                android:id="@+id/voir_mes_parties"
+                android:layout_width="142dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="28dp"
+                android:background="@drawable/box_pour_entoure"
+                android:text="@string/voir_mes_parties"
+                android:textColor="@color/colorTheme" />
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/student_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:gravity="center_horizontal"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/welcome_text"
+            android:textColor="@color/colorTheme"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toTopOf="@+id/duel_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/parametre_button"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_chainStyle="spread_inside" />
+
+        <ProgressBar
+            android:id="@+id/progressBarAvancement"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/niveau" />
+
+        <TextView
+            android:id="@+id/niveau"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/colorTheme"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/game_layout" />
+
+        <TextView
+            android:id="@+id/avancement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="92dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/progressBarAvancement" />
+
+        <ImageButton
+            android:id="@+id/parametre_button"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/parametre"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <LinearLayout
+            android:id="@+id/layout_parametre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/parametre_button">
+
+            <TextView
+                android:id="@+id/voir_ami"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/box_pour_menu"
+                android:padding="10dp"
+                android:text="@string/voir_ami"
+                android:textColor="@color/colorTheme"
+                android:textSize="20dp"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="38dp" />
+
+            <TextView
+                android:id="@+id/configurer_compte"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/box_pour_menu"
+                android:padding="10dp"
+                android:text="@string/configurer_compte"
+                android:textColor="@color/colorTheme"
+                android:textSize="20dp"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="38dp" />
+
+            <TextView
+                android:id="@+id/se_deconnecter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/box_pour_menu"
+                android:padding="10dp"
+                android:text="@string/se_deconnecter"
+                android:textColor="@color/colorTheme"
+                android:textSize="20dp"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="58dp" />
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+
+
+</ScrollView>

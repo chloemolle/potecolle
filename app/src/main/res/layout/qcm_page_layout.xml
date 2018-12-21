@@ -2,7 +2,6 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -85,39 +84,41 @@
             android:id="@+id/brouillon_button"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/brouillon"
             android:textColor="@color/white"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
+        <Button
             android:id="@+id/retour_precedent_quiz"
-            android:layout_width="45dp"
+            android:layout_width="wrap_content"
             android:layout_height="45dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/fleche_gauche"
+            android:padding="10dp"
+            android:text="Previous"
             android:textColor="@color/white"
+            android:background="@drawable/button_with_radius"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/reponse_quiz4"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/reponse_quiz4"/>
 
-        <ImageButton
+        <Button
             android:id="@+id/next_quiz"
-            android:layout_width="45dp"
+            android:layout_width="wrap_content"
             android:layout_height="45dp"
             android:layout_marginBottom="16dp"
+            android:padding="10dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
-            android:alpha="0.5"
-            android:background="@drawable/fleche_droite"
+            android:text="Next"
             android:clickable="false"
+            android:textColor="@color/white"
+            android:background="@drawable/button_with_radius"
             app:layout_constraintTop_toBottomOf="@+id/reponse_quiz4"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

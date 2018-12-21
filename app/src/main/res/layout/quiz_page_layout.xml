@@ -37,19 +37,6 @@
 
 
     <ImageButton
-        android:id="@+id/next_quiz"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/fleche_droite"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
-    <ImageButton
         android:id="@+id/brouillon_button"
         android:layout_width="45dp"
         android:layout_height="45dp"
@@ -61,20 +48,38 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <ImageButton
+    <Button
         android:id="@+id/retour_precedent_quiz"
-        android:layout_width="45dp"
+        android:layout_width="wrap_content"
         android:layout_height="45dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/fleche_gauche"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
+        android:padding="10dp"
+        android:text="Previous"
         android:textColor="@color/white"
+        android:background="@drawable/button_with_radius"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linear_layout_reponse" />
+        app:layout_constraintTop_toBottomOf="@+id/reponse_quiz4"/>
+
+    <Button
+        android:id="@+id/next_quiz"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_marginBottom="16dp"
+        android:padding="10dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Next"
+        android:clickable="false"
+        android:textColor="@color/white"
+        android:background="@drawable/button_with_radius"
+        app:layout_constraintTop_toBottomOf="@+id/reponse_quiz4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <ProgressBar
         android:id="@+id/progressBarTimer"

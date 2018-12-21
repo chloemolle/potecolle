@@ -32,6 +32,7 @@ import static com.firebase.ui.auth.AuthUI.TAG;
  */
 
 public class ChoixTimer extends Activity {
+/*
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,6 @@ public class ChoixTimer extends Activity {
         final Globals globalVariables = (Globals) getApplicationContext();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-        final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
         final Game currentGame = globalVariables.getCurrentGame();
         final String opponentUsername = currentGame.getAdversaire();
 
@@ -139,4 +139,5 @@ public class ChoixTimer extends Activity {
                 });
 
             }
+*/
 }
