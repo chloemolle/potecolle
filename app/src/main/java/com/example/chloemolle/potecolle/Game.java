@@ -45,6 +45,16 @@ public class Game {
     public Game () {
     }
 
+
+    public Game (String _player1, String _classe, String _matiere, Boolean _seul, Boolean _timed) {
+        this.player1 = _player1;
+        this.classe = _classe;
+        this.matiere = _matiere;
+        this.seul =_seul;
+        this.timed = _timed;
+    }
+
+
     public Game (String _player1, String _classe) {
         this.player1 = _player1;
         this.classe = _classe;

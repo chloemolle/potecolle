@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,9 +68,12 @@ public class MainPage extends Activity {
 
 
         setMenuAppearance(linearLayout);
+
         setButtonOfMenu(linearLayout);
 
         setButtonVoirMesParties();
+
+        setButtonSolo();
 
         getUserInfo(globalVariables.getUser() == null);
 
@@ -140,8 +144,8 @@ public class MainPage extends Activity {
                     //on crée le bouton pour démarrer une partie
                     startGame.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            globalVariables.setCurrentGame(new Game(globalVariables.getUser().getUsername(), globalVariables.getUser().getClasse()));
-                            Intent intent = new Intent(v.getContext(), ChoixMatierePage.class);
+                            globalVariables.setCurrentGame(new Game(globalVariables.getUser().getUsername(), globalVariables.getUser().getClasse(), "Maths", false, true));
+                            Intent intent = new Intent(v.getContext(), ChoixSujetPage.class);
                             startActivity(intent);
                         }
                     });
@@ -149,17 +153,6 @@ public class MainPage extends Activity {
 
                     //Init view
                     TextView studentName = (TextView) findViewById(R.id.student_name);
-
-                    try {
-                        String userName = user.getUsername();
-                        studentName.setText("Salut " + userName + " !");
-                    } catch (Exception e) {
-                        Log.d("Exception", e.getMessage());
-                        Log.d("INFO", globalVariables.getUser().getUsername());
-                        Log.d("INFO - CreateUser", createUser.toString());
-
-                    }
-
 
                     TextView level = (TextView) findViewById(R.id.niveau);
                     level.setText("Niveau " + user.getLevel().toString());
@@ -169,27 +162,16 @@ public class MainPage extends Activity {
 
                     getFriendRequestsAndGames(userDB);
 
-
-                    Button addFriends = (Button) findViewById(R.id.add_friends);
-                    addFriends.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(v.getContext(), AddFriendsPage.class);
-                            startActivity(intent);
-                        }
-                    });
-
-
                 }
             }
 
         })
-        .addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("Failure", e.getMessage());
-            }
-        });
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Failure", e.getMessage());
+                    }
+                });
         return true;
 
     }
@@ -371,7 +353,7 @@ public class MainPage extends Activity {
         });
 
 
-        ConstraintLayout constraintLayout = (ConstraintLayout) findViewById(R.id.layout_main_background);
+        ConstraintLayout constraintLayout = (ConstraintLayout) findViewById(R.id.constraint_layout_id);
         constraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -626,5 +608,19 @@ public class MainPage extends Activity {
     }
 
 
+    public void setButtonSolo(){
+        final Globals globalVariable = (Globals) getApplicationContext();
+        Button solo = (Button) findViewById(R.id.s_entrainer);
+        solo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), ChoixSujetPage.class);
+                User user = globalVariable.getUser();
+                Game game = new Game(user.getUsername(), user.getClasse(), "Maths", true, false);
+                globalVariable.setCurrentGame(game);
+                startActivity(intent);
+            }
+        });
+    }
 
 }

@@ -7,10 +7,12 @@
     <string name="username">Mail</string>
     <string name="mdp">Mot de passe</string>
     <string name="start_game">Nouvelle partie</string>
-    <string name="ajout_ami">Ajouter un ami</string>
+    <string name="start_duel">Lancer un duel !</string>
+    <string name="start_solo">S\'entrainer</string>    <string name="ajout_ami">Ajouter un ami</string>
     <string name="maths">Maths</string>
     <string name="français">Français</string>
     <string name="next">Suivant</string>
+    <string name="welcome_text">Gagne des défis contre tes potes !</string>
     <string name="se_deconnecter">Se deconnecter</string>
     <string name="configurer_compte">Mon compte</string>
     <string name="rester_connecter">Rester connecté</string>
