@@ -87,9 +87,7 @@ public class ConnexionPage extends Activity {
                 // Successfully signed in
                 ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.layout_connexion);
                 Button bouton = (Button) findViewById(R.id.s_inscrire_bouton);
-                TextView seConnecter = (TextView) findViewById(R.id.se_connecter_texte);
                 ImageView logo = (ImageView) findViewById(R.id.logo);
-                layout.removeView(seConnecter);
                 layout.removeView(bouton);
                 layout.removeView(logo);
                 ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleLarge);
