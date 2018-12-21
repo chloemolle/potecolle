@@ -19,6 +19,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -35,6 +37,7 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 
 import static com.firebase.ui.auth.AuthUI.TAG;
@@ -98,21 +101,21 @@ public class ChoixSujetPage extends Activity {
                     @Override
                     public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
                         ArrayList<String> arr = (ArrayList<String>) task.getResult().getData();
-                            FileWriter fw;
-                            BufferedWriter bfw;
-                            File cacheFile = new File(context.getCacheDir(), globalVariables.getUser().getClasse() + "_sujets_" + globalVariables.getCurrentGame().getMatiere());
-                            try {
-                                fw = new FileWriter(cacheFile.getAbsoluteFile());
-                                bfw = new BufferedWriter(fw);
-                                for (String sujet : arr) {
-                                    createButtonWithNameForSubject(sujet);
-                                    bfw.write(sujet);
-                                    bfw.newLine();
-                                }
-                                bfw.close();
-                            } catch (Exception e) {
-                                Log.d("problemeCache", e.getMessage());
+                        FileWriter fw;
+                        BufferedWriter bfw;
+                        File cacheFile = new File(context.getCacheDir(), globalVariables.getUser().getClasse() + "_sujets_" + globalVariables.getCurrentGame().getMatiere());
+                        try {
+                            fw = new FileWriter(cacheFile.getAbsoluteFile());
+                            bfw = new BufferedWriter(fw);
+                            for (String sujet : arr) {
+                                createButtonWithNameForSubject(sujet);
+                                bfw.write(sujet);
+                                bfw.newLine();
                             }
+                            bfw.close();
+                        } catch (Exception e) {
+                            Log.d("problemeCache", e.getMessage());
+                        }
 
                         progressBar.setVisibility(View.GONE);
                         return "";
@@ -129,11 +132,12 @@ public class ChoixSujetPage extends Activity {
         newButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent;
-                if (globalVariables.getCurrentGame().getRevanche()) {
-                    intent = new Intent(v.getContext(), ChoixTimer.class);
+                if (globalVariables.getCurrentGame().getRevanche() || globalVariables.getCurrentGame().getSeul()) {
+                    intent = new Intent(v.getContext(), QuizPage.class);
                 } else {
                     intent = new Intent(v.getContext(), ChoixAmiPage.class);
                 }
+                globalVariables.setTmpTime(30);
                 globalVariables.getCurrentGame().setSujet(name);
                 Date date = new Date();
                 Long tmp = date.getTime();
@@ -141,8 +145,7 @@ public class ChoixSujetPage extends Activity {
                 globalVariables.getCurrentGame().setId(id);
 
                 //Creation des questions pour le quiz
-                createQuestion(name);
-                startActivity(intent);
+                createQuestion(name, intent);
             }
         });
         layout.addView(newButton);
@@ -164,7 +167,7 @@ public class ChoixSujetPage extends Activity {
         return newButton;
     }
 
-    public void createQuestion(String name_sujet) {
+    public void createQuestion(String name_sujet, final Intent intent) {
         final Globals globalVariables = (Globals) getApplicationContext();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final String classe = globalVariables.getCurrentGame().getClasse();
@@ -206,6 +209,7 @@ public class ChoixSujetPage extends Activity {
                             }
                             globalVariables.getCurrentGame().setQuestions(questionsQuiz);
                             globalVariables.getCurrentGame().setQuestionsId(questionsQuizId);
+                            startActivity(intent);
                             Log.d("Information", "Voici les questions: " + questionsQuiz.toString());
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
@@ -244,5 +248,7 @@ public class ChoixSujetPage extends Activity {
         }
         question.setPropositions(propositionsShuffled);
     }
+
+
 
 }

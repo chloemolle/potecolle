@@ -68,11 +68,8 @@ public class MesPartiesPage extends Activity {
             final Boolean repondu = game.getRepondu();
             final Boolean fini = game.getFini();
 
-            String player2 = game.getPlayer2();
-            String player2Email = game.getAdversaire();
-
             final String finiOuPas = (repondu && !fini)?
-                    "Attends que ton pote" + game.getPlayer2() + "joue!" :
+                    "Attends que ton pote " + game.getPlayer2() + " joue!" :
                     (repondu && fini) ?
                             "Regarde les résultats !\n"+ game.getPlayer2() : "Réponds aux questions de " + game.getPlayer2() + " :) ";
 

@@ -55,7 +55,7 @@
 
             <Button
                 android:id="@+id/lancer_partie"
-                android:layout_width="146dp"
+                android:layout_width="142dp"
                 android:layout_height="45dp"
                 android:layout_marginLeft="28dp"
                 android:background="@drawable/button_with_radius"
@@ -104,7 +104,7 @@
             <ImageView
                 android:id="@+id/game_image"
                 android:layout_width="45dp"
-                android:layout_height="35dp"
+                android:layout_height="45dp"
                 android:background="@drawable/games" />
 
             <Button
@@ -130,6 +130,7 @@
             android:text="@string/welcome_text"
             android:textColor="@color/colorTheme"
             android:textSize="30sp"
+
             app:layout_constraintBottom_toTopOf="@+id/duel_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

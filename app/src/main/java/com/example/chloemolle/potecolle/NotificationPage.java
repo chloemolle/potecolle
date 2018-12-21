@@ -383,7 +383,7 @@ public class NotificationPage extends Activity {
         final Boolean fini = game.getFini();
 
         final String finiOuPas = (repondu && !fini)?
-                "Attends que ton pote" + game.getPlayer2() + "joue!" :
+                "Attends que ton pote " + game.getPlayer2() + " joue!" :
                 (repondu && fini) ?
                         "Regarde les résultats !\n"+ game.getPlayer2() : "Réponds aux questions de " + game.getPlayer2() + " :) ";
 
