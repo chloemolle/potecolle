@@ -81,13 +81,13 @@ public class ChoixTimer extends Activity {
         final String opponentUsername = currentGame.getAdversaire();
 
         //set game for user
-        setGameForOneUser(userAuth.getEmail(), true, currentGame.getAdversaire());
+        setGameForOneUser(userAuth.getEmail(), true, currentGame.getAdversaire(), currentGame.getPlayer2());
 
         //set game for opponent
-        setGameForOneUser(opponentUsername, false, userAuth.getEmail());
+        setGameForOneUser(opponentUsername, false, userAuth.getEmail(), globalVariables.getUser().getUsername());
     }
 
-    public void setGameForOneUser(final String monMail, final Boolean vu, String adversaire) {
+    public void setGameForOneUser(final String monMail, final Boolean vu, String adversaire, String player2) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         Globals globalVariables = (Globals) getApplicationContext();
         final Game currentGame = globalVariables.getCurrentGame();
@@ -95,6 +95,7 @@ public class ChoixTimer extends Activity {
         HashMap<String,Object> newGame = new HashMap<>();
         newGame.put("timed", currentGame.getTimed());
         newGame.put("adversaire", adversaire);
+        newGame.put("player2", player2);
         newGame.put("classe", currentGame.getClasse());
         newGame.put("matiere", currentGame.getMatiere());
         newGame.put("sujet", currentGame.getSujet());

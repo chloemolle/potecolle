@@ -53,7 +53,6 @@ public class NotificationPage extends Activity {
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Globals globalVariables = (Globals) getApplicationContext();
-        final Context context = this;
 
         final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
 
@@ -73,69 +72,7 @@ public class NotificationPage extends Activity {
 
 
         for (final Game partie: parties) {
-
-            userDB.collection("Games").document(partie.getId())
-                    .get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            if (documentSnapshot.exists()) {
-                                final Game game = documentSnapshot.toObject(Game.class);
-
-                                if (game.getFini()){
-                                    createButton(game, layout, userDB);
-                                } else {
-                                    //On met à jour la partie suivant si l'adversaire a repondu aux questions
-                                    db.collection("Users")
-                                            .document(game.getAdversaire())
-                                            .get()
-                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        DocumentSnapshot document = task.getResult();
-
-                                                        db.collection("Users").document(document.getId())
-                                                                .collection("Games").document(partie.getId())
-                                                                .get()
-                                                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                    @Override
-                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                        if (documentSnapshot.exists()) {
-                                                                            if (documentSnapshot.get("repondu").equals("true") && game.getRepondu().equals("true")) {
-                                                                                DocumentReference doc = userDB.collection("Games").document(partie.getId());
-                                                                                doc.update("fini", "true")
-                                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                            @Override
-                                                                                            public void onSuccess(Void aVoid) {
-                                                                                                Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                                                                            }
-                                                                                        })
-                                                                                        .addOnFailureListener(new OnFailureListener() {
-                                                                                            @Override
-                                                                                            public void onFailure(@NonNull Exception e) {
-                                                                                                Log.w(TAG, "Error updating document", e);
-                                                                                            }
-                                                                                        });
-                                                                            }
-
-                                                                            createButton(game, layout, userDB);
-                                                                        }
-                                                                    }
-                                                                });
-
-
-                                                    } else {
-                                                        Log.d(TAG, "Error getting documents: ", task.getException());
-                                                    }
-
-                                                }
-                                            });
-                                }
-                            }
-                        }
-                    });
-
+            createButton(partie, layout, userDB);
         }
 
         ArrayList<FriendRequest> friendRequests = user.getFriendRequests();
@@ -446,113 +383,98 @@ public class NotificationPage extends Activity {
         final Boolean fini = game.getFini();
 
         final String finiOuPas = (repondu && !fini)?
-                "Attends qu'il réponde aux questions !" :
+                "Attends que ton pote" + game.getPlayer2() + "joue!" :
                 (repondu && fini) ?
-                        "Regarde les résultats !" : "Réponds aux questions :) ";
+                        "Regarde les résultats !\n"+ game.getPlayer2() : "Réponds aux questions de " + game.getPlayer2() + " :) ";
 
 
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("Users").document(game.getAdversaire())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        newButton.setText(finiOuPas + "\n" + task.getResult().get("username") + " " + game.getClasse() + "\n" + game.getMatiere() + " " + game.getSujet());
-                        newButton.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        params.setMargins(25,25,25,0);
-                        newButton.setPadding(100, 0, 100, 0);
-                        newButton.setLayoutParams(params);
-                        newButton.setTextColor(getResources().getColor(R.color.colorTheme));
+        newButton.setText(finiOuPas + "\n" + game.getClasse() + "\n" + game.getMatiere() + " " + game.getSujet());
+        newButton.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(25,25,25,0);
+        newButton.setPadding(100, 0, 100, 0);
+        newButton.setLayoutParams(params);
+        newButton.setTextColor(getResources().getColor(R.color.colorTheme));
 
-                        if (!game.getVu()) {
-                            globalVariables.getUserDB().collection("Games")
-                                    .document(game.getId())
-                                    .update("vu", true)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            Log.d("Reussi", "update réussi");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.d("Fail", e.getMessage());
-                                        }
-                                    });
-                            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
-                        } else {
-                            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure_deja_vu));
+        if (!game.getVu()) {
+            globalVariables.getUserDB().collection("Games")
+                    .document(game.getId())
+                    .update("vu", true)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Log.d("Reussi", "update réussi");
                         }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Fail", e.getMessage());
+                        }
+                    });
+            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
+        } else {
+            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure_deja_vu));
+        }
 
-                        if (!repondu) {
-                            newButton.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View v) {
-                                    globalVariables.setCurrentGame(game);
-                                    Intent intent = new Intent(v.getContext(), LoadingQuizPage.class);
-                                    startActivity(intent);
-                                }
-                            });
-                        } else if (fini) {
-                            newButton.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View v) {
-                                    globalVariables.setCurrentGame(game);
-                                    Intent intent = new Intent(v.getContext(), ResultPage.class);
-                                    startActivity(intent);
-                                }
-                            });
+        if (!repondu) {
+            newButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    globalVariables.setCurrentGame(game);
+                    Intent intent = new Intent(v.getContext(), LoadingQuizPage.class);
+                    startActivity(intent);
+                }
+            });
+        } else if (fini) {
+            newButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    globalVariables.setCurrentGame(game);
+                    Intent intent = new Intent(v.getContext(), ResultPage.class);
+                    startActivity(intent);
+                }
+            });
 
-                            newButton.setOnLongClickListener(new View.OnLongClickListener() {
+            newButton.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Veux-tu supprimer cette partie ?")
+                            .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                                 @Override
-                                public boolean onLongClick(View v) {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    builder.setMessage("Veux-tu supprimer cette partie ?")
-                                            .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    userDB.collection("Games")
+                                            .document(game.getId())
+                                            .delete()
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    userDB.collection("Games")
-                                                            .document(game.getId())
-                                                            .delete()
-                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<Void> task) {
-                                                                    if (task.isSuccessful()){
-                                                                        layout.removeView(newButton);
-                                                                        Log.d("Success", "document successfully deleted");
-                                                                    } else {
-                                                                        Log.d("Error", "document NOT successfully deleted");
-                                                                    }
-                                                                }
-                                                            });
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()){
+                                                        layout.removeView(newButton);
+                                                        Log.d("Success", "document successfully deleted");
+                                                    } else {
+                                                        Log.d("Error", "document NOT successfully deleted");
+                                                    }
                                                 }
-                                            })
-                                            .setNegativeButton("Non", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    Log.d("Info","partie conservée");
-                                                }
-                                            }).show();
-                                    return true;
+                                            });
                                 }
-                            });
+                            })
+                            .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.d("Info","partie conservée");
+                                }
+                            }).show();
+                    return true;
+                }
+            });
 
 
-                        }
+        }
 
-                        layout.addView(newButton);
-
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("erreur", e.getMessage());
-                    }
-                });
+        layout.addView(newButton);
 
     }
 

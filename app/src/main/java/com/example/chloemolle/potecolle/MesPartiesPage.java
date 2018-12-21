@@ -68,93 +68,81 @@ public class MesPartiesPage extends Activity {
             final Boolean repondu = game.getRepondu();
             final Boolean fini = game.getFini();
 
+            String player2 = game.getPlayer2();
+            String player2Email = game.getAdversaire();
+
             final String finiOuPas = (repondu && !fini)?
-                    "Attends qu'il réponde aux questions !" :
+                    "Attends que ton pote" + game.getPlayer2() + "joue!" :
                     (repondu && fini) ?
-                            "regarde les résultats !" : "Réponds aux questions :) ";
+                            "Regarde les résultats !\n"+ game.getPlayer2() : "Réponds aux questions de " + game.getPlayer2() + " :) ";
 
 
-            final FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("Users").document(game.getAdversaire())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            newButton.setText(finiOuPas + "\n" + task.getResult().get("username") + " " + game.getClasse() + "\n" + game.getMatiere() + " " + game.getSujet());
-                            newButton.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            params.setMargins(25,25,25,0);
-                            newButton.setPadding(100, 0, 100, 0);
-                            newButton.setLayoutParams(params);
-                            newButton.setTextColor(getResources().getColor(R.color.colorTheme));
-                            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
-                            if (!repondu) {
-                                newButton.setOnClickListener(new View.OnClickListener() {
-                                    public void onClick(View v) {
-                                        globalVariables.setCurrentGame(game);
-                                        Intent intent = new Intent(v.getContext(), LoadingQuizPage.class);
-                                        startActivity(intent);
-                                    }
-                                });
-                            } else if (fini) {
-                                newButton.setOnClickListener(new View.OnClickListener() {
-                                    public void onClick(View v) {
-                                        globalVariables.setCurrentGame(game);
-                                        Intent intent = new Intent(v.getContext(), ResultPage.class);
-                                        startActivity(intent);
-                                    }
-                                });
+            newButton.setText(finiOuPas + "\n" + game.getClasse() + "\n" + game.getMatiere() + " " + game.getSujet());
+            newButton.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(25,25,25,0);
+            newButton.setPadding(100, 0, 100, 0);
+            newButton.setLayoutParams(params);
+            newButton.setTextColor(getResources().getColor(R.color.colorTheme));
+            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
+            if (!repondu) {
+                newButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        globalVariables.setCurrentGame(game);
+                        Intent intent = new Intent(v.getContext(), LoadingQuizPage.class);
+                        startActivity(intent);
+                    }
+                });
+            } else if (fini) {
+                newButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        globalVariables.setCurrentGame(game);
+                        Intent intent = new Intent(v.getContext(), ResultPage.class);
+                        startActivity(intent);
+                    }
+                });
 
-                                newButton.setOnLongClickListener(new View.OnLongClickListener() {
+                newButton.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setMessage("Veux-tu supprimer cette partie ?")
+                                .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                                     @Override
-                                    public boolean onLongClick(View v) {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                        builder.setMessage("Veux-tu supprimer cette partie ?")
-                                                .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        userDB.collection("Games")
+                                                .document(game.getId())
+                                                .delete()
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        userDB.collection("Games")
-                                                                .document(game.getId())
-                                                                .delete()
-                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                    @Override
-                                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                                        if (task.isSuccessful()){
-                                                                            layout.removeView(newButton);
-                                                                            Log.d("Success", "document successfully deleted");
-                                                                        } else {
-                                                                            Log.d("Error", "document NOT successfully deleted");
-                                                                        }
-                                                                    }
-                                                                });
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()){
+                                                            layout.removeView(newButton);
+                                                            Log.d("Success", "document successfully deleted");
+                                                        } else {
+                                                            Log.d("Error", "document NOT successfully deleted");
+                                                        }
                                                     }
-                                                })
-                                                .setNegativeButton("Non", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        Log.d("Info","partie conservée");
-                                                    }
-                                                }).show();
-                                        return true;
+                                                });
                                     }
-                                });
+                                })
+                                .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Log.d("Info","partie conservée");
+                                    }
+                                }).show();
+                        return true;
+                    }
+                });
 
 
-                            }
+            }
 
-                            layout.addView(newButton);
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("erreur", e.getMessage());
-                        }
-                    });
+            layout.addView(newButton);
 
         }
 
