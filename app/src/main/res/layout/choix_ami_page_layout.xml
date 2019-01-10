@@ -32,6 +32,22 @@
                 app:layout_constraintLeft_toLeftOf="parent" />
         </LinearLayout>
 
+
+        <Button
+            android:id="@+id/ajouter_ami_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="24dp"
+            android:textColor="@color/white"
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/button_with_radius"
+            android:text="@string/ajout_ami"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linear_layout_ami" />
+
     </android.support.constraint.ConstraintLayout>
 
 </ScrollView>

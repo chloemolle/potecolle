@@ -112,7 +112,7 @@ public class NotificationPage extends Activity {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Veux-tu annuler ta demande d'ami à " + friendRequest.getUsername())
+                builder.setMessage("Veux-tu annuler ton invitation à " + friendRequest.getUsername())
                         .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -143,7 +143,7 @@ public class NotificationPage extends Activity {
                         .setNegativeButton("Non", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.d("Info","demande d'ami conservé");
+                                Log.d("Info","invitation conservé");
                             }
                         }).show();
             }
@@ -202,7 +202,7 @@ public class NotificationPage extends Activity {
             newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure_deja_vu));
         }
 
-        newButton.setText(friendRequest.getUsername() + " souhaiterait devenir votre ami !");
+        newButton.setText(friendRequest.getUsername() + " souhaiterait devenir votre pote !");
         newButton.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -215,7 +215,7 @@ public class NotificationPage extends Activity {
         newButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Veux-tu ajouter " + friendRequest.getUsername() + " à tes amis?")
+                builder.setMessage("Veux-tu ajouter " + friendRequest.getUsername() + " à tes potes?")
                         .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -248,7 +248,7 @@ public class NotificationPage extends Activity {
                                         (ViewGroup) findViewById(R.id.custom_toast_container));
 
                                 TextView textToast = (TextView) layout.findViewById(R.id.text);
-                                textToast.setText("Bravo ! Vous avez gagné 100 points en ajoutant un ami!");
+                                textToast.setText("Bravo ! Vous avez gagné 100 points en ajoutant un pote!");
                                 Toast toast = new Toast(getApplicationContext());
                                 toast.setGravity(Gravity.BOTTOM, 0, 0);
                                 toast.setDuration(Toast.LENGTH_LONG);

@@ -64,7 +64,7 @@ public class AddFriendsPage extends Activity {
 
     public void setSearchFriends() {
         SearchView searchView = (SearchView) findViewById(R.id.add_friends_search);
-        searchView.setQueryHint("Chercher un ami");
+        searchView.setQueryHint("Chercher un pote");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

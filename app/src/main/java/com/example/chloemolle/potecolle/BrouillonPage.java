@@ -29,7 +29,6 @@ public class BrouillonPage extends Activity {
         setContentView(R.layout.brouillon_page_layout);
 
         final Globals globalVariables = (Globals) getApplicationContext();
-        setProgressBar();
 
         final EditText brouillon = (EditText) findViewById(R.id.ecriture);
         brouillon.setText(globalVariables.getBrouillonText());
@@ -37,26 +36,36 @@ public class BrouillonPage extends Activity {
         final Question currentQuestion = globalVariables.getCurrentGame().getQuestions().get(currentQuestionNumber);
 
         setQuestion(currentQuestion);
-
-
-        final Handler handler = setHandler(currentQuestion, currentQuestionNumber);
-
         Button retourQuiz = (Button) findViewById(R.id.retour_quiz);
-        retourQuiz.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                globalVariables.setBrouillonText(brouillon.getText().toString());
-                handler.removeCallbacksAndMessages(null);
-                Intent intent = new Intent(v.getContext(), QuizPage.class);
-                startActivity(intent);
-            }
-        });
+        setProgressBar();
+
+        if(globalVariables.getCurrentGame().getTimed()) {
+            final Handler handler = setHandler(currentQuestion, currentQuestionNumber);
+            retourQuiz.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    globalVariables.setBrouillonText(brouillon.getText().toString());
+                    handler.removeCallbacksAndMessages(null);
+                    Intent intent = new Intent(v.getContext(), QuizPage.class);
+                    startActivity(intent);
+                }
+            });
+        } else {
+            retourQuiz.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    globalVariables.setBrouillonText(brouillon.getText().toString());
+                    Intent intent = new Intent(v.getContext(), QuizPage.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
 
     }
 
     private void setProgressBar() {
         Globals globalVariables = (Globals) getApplicationContext();
         ProgressBar pgBar = (ProgressBar) findViewById(R.id.progressBarTimer);
-        if (globalVariables.getCurrentGame().getTimed().equals("false")) {
+        if (!globalVariables.getCurrentGame().getTimed()) {
             pgBar.setVisibility(View.GONE);
         } else {
             pgBar.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));

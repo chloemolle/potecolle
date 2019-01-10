@@ -527,7 +527,7 @@ public class MainPage extends Activity {
                                         View layout = inflater.inflate(R.layout.toast,
                                                 (ViewGroup) findViewById(R.id.custom_toast_container));
 
-                                        Globals.makeToast("Bravo ! Vous avez gagné 100 points en ajoutant un ami!", layout, getApplicationContext());
+                                        Globals.makeToast("Bravo ! Vous avez gagné 100 points en ajoutant un pote !", layout, getApplicationContext());
 
                                         HashMap<String, Object> updateUser = new HashMap<>();
                                         updateUser.put("level", user.getLevel());

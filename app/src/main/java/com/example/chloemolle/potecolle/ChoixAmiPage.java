@@ -77,6 +77,16 @@ public class ChoixAmiPage extends Activity {
 
             layout.addView(textView);
         }
+
+        Button ajoutAmi = findViewById(R.id.ajouter_ami_button);
+        ajoutAmi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), AddFriendsPage.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
 
