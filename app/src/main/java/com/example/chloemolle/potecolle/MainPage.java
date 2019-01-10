@@ -75,7 +75,7 @@ public class MainPage extends Activity {
 
         setButtonSolo();
 
-        getUserInfo(globalVariables.getUser() == null);
+        getUserInfo(globalVariables.getUser() == null, true);
 
         setHandler();
 
@@ -102,7 +102,7 @@ public class MainPage extends Activity {
         });
     }
 
-    private Boolean getUserInfo(final Boolean createUser) {
+    private Boolean getUserInfo(final Boolean createUser, final Boolean firstOccurence) {
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Globals globalVariables = (Globals) getApplicationContext();
@@ -159,9 +159,11 @@ public class MainPage extends Activity {
 
                     updateProgressBar();
 
+                    if (firstOccurence) {
+                        setLeaderboard(globalVariables);
+                    }
 
                     getFriendRequestsAndGames(userDB);
-
                 }
             }
 
@@ -370,7 +372,7 @@ public class MainPage extends Activity {
         final Context self = this;
         this.runnable = new Runnable(){
             public void run() {
-                Boolean test = getUserInfo(false);
+                Boolean test = getUserInfo(false, false);
                 if (test) {
                     handler.postDelayed(this, delay);
                 }
@@ -514,7 +516,6 @@ public class MainPage extends Activity {
                                 if (friendRequest.getDemande() &&
                                         !friendRequest.getPending() &&
                                         friendRequest.getAccepte()) {
-
                                     if (!friendRequest.getVu()) {
                                         Integer previousLevel = user.getLevel();
                                         user.addPoints(100);
@@ -621,6 +622,121 @@ public class MainPage extends Activity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void setLeaderboard(final Globals globalVariables) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Users")
+                .whereArrayContains("friends", globalVariables.getUserDB().getId())
+                .orderBy("level")
+                .orderBy("pointsActuels")
+                .limit(3)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            User user = globalVariables.getUser();
+                            ArrayList<HashMap<String, String>> leaderboardData = new ArrayList<>();
+                            Log.d("Success", "ok ! ");
+                            List<DocumentSnapshot> query = task.getResult().getDocuments();
+                            Boolean alreadyAdded = false;
+                            for (DocumentSnapshot friend: query) {
+                                HashMap<String, String> friendData = new HashMap<>();
+                                friendData.put("username", friend.get("username").toString());
+                                friendData.put("level", friend.get("level").toString());
+                                friendData.put("pointsActuels", friend.get("pointsActuels").toString());
+                                if (!alreadyAdded && Integer.valueOf(friendData.get("level")) <= user.getLevel() && Double.valueOf(friendData.get("pointsActuels")) <= user.getPointsActuels()) {
+                                    alreadyAdded = true;
+                                    HashMap<String, String> myData = new HashMap<>();
+                                    myData.put("username", user.getUsername());
+                                    myData.put("level", user.getLevel().toString());
+                                    myData.put("pointsActuels", String.valueOf(user.getPointsActuels()));
+                                    leaderboardData.add(myData);
+                                }
+                                leaderboardData.add(friendData);
+                            }
+                            LinearLayout layout = (LinearLayout) findViewById(R.id.leaderboard);
+
+                            if (!alreadyAdded && leaderboardData.size() == 3) {
+                                //Cas où on ne fait pas partie du leaderboard
+                                TextView myPlaceLeaderBoardUsername = (TextView) findViewById(R.id.leaderboard_your_place_username);
+                                myPlaceLeaderBoardUsername.setText("Moi");
+                                TextView myPlaceLeaderBoardLevel = (TextView) findViewById(R.id.leaderboard_your_place_level);
+                                myPlaceLeaderBoardLevel.setText("Niveau : " + user.getLevel());
+                                TextView myPlaceLeaderBoardPoints = (TextView) findViewById(R.id.leaderboard_your_place_points);
+                                myPlaceLeaderBoardPoints.setText("Points : " + user.getPointsActuels());
+                            } else {
+                                if (!alreadyAdded) {
+                                    HashMap<String, String> myData = new HashMap<>();
+                                    myData.put("username", user.getUsername());
+                                    myData.put("level", user.getLevel().toString());
+                                    myData.put("pointsActuels", String.valueOf(user.getPointsActuels()));
+                                    leaderboardData.add(myData);
+                                }
+                                //Cas où on fait partie du leaderboard
+                                LinearLayout myPlaceLeaderBoard = (LinearLayout) findViewById(R.id.leaderboard_your_place);
+                                layout.removeView(myPlaceLeaderBoard);
+                            }
+
+
+                            switch(leaderboardData.size()) {
+                                case 3:
+                                    break;
+                                case 1:
+                                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.leaderboard_second_place);
+                                    layout.removeView(linearLayout);
+                                case 2:
+                                    LinearLayout linearLayoutThird = (LinearLayout) findViewById(R.id.leaderboard_third_place);
+                                    layout.removeView(linearLayoutThird);
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            for (int i = 0; i < 3 && i < leaderboardData.size(); i ++) {
+                                HashMap<String, String> leader = leaderboardData.get(i);
+                                TextView textViewUsername;
+                                TextView textViewLevel;
+                                TextView textViewPoints;
+                                switch (i) {
+                                    case 0:
+                                        textViewUsername = (TextView) findViewById(R.id.leaderboard_first_place_username);
+                                        textViewLevel = (TextView) findViewById(R.id.leaderboard_first_place_level);
+                                        textViewPoints = (TextView) findViewById(R.id.leaderboard_first_place_points);
+                                        break;
+                                    case 1:
+                                        textViewUsername = (TextView) findViewById(R.id.leaderboard_second_place_username);
+                                        textViewLevel = (TextView) findViewById(R.id.leaderboard_second_place_level);
+                                        textViewPoints = (TextView) findViewById(R.id.leaderboard_second_place_points);
+                                        break;
+                                    case 2:
+                                        textViewUsername = (TextView) findViewById(R.id.leaderboard_third_place_username);
+                                        textViewLevel = (TextView) findViewById(R.id.leaderboard_third_place_level);
+                                        textViewPoints = (TextView) findViewById(R.id.leaderboard_third_place_points);
+                                        break;
+                                    default:
+                                        Log.d("fail", "probleme dans le switch case");
+                                        textViewUsername = (TextView) findViewById(R.id.leaderboard_first_place_username);
+                                        textViewLevel = (TextView) findViewById(R.id.leaderboard_first_place_level);
+                                        textViewPoints = (TextView) findViewById(R.id.leaderboard_first_place_points);
+                                }
+                                if (leader.get("username").equals(user.getUsername())) {
+                                    textViewUsername.setText("Moi");
+                                    textViewLevel.setText("Niveau : " + user.getLevel());
+                                    textViewPoints.setText("Points : " + user.getPointsActuels());
+                                } else {
+                                    textViewUsername.setText(leader.get("username"));
+                                    textViewLevel.setText("Niveau : " + leader.get("level"));
+                                    textViewPoints.setText("Points : " + leader.get("pointsActuels"));
+                                }
+                            }
+
+                        } else {
+                            Log.d("Fail", task.getException().getMessage());
+                        }
+                    }
+                });
     }
 
 }

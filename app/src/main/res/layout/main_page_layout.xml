@@ -238,6 +238,174 @@
                 tools:layout_editor_absoluteY="58dp" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/leaderboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/avancement">
+
+            <TextView
+                android:id="@+id/leaderboard_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorTheme"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:text="@string/leaderBoard"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:id="@+id/leaderboard_first_place"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:background="@drawable/box_sans_radius"
+                android:paddingBottom="1dp"
+                android:paddingStart="1dp"
+                android:paddingEnd="1dp">
+
+                <TextView
+                    android:id="@+id/leaderboard_first_place_username"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/colorTheme" />
+
+                <TextView
+                    android:id="@+id/leaderboard_first_place_level"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/colorTheme" />
+
+                <TextView
+                    android:id="@+id/leaderboard_first_place_points"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/colorTheme" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/leaderboard_second_place"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/box_sans_radius"
+                android:paddingBottom="1dp"
+                android:paddingStart="1dp"
+                android:paddingEnd="1dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/leaderboard_second_place_username"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/colorTheme" />
+
+                <TextView
+                    android:id="@+id/leaderboard_second_place_level"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/colorTheme" />
+
+                <TextView
+                    android:id="@+id/leaderboard_second_place_points"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/colorTheme" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/leaderboard_third_place"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/box_sans_radius"
+                android:paddingBottom="1dp"
+                android:paddingStart="1dp"
+                android:paddingEnd="1dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/leaderboard_third_place_username"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/colorTheme" />
+
+                <TextView
+                    android:id="@+id/leaderboard_third_place_level"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/colorTheme" />
+
+                <TextView
+                    android:id="@+id/leaderboard_third_place_points"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/colorTheme" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/leaderboard_your_place"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/box_sans_radius"
+                android:paddingBottom="1dp"
+                android:paddingStart="1dp"
+                android:paddingEnd="1dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/leaderboard_your_place_username"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/colorTheme" />
+
+                <TextView
+                    android:id="@+id/leaderboard_your_place_level"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/colorTheme" />
+
+                <TextView
+                    android:id="@+id/leaderboard_your_place_points"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/colorTheme" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
     </android.support.constraint.ConstraintLayout>
 
 

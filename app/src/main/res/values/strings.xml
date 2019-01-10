@@ -39,6 +39,7 @@
     <string name="username_already_used">Ce nom est déjà utilisé</string>
     <string name="bravo">Bravo !</string>
     <string name="got_it">Retour</string>
+    <string name="leaderBoard">Leaderboard</string>
     <string name="voir_mes_parties">Mes parties</string>
     <string name="stop_partie_seul">Nous avons annulé ta partie car tu es partie :( </string>
     <string name="stop_partie">Nous avons arrêté ta partie car tu es partie... Recommence la dans tes parties !  </string>
