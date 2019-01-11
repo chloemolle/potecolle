@@ -16,7 +16,7 @@ public class User {
     private ArrayList<Game> partiesEnCours = new ArrayList<>();
     private ArrayList<FriendRequest> friendRequests = new ArrayList<>();
     private Integer level;
-    private double pointsActuels;
+    private Double pointsActuels;
 
     public User() {};
 
@@ -52,13 +52,13 @@ public class User {
         return level;
     }
 
-    public double getPointsActuels() {
+    public Double getPointsActuels() {
         return pointsActuels;
     }
 
     public void addPoints(Integer points) {
-        double nextFloor = this.getFormule();
-        double newPoints = getPointsActuels() + points;
+        Double nextFloor = this.getFormule();
+        Double newPoints = getPointsActuels() + points;
         while (newPoints >= nextFloor) {
             newPoints = newPoints - nextFloor;
             level ++;
@@ -68,7 +68,7 @@ public class User {
         return;
     }
 
-    public double getFormule() {
+    public Double getFormule() {
         return 250 * Math.pow(2, this.getLevel() - 1);
     }
 

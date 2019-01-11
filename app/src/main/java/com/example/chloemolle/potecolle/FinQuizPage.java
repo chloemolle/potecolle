@@ -3,6 +3,8 @@ package com.example.chloemolle.potecolle;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,13 +30,18 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static com.firebase.ui.auth.AuthUI.TAG;
 
@@ -91,6 +98,23 @@ public class FinQuizPage extends Activity {
                 startActivity(intent);
             }
         });
+
+        Button revanche = (Button) findViewById(R.id.rejouer_revanche);
+        if (globalVariables.getCurrentGame().getSeul()) {
+            revanche.setText(R.string.rejouer);
+        }
+
+        revanche.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Game game = globalVariables.getCurrentGame();
+                Intent intent = new Intent(v.getContext(), QuizPage.class);
+                createQuestion(game.getSujet(), intent);
+            }
+        });
+
+
+
     }
 
     private void openPopup() {
@@ -283,33 +307,52 @@ public class FinQuizPage extends Activity {
 
         db.collection("Users")
                 .document(globalVariables.getCurrentGame().getAdversaire())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                .collection("Games")
+                .document(globalVariables.getCurrentGame().getId())
+                .update(updateOtherFields)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            final DocumentReference opponentDB = db.collection("Users").document(document.getId());
-                            opponentDB.collection("Games")
-                                    .document(globalVariables.getCurrentGame().getId())
-                                    .update(updateOtherFields)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error updating document", e);
-                                        }
-                                    });
-                        }
-
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
                     }
                 });
 
     }
+
+    public void createQuestion(String name_sujet, final Intent intent) {
+        final Globals globalVariables = (Globals) getApplicationContext();
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final String classe = globalVariables.getCurrentGame().getClasse();
+        final String matiere = globalVariables.getCurrentGame().getMatiere();
+
+        db.collection(classe).document(matiere).collection(name_sujet).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Game game = globalVariables.getCurrentGame();
+                            game.flushGame();
+                            game.createQuestions(task);
+                            if (!game.getSeul()) {
+                                Date date = new Date();
+                                Long tmpDate = date.getTime();
+                                final String id = tmpDate.toString();
+                                game.setId(id);
+                                game.setGame(globalVariables);
+                            }
+                            startActivity(intent);
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
 
 }

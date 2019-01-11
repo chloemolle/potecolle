@@ -8,8 +8,8 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_vertical">
-
+        android:layout_gravity="center_vertical"
+        android:padding="10dp">
 
 
         <LinearLayout
@@ -39,10 +39,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginTop="24dp"
-            android:textColor="@color/white"
             android:layout_marginEnd="50dp"
-            android:background="@drawable/button_with_radius"
+            android:background="@drawable/box_pour_entoure"
             android:text="@string/ajout_ami"
+            android:textColor="@color/colorTheme"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"

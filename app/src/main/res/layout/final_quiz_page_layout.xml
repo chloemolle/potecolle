@@ -37,13 +37,16 @@
     <ScrollView
         android:id="@+id/scroll_view_response"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="288dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_reviens_plus_tard">
+        app:layout_constraintTop_toBottomOf="@+id/text_reviens_plus_tard"
+        app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
             android:id="@+id/linear_layout_reponse"
@@ -63,15 +66,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/button_with_radius"
+        android:background="@drawable/box_pour_entoure"
+        android:padding="12dp"
         android:text="@string/retourMain"
-        android:textColor="@color/white"
+        android:textColor="@color/colorTheme"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scroll_view_response"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <TextView
@@ -85,6 +86,19 @@
         app:layout_constraintHorizontal_bias="0.506"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fin_quiz_text2" />
+
+    <Button
+        android:id="@+id/rejouer_revanche"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/button_with_radius"
+        android:padding="12dp"
+        android:text="@string/revanche"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
 

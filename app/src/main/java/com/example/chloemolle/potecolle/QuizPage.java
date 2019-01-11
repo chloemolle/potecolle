@@ -700,6 +700,7 @@ public class QuizPage extends Activity {
                     (ViewGroup) findViewById(R.id.custom_toast_container));
 
             TextView text = (TextView) layout.findViewById(R.id.text);
+            globalVariables.setCurrentQuestionNumero(0);
 
             if(globalVariables.getCurrentGame().getSeul()) {
                 text.setText(R.string.stop_partie_seul);

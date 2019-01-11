@@ -38,6 +38,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,7 +145,10 @@ public class MainPage extends Activity {
                     //on crée le bouton pour démarrer une partie
                     startGame.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            globalVariables.setCurrentGame(new Game(globalVariables.getUser().getUsername(), globalVariables.getUser().getClasse(), "Maths", false, true));
+                            Date date = new Date();
+                            Long tmpDate = date.getTime();
+                            final String id = tmpDate.toString();
+                            globalVariables.setCurrentGame(new Game(globalVariables.getUser().getUsername(), globalVariables.getUser().getClasse(), "Maths", false, true, id));
                             Intent intent = new Intent(v.getContext(), ChoixSujetPage.class);
                             startActivity(intent);
                         }
@@ -182,13 +186,13 @@ public class MainPage extends Activity {
         Globals globalVariables = (Globals) getApplicationContext();
         User user = globalVariables.getUser();
         ProgressBar avancement = (ProgressBar) findViewById(R.id.progressBarAvancement);
-        double avancementInteger = user.getFormule();
-        double pointsActuelsDouble = user.getPointsActuels();
+        Double avancementInteger = user.getFormule();
+        Double pointsActuelsDouble = user.getPointsActuels();
 
         TextView avancementText = (TextView) findViewById(R.id.avancement);
-        avancementText.setText((int) pointsActuelsDouble + "/" + (int) avancementInteger);
-        avancement.setMax((int) avancementInteger);
-        avancement.setProgress((int) pointsActuelsDouble);
+        avancementText.setText(pointsActuelsDouble.intValue() + "/" + avancementInteger.intValue());
+        avancement.setMax(avancementInteger.intValue());
+        avancement.setProgress(pointsActuelsDouble.intValue());
         avancement.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorTheme)));
     }
 
@@ -617,7 +621,10 @@ public class MainPage extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ChoixSujetPage.class);
                 User user = globalVariable.getUser();
-                Game game = new Game(user.getUsername(), user.getClasse(), "Maths", true, false);
+                Date date = new Date();
+                Long tmpDate = date.getTime();
+                final String id = tmpDate.toString();
+                Game game = new Game(user.getUsername(), user.getClasse(), "Maths", true, false, id);
                 globalVariable.setCurrentGame(game);
                 startActivity(intent);
             }
@@ -637,24 +644,17 @@ public class MainPage extends Activity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful()) {
                             User user = globalVariables.getUser();
-                            ArrayList<HashMap<String, String>> leaderboardData = new ArrayList<>();
+                            ArrayList<User> leaderboardData = new ArrayList<>();
                             Log.d("Success", "ok ! ");
                             List<DocumentSnapshot> query = task.getResult().getDocuments();
                             Boolean alreadyAdded = false;
                             for (DocumentSnapshot friend: query) {
-                                HashMap<String, String> friendData = new HashMap<>();
-                                friendData.put("username", friend.get("username").toString());
-                                friendData.put("level", friend.get("level").toString());
-                                friendData.put("pointsActuels", friend.get("pointsActuels").toString());
-                                if (!alreadyAdded && Integer.valueOf(friendData.get("level")) <= user.getLevel() && Double.valueOf(friendData.get("pointsActuels")) <= user.getPointsActuels()) {
+                                User friendUser = friend.toObject(User.class);
+                                if (!alreadyAdded && (Integer.valueOf(friendUser.getLevel()) == user.getLevel() && Double.valueOf(friendUser.getPointsActuels()) <= user.getPointsActuels()) || Integer.valueOf(friendUser.getLevel()) < user.getLevel())  {
                                     alreadyAdded = true;
-                                    HashMap<String, String> myData = new HashMap<>();
-                                    myData.put("username", user.getUsername());
-                                    myData.put("level", user.getLevel().toString());
-                                    myData.put("pointsActuels", String.valueOf(user.getPointsActuels()));
-                                    leaderboardData.add(myData);
+                                    leaderboardData.add(user);
                                 }
-                                leaderboardData.add(friendData);
+                                leaderboardData.add(friendUser);
                             }
                             LinearLayout layout = (LinearLayout) findViewById(R.id.leaderboard);
 
@@ -665,14 +665,11 @@ public class MainPage extends Activity {
                                 TextView myPlaceLeaderBoardLevel = (TextView) findViewById(R.id.leaderboard_your_place_level);
                                 myPlaceLeaderBoardLevel.setText("Niveau : " + user.getLevel());
                                 TextView myPlaceLeaderBoardPoints = (TextView) findViewById(R.id.leaderboard_your_place_points);
-                                myPlaceLeaderBoardPoints.setText("Points : " + user.getPointsActuels());
+                                Integer integer = user.getPointsActuels().intValue();
+                                myPlaceLeaderBoardPoints.setText("Points : " + user.getPointsActuels().intValue());
                             } else {
                                 if (!alreadyAdded) {
-                                    HashMap<String, String> myData = new HashMap<>();
-                                    myData.put("username", user.getUsername());
-                                    myData.put("level", user.getLevel().toString());
-                                    myData.put("pointsActuels", String.valueOf(user.getPointsActuels()));
-                                    leaderboardData.add(myData);
+                                    leaderboardData.add(user);
                                 }
                                 //Cas où on fait partie du leaderboard
                                 LinearLayout myPlaceLeaderBoard = (LinearLayout) findViewById(R.id.leaderboard_your_place);
@@ -695,7 +692,7 @@ public class MainPage extends Activity {
                             }
 
                             for (int i = 0; i < 3 && i < leaderboardData.size(); i ++) {
-                                HashMap<String, String> leader = leaderboardData.get(i);
+                                User leader = leaderboardData.get(i);
                                 TextView textViewUsername;
                                 TextView textViewLevel;
                                 TextView textViewPoints;
@@ -721,14 +718,14 @@ public class MainPage extends Activity {
                                         textViewLevel = (TextView) findViewById(R.id.leaderboard_first_place_level);
                                         textViewPoints = (TextView) findViewById(R.id.leaderboard_first_place_points);
                                 }
-                                if (leader.get("username").equals(user.getUsername())) {
+                                if (leader.getUsername().equals(user.getUsername())) {
                                     textViewUsername.setText("Moi");
                                     textViewLevel.setText("Niveau : " + user.getLevel());
-                                    textViewPoints.setText("Points : " + user.getPointsActuels());
+                                    textViewPoints.setText("Points : " + user.getPointsActuels().intValue());
                                 } else {
-                                    textViewUsername.setText(leader.get("username"));
-                                    textViewLevel.setText("Niveau : " + leader.get("level"));
-                                    textViewPoints.setText("Points : " + leader.get("pointsActuels"));
+                                    textViewUsername.setText(leader.getUsername());
+                                    textViewLevel.setText("Niveau : " + leader.getLevel());
+                                    textViewPoints.setText("Points : " + leader.getPointsActuels().intValue());
                                 }
                             }
 

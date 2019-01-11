@@ -1,16 +1,28 @@
 package com.example.chloemolle.potecolle;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static com.firebase.ui.auth.AuthUI.TAG;
 
@@ -46,12 +58,13 @@ public class Game {
     }
 
 
-    public Game (String _player1, String _classe, String _matiere, Boolean _seul, Boolean _timed) {
+    public Game (String _player1, String _classe, String _matiere, Boolean _seul, Boolean _timed, String _id) {
         this.player1 = _player1;
         this.classe = _classe;
         this.matiere = _matiere;
         this.seul =_seul;
         this.timed = _timed;
+        this.id = _id;
     }
 
 
@@ -328,4 +341,151 @@ public class Game {
     public void setRevanche(Boolean revanche) {
         this.revanche = revanche;
     }
+
+    public void createQuestions(Task<QuerySnapshot> task) {
+        ArrayList<Question> questionsQuiz = new ArrayList<>();
+        ArrayList<String> questionsQuizId = new ArrayList<>();
+        Integer nbQuestionDisponible = task.getResult().size();
+        ArrayList<Integer> questionToFetch = new ArrayList<>();
+
+        Random r = new Random();
+        while (questionToFetch.size() != 5) {
+            Integer tmp = r.nextInt(nbQuestionDisponible);
+            if (questionToFetch.indexOf(tmp) == -1) {
+                questionToFetch.add(tmp);
+            }
+        }
+        Integer index = 0;
+        List<DocumentSnapshot> documents = task.getResult().getDocuments();
+        for (int i = 0; i < questionToFetch.size(); i ++) {
+            DocumentSnapshot document = documents.get(questionToFetch.get(i));
+            if (questionToFetch.indexOf(index) != -1) {
+                final Question question = document.toObject(Question.class);
+                if (question.getType().toString().contains("image")){
+                    getImage(question);
+                }
+                ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
+
+                if (propositions != null && propositions.size() > 0) {
+                    setPropositions(question, propositions);
+                }
+
+                questionsQuiz.add(question);
+                questionsQuizId.add(document.getId());
+            }
+            index ++;
+        }
+        this.setQuestions(questionsQuiz);
+        this.setQuestionsId(questionsQuizId);
+    }
+
+
+
+    public void getImage(final Question question){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        // Create a storage reference from our app
+        StorageReference storageRef = storage.getReference();
+        StorageReference mountainImagesRef = storageRef.child(question.getImage());
+        mountainImagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                // Use the bytes to display the image
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                question.setBmp(bmp);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+    }
+
+    public void setPropositions(Question question, ArrayList<String> propositions) {
+        ArrayList<String> propositionsShuffled = new ArrayList<>();
+
+        while (propositions.size() != 0) {
+            int indexProp = (int) Math.floor(Math.random() * propositions.size());
+            propositionsShuffled.add(propositions.get(indexProp));
+            propositions.remove(indexProp);
+        }
+        question.setPropositions(propositionsShuffled);
+    }
+
+    public void setGame(Globals globalVariables){
+        final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
+
+        //set game for user
+        setGameForOneUser(userAuth.getEmail(), true, this.adversaire, this.player2);
+
+        //set game for opponent
+        setGameForOneUser(this.adversaire, false, userAuth.getEmail(), globalVariables.getUser().getUsername());
+    }
+
+    public void setGameForOneUser(final String monMail, final Boolean vu, String adversaire, String player2) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        HashMap<String,Object> newGame = new HashMap<>();
+        newGame.put("timed", this.timed);
+        newGame.put("adversaire", adversaire);
+        newGame.put("player2", player2);
+        newGame.put("classe", this.classe);
+        newGame.put("matiere", this.matiere);
+        newGame.put("sujet", this.sujet);
+        newGame.put("fini", false);
+        newGame.put("repondu", false);
+        newGame.put("vu", vu);
+        newGame.put("id", this.id);
+
+
+        final Game currentGame = this;
+        db.collection("Users")
+                .document(monMail)
+                .collection("Games")
+                .document(this.id)
+                .set(newGame)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        ArrayList<String> questionsId = currentGame.getQuestionsId();
+                        db.collection("Users")
+                                .document(monMail).collection("Games").document(currentGame.getId())
+                                .update("questionsId", questionsId)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error updating document", e);
+                                    }
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+
+    }
+    //Permet de recréer une partie avec les mêmes paramètres de début
+    public void flushGame() {
+        this.repondu = false;
+        this.fini = false;
+        this.player1Answers = new ArrayList<>();
+        this.player2Answers = new ArrayList<>();
+        this.score = "0";
+        this.id = "0";
+        this.scoreOpponent = "0";
+        this.scoreVu = false;
+        this.vu = false;
+    }
+
+
 }

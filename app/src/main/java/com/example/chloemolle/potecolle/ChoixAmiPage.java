@@ -138,82 +138,15 @@ public class ChoixAmiPage extends Activity {
             public void onClick(View v) {
                 Button b = (Button) v;
                 Intent intent = new Intent(v.getContext(), QuizPage.class);
-                globalVariables.getCurrentGame().setPlayer2(name);
-                globalVariables.getCurrentGame().setAdversaire(email);
-                setGame();
+                Game game = globalVariables.getCurrentGame();
+                game.setPlayer2(name);
+                game.setAdversaire(email);
+                game.setGame(globalVariables);
                 startActivity(intent);
             }
         });
 
         layout.addView(newButton, 0);
     }
-
-
-    public void setGame(){
-        final Globals globalVariables = (Globals) getApplicationContext();
-        final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-        final Game currentGame = globalVariables.getCurrentGame();
-        final String opponentUsername = currentGame.getAdversaire();
-
-        //set game for user
-        setGameForOneUser(userAuth.getEmail(), true, currentGame.getAdversaire(), currentGame.getPlayer2());
-
-        //set game for opponent
-        setGameForOneUser(opponentUsername, false, userAuth.getEmail(), globalVariables.getUser().getUsername());
-    }
-
-    public void setGameForOneUser(final String monMail, final Boolean vu, String adversaire, String player2) {
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Globals globalVariables = (Globals) getApplicationContext();
-        final Game currentGame = globalVariables.getCurrentGame();
-
-        HashMap<String,Object> newGame = new HashMap<>();
-        newGame.put("timed", currentGame.getTimed());
-        newGame.put("adversaire", adversaire);
-        newGame.put("player2", player2);
-        newGame.put("classe", currentGame.getClasse());
-        newGame.put("matiere", currentGame.getMatiere());
-        newGame.put("sujet", currentGame.getSujet());
-        newGame.put("fini", false);
-        newGame.put("repondu", false);
-        newGame.put("vu", vu);
-        newGame.put("id", currentGame.getId());
-
-        db.collection("Users")
-                .document(monMail)
-                .collection("Games")
-                .document(currentGame.getId())
-                .set(newGame)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                        ArrayList<String> questionsId = currentGame.getQuestionsId();
-                        db.collection("Users")
-                                .document(monMail).collection("Games").document(currentGame.getId())
-                                .update("questionsId", questionsId)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w(TAG, "Error updating document", e);
-                                    }
-                                });
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
-                    }
-                });
-
-    }
-
 
 }
