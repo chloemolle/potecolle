@@ -101,11 +101,25 @@ public class AddFriendsPage extends Activity {
 
         final ArrayList<HashMap<String, String>> arr = (ArrayList<HashMap<String, String>>) task.getResult().getData();
 
-        for (final HashMap<String, String> ami : arr) {
+        Boolean finiDealWithUsers = false;
+        Integer index = 0;
+        while (!finiDealWithUsers) {
+            HashMap<String, String> ami = arr.get(index);
             if (dealWithOneUser(ami)) {
                 arr.remove(ami);
+            } else {
+                index ++;
+            }
+            if (index == arr.size()) {
+                finiDealWithUsers = true;
             }
         }
+
+        if (arr.size() == 0) {
+            progressBar.setVisibility(View.GONE);
+        }
+
+
 
         final ListView listView = (ListView) findViewById(R.id.add_friends_list);
         listView.setAdapter(users);

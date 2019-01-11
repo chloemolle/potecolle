@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,6 +37,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -263,32 +266,6 @@ public class MainPage extends Activity {
         globalVariables.setTest(new Long(0));
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
-            LayoutInflater inflater = getLayoutInflater();
-            View layout = inflater.inflate(R.layout.toast,
-                    (ViewGroup) findViewById(R.id.custom_toast_container));
-
-            TextView text = (TextView) layout.findViewById(R.id.text);
-            text.setText("Tout va bien");
-
-            Toast toast = new Toast(getApplicationContext());
-            toast.setGravity(Gravity.BOTTOM, 0, 0);
-            toast.setDuration(Toast.LENGTH_LONG);
-            toast.setView(layout);
-            toast.show();
-        } else {
-            LayoutInflater inflater = getLayoutInflater();
-            View layout = inflater.inflate(R.layout.toast,
-                    (ViewGroup) findViewById(R.id.custom_toast_container));
-
-            TextView text = (TextView) layout.findViewById(R.id.text);
-            text.setText("probleme de handler");
-
-            Toast toast = new Toast(getApplicationContext());
-            toast.setGravity(Gravity.BOTTOM, 0, 0);
-            toast.setDuration(Toast.LENGTH_LONG);
-            toast.setView(layout);
-            toast.show();
-
         }
     }
 
@@ -582,7 +559,12 @@ public class MainPage extends Activity {
                                                 List<DocumentSnapshot> lists = task.getResult().getDocuments();
                                                 ArrayList<Game> arrayListGames = new ArrayList<>();
                                                 for(DocumentSnapshot doc: lists) {
-                                                    arrayListGames.add(doc.toObject(Game.class));
+                                                    Game game = doc.toObject(Game.class);
+                                                    for(int i = 0; i < game.getQuestions().size(); i ++) {
+                                                        ArrayList<HashMap<String, Object>> questions = (ArrayList<HashMap<String, Object>>) doc.get("questions");
+                                                        game.setPropositions(game.getQuestions().get(i), (ArrayList<String>) questions.get(i).get("propositions"));
+                                                    }
+                                                    arrayListGames.add(game);
                                                 }
                                                 user.setPartiesEnCours(arrayListGames);
                                                 globalVariables.setUser(user);
@@ -632,12 +614,12 @@ public class MainPage extends Activity {
     }
 
     public void setLeaderboard(final Globals globalVariables) {
+        final Context context = this;
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("Users")
                 .whereArrayContains("friends", globalVariables.getUserDB().getId())
                 .orderBy("level")
                 .orderBy("pointsActuels")
-                .limit(3)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -650,83 +632,62 @@ public class MainPage extends Activity {
                             Boolean alreadyAdded = false;
                             for (DocumentSnapshot friend: query) {
                                 User friendUser = friend.toObject(User.class);
-                                if (!alreadyAdded && (Integer.valueOf(friendUser.getLevel()) == user.getLevel() && Double.valueOf(friendUser.getPointsActuels()) <= user.getPointsActuels()) || Integer.valueOf(friendUser.getLevel()) < user.getLevel())  {
-                                    alreadyAdded = true;
-                                    leaderboardData.add(user);
+                                if (user.getFriends().contains(friend.getId())) {
+                                    if (!alreadyAdded && (Integer.valueOf(friendUser.getLevel()) == user.getLevel() && Double.valueOf(friendUser.getPointsActuels()) <= user.getPointsActuels()) || Integer.valueOf(friendUser.getLevel()) < user.getLevel())  {
+                                        alreadyAdded = true;
+                                        leaderboardData.add(user);
+                                    }
+                                    leaderboardData.add(friendUser);
                                 }
-                                leaderboardData.add(friendUser);
-                            }
-                            LinearLayout layout = (LinearLayout) findViewById(R.id.leaderboard);
 
-                            if (!alreadyAdded && leaderboardData.size() == 3) {
-                                //Cas où on ne fait pas partie du leaderboard
-                                TextView myPlaceLeaderBoardUsername = (TextView) findViewById(R.id.leaderboard_your_place_username);
-                                myPlaceLeaderBoardUsername.setText("Moi");
-                                TextView myPlaceLeaderBoardLevel = (TextView) findViewById(R.id.leaderboard_your_place_level);
-                                myPlaceLeaderBoardLevel.setText("Niveau : " + user.getLevel());
-                                TextView myPlaceLeaderBoardPoints = (TextView) findViewById(R.id.leaderboard_your_place_points);
-                                Integer integer = user.getPointsActuels().intValue();
-                                myPlaceLeaderBoardPoints.setText("Points : " + user.getPointsActuels().intValue());
-                            } else {
-                                if (!alreadyAdded) {
-                                    leaderboardData.add(user);
-                                }
-                                //Cas où on fait partie du leaderboard
-                                LinearLayout myPlaceLeaderBoard = (LinearLayout) findViewById(R.id.leaderboard_your_place);
-                                layout.removeView(myPlaceLeaderBoard);
                             }
 
-
-                            switch(leaderboardData.size()) {
-                                case 3:
-                                    break;
-                                case 1:
-                                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.leaderboard_second_place);
-                                    layout.removeView(linearLayout);
-                                case 2:
-                                    LinearLayout linearLayoutThird = (LinearLayout) findViewById(R.id.leaderboard_third_place);
-                                    layout.removeView(linearLayoutThird);
-                                    break;
-                                default:
-                                    break;
+                            if (!alreadyAdded) {
+                                leaderboardData.add(user);
                             }
 
-                            for (int i = 0; i < 3 && i < leaderboardData.size(); i ++) {
-                                User leader = leaderboardData.get(i);
-                                TextView textViewUsername;
-                                TextView textViewLevel;
-                                TextView textViewPoints;
-                                switch (i) {
-                                    case 0:
-                                        textViewUsername = (TextView) findViewById(R.id.leaderboard_first_place_username);
-                                        textViewLevel = (TextView) findViewById(R.id.leaderboard_first_place_level);
-                                        textViewPoints = (TextView) findViewById(R.id.leaderboard_first_place_points);
-                                        break;
-                                    case 1:
-                                        textViewUsername = (TextView) findViewById(R.id.leaderboard_second_place_username);
-                                        textViewLevel = (TextView) findViewById(R.id.leaderboard_second_place_level);
-                                        textViewPoints = (TextView) findViewById(R.id.leaderboard_second_place_points);
-                                        break;
-                                    case 2:
-                                        textViewUsername = (TextView) findViewById(R.id.leaderboard_third_place_username);
-                                        textViewLevel = (TextView) findViewById(R.id.leaderboard_third_place_level);
-                                        textViewPoints = (TextView) findViewById(R.id.leaderboard_third_place_points);
-                                        break;
-                                    default:
-                                        Log.d("fail", "probleme dans le switch case");
-                                        textViewUsername = (TextView) findViewById(R.id.leaderboard_first_place_username);
-                                        textViewLevel = (TextView) findViewById(R.id.leaderboard_first_place_level);
-                                        textViewPoints = (TextView) findViewById(R.id.leaderboard_first_place_points);
-                                }
+                            LinearLayout nestedScrollView = (LinearLayout) findViewById(R.id.nested_scrollview_leaderboard_linear_layout);
+
+                            for (User leader: leaderboardData) {
+                                LinearLayout linearLayout = new LinearLayout(context);
+                                linearLayout.setBackground(getResources().getDrawable(R.drawable.box_sans_radius));
+                                linearLayout.setPadding(2, 0, 2, 2);
+
+                                TextView textViewUsername = new TextView(context);
+                                textViewUsername.setGravity(Gravity.CENTER);
+                                textViewUsername.setTextColor(getResources().getColor(R.color.colorTheme));
+                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                        0,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                                        1
+                                );
+                                textViewUsername.setLayoutParams(params);
+
+                                TextView textViewLevel = new TextView(context);
+                                textViewLevel.setGravity(Gravity.CENTER);
+                                textViewLevel.setTextColor(getResources().getColor(R.color.colorTheme));
+                                textViewLevel.setLayoutParams(params);
+
+                                TextView textViewPoints = new TextView(context);
+                                textViewPoints.setGravity(Gravity.CENTER);
+                                textViewPoints.setTextColor(getResources().getColor(R.color.colorTheme));
+                                textViewPoints.setLayoutParams(params);
+
+                                linearLayout.addView(textViewUsername);
+                                linearLayout.addView(textViewLevel);
+                                linearLayout.addView(textViewPoints);
+
                                 if (leader.getUsername().equals(user.getUsername())) {
                                     textViewUsername.setText("Moi");
-                                    textViewLevel.setText("Niveau : " + user.getLevel());
-                                    textViewPoints.setText("Points : " + user.getPointsActuels().intValue());
+                                    textViewLevel.setText(user.getLevel().toString());
+                                    textViewPoints.setText("" + user.getPointsActuels().intValue());
                                 } else {
                                     textViewUsername.setText(leader.getUsername());
-                                    textViewLevel.setText("Niveau : " + leader.getLevel());
-                                    textViewPoints.setText("Points : " + leader.getPointsActuels().intValue());
+                                    textViewLevel.setText(leader.getLevel().toString());
+                                    textViewPoints.setText("" + leader.getPointsActuels().intValue());
                                 }
+                                nestedScrollView.addView(linearLayout);
+
                             }
 
                         } else {

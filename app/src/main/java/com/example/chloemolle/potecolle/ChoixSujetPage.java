@@ -179,10 +179,6 @@ public class ChoixSujetPage extends Activity {
                         if (task.isSuccessful()) {
                             Game game = globalVariables.getCurrentGame();
                             game.createQuestions(task);
-                            db.collection("Users")
-                                    .document(globalVariables.getUserDB().getId())
-                                    .collection("Games")
-                                    .document(game.getId());
                             startActivity(intent);
 
                         } else {

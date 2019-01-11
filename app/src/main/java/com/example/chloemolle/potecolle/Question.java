@@ -11,9 +11,9 @@ import java.util.HashMap;
  */
 
 public class Question {
-    private Object question;
-    private Object reponse;
-    private Object type;
+    private String question;
+    private String reponse;
+    private String type;
     private String image;
     private Bitmap bmp;
     private Integer temps;
@@ -35,15 +35,15 @@ public class Question {
     };
 
 
-    public Object getReponse() {
+    public String getReponse() {
         return reponse;
     }
 
-    public Object getQuestion() {
+    public String getQuestion() {
         return question;
     }
 
-    public Object getType() {
+    public String getType() {
         return type;
     }
 

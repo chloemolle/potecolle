@@ -139,8 +139,10 @@ public class FinQuizPage extends Activity {
     public Integer processAnswer(Integer i, Integer score) {
         final Globals globalVariables = (Globals) getApplicationContext();
 
-        ArrayList<String> player1Answers = globalVariables.getCurrentGame().getPlayer1Answers();
-        ArrayList<Question> realAnswers = globalVariables.getCurrentGame().getQuestions();
+        Game game = globalVariables.getCurrentGame();
+        ArrayList<String> player1Answers = game.getPlayer1Answers();
+
+        ArrayList<Question> realAnswers = game.getQuestions();
 
         LinearLayout ll = (LinearLayout) findViewById(R.id.linear_layout_reponse);
 
@@ -278,6 +280,7 @@ public class FinQuizPage extends Activity {
         Map<String, Object> updateFields = new HashMap<>();
         updateFields.put("score", scoreFinal.toString());
         updateFields.put("repondu", true);
+        updateFields.put("player1Answers", globalVariables.getCurrentGame().getPlayer1Answers());
         updateFields.put("vu", true);
         updateFields.put("reponsesTemps", globalVariables.getCurrentGame().getReponsesTemps());
 
@@ -301,6 +304,7 @@ public class FinQuizPage extends Activity {
         final Map<String, Object> updateOtherFields = new HashMap<>();
         updateOtherFields.put("reponsesTempsOpponent", globalVariables.getCurrentGame().getReponsesTemps());
         updateOtherFields.put("scoreOpponent", scoreFinal.toString());
+        updateFields.put("player2Answers", globalVariables.getCurrentGame().getPlayer1Answers());
         updateOtherFields.put("fini", true);
         updateOtherFields.put("vu", false);
 

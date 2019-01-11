@@ -69,9 +69,9 @@ public class MesPartiesPage extends Activity {
             final Boolean fini = game.getFini();
 
             final String finiOuPas = (repondu && !fini)?
-                    "Attends que ton pote " + game.getPlayer2() + " joue!" :
+                    "Attends que " + game.getPlayer2() + " joue!" :
                     (repondu && fini) ?
-                            "Regarde les résultats !\n"+ game.getPlayer2() : "Réponds aux questions de " + game.getPlayer2() + " :) ";
+                            "Regarde les résultats !\n"+ game.getPlayer2() : "Réponds aux questions contre " + game.getPlayer2() + " :) ";
 
 
             newButton.setText(finiOuPas + "\n" + game.getClasse() + "\n" + game.getMatiere() + " " + game.getSujet());
@@ -136,6 +136,15 @@ public class MesPartiesPage extends Activity {
                     }
                 });
 
+
+            } else {
+                newButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        globalVariables.setCurrentGame(game);
+                        Intent intent = new Intent(v.getContext(), FinQuizPage.class);
+                        startActivity(intent);
+                    }
+                });
 
             }
 

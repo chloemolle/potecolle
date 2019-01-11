@@ -97,6 +97,8 @@ public class NotificationPage extends Activity {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
 
+        final Globals globalVariables = (Globals) getApplicationContext();
+
         newButton.setText(friendRequest.getUsername() + ": demande envoyé !");
         newButton.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -119,9 +121,23 @@ public class NotificationPage extends Activity {
                                 //On supprime la requête de notre database
                                 suppressRequestFromDatabase(friendRequest, false, newButton, true, true);
 
-                                HashMap<String, Object> demandeAccepte = new HashMap<>();
-                                demandeAccepte.put("pending", false);
-                                demandeAccepte.put("accepte", true);
+                                User user = globalVariables.getUser();
+                                ArrayList<String> friends = user.getFriends();
+                                friends.remove(friendRequest.getEmail());
+
+                                db.collection("Users")
+                                        .document(userFirebase.getEmail())
+                                        .update("friends", friends)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Log.d("ok", "updating friends");
+                                                } else {
+                                                    Log.d("Error", "Updating friends failed");
+                                                }
+                                            }
+                                        });
 
                                 //On supprime  celle du demandeur
                                 db.collection("Users").document(friendRequest.getEmail())
@@ -383,9 +399,9 @@ public class NotificationPage extends Activity {
         final Boolean fini = game.getFini();
 
         final String finiOuPas = (repondu && !fini)?
-                "Attends que ton pote " + game.getPlayer2() + " joue!" :
+                "Attends que  " + game.getPlayer2() + " joue!" :
                 (repondu && fini) ?
-                        "Regarde les résultats !\n"+ game.getPlayer2() : "Réponds aux questions de " + game.getPlayer2() + " :) ";
+                        "Regarde les résultats !\n"+ game.getPlayer2() : "Réponds aux questions contre " + game.getPlayer2() + " :) ";
 
 
         newButton.setText(finiOuPas + "\n" + game.getClasse() + "\n" + game.getMatiere() + " " + game.getSujet());
@@ -424,7 +440,8 @@ public class NotificationPage extends Activity {
             newButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     globalVariables.setCurrentGame(game);
-                    Intent intent = new Intent(v.getContext(), LoadingQuizPage.class);
+                    globalVariables.setTmpTime(30);
+                    Intent intent = new Intent(v.getContext(), QuizPage.class);
                     startActivity(intent);
                 }
             });
@@ -471,6 +488,15 @@ public class NotificationPage extends Activity {
                 }
             });
 
+
+        } else {
+            newButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    globalVariables.setCurrentGame(game);
+                    Intent intent = new Intent(v.getContext(), FinQuizPage.class);
+                    startActivity(intent);
+                }
+            });
 
         }
 

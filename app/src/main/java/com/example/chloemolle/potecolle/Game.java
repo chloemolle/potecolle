@@ -437,8 +437,26 @@ public class Game {
         newGame.put("vu", vu);
         newGame.put("id", this.id);
 
-
         final Game currentGame = this;
+
+        ArrayList<HashMap<String, Object>> questions = new ArrayList<>();
+
+        for (Question question: currentGame.getQuestions()) {
+            HashMap<String, Object> questionTmp = new HashMap<>();
+            questionTmp.put("question", question.getQuestion());
+            questionTmp.put("reponse", question.getReponse());
+            questionTmp.put("type", question.getType());
+            questionTmp.put("image", question.getImage());
+            questionTmp.put("bmp", question.getBmp());
+            questionTmp.put("temps", question.getTemps());
+            questionTmp.put("propositions", question.getProposition());
+            questionTmp.put("keyboardType", question.getKeyboardType());
+            questions.add(questionTmp);
+        }
+
+        newGame.put("questionsId", currentGame.getQuestionsId());
+        newGame.put("questions", questions);
+
         db.collection("Users")
                 .document(monMail)
                 .collection("Games")
@@ -449,21 +467,6 @@ public class Game {
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
                         ArrayList<String> questionsId = currentGame.getQuestionsId();
-                        db.collection("Users")
-                                .document(monMail).collection("Games").document(currentGame.getId())
-                                .update("questionsId", questionsId)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w(TAG, "Error updating document", e);
-                                    }
-                                });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
