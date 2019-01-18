@@ -69,7 +69,7 @@ public class ResultPage extends Activity {
 
         String quiAGagne = "";
         String diffSeconds = "";
-        if (game.getTimed().equals("true")) {
+        if (game.getTimed()) {
             Integer diff = 0;
             if (votreScore > sonScore) {
                 quiAGagne =  " VICTOIRE ! :D" ;
@@ -82,16 +82,16 @@ public class ResultPage extends Activity {
                 }
                 if (diff > 0) {
                     quiAGagne =  " VICTOIRE ! :D" ;
-                    diffTempsText = "Vous avez le même score mais vous avez répondu plus rapidement que votre adversaire ;) (différence de " + diff + " secondes)";
+                    diffTempsText = "Vous avez le même score mais vous avez répondu plus rapidement que votre adversaire ;)";
                     TextView textDiffTemps = (TextView) findViewById(R.id.text_diff_temps);
                     textDiffTemps.setText(diffTempsText);
                 } else if (diff < 0) {
                     quiAGagne =  " Perdu :( \n Prends ta revanche ! " ;
-                    diffTempsText = "Vous avez le même score mais vous avez répondu moins rapidement que votre adversaire (différence de " + Math.abs(diff) + " secondes)";
+                    diffTempsText = "Vous avez le même score mais vous avez répondu moins rapidement que votre adversaire";
                     TextView textDiffTemps = (TextView) findViewById(R.id.text_diff_temps);
                     textDiffTemps.setText(diffTempsText);
                 } else {
-                    quiAGagne =  " EGALITE ! :)" ;
+                    quiAGagne =  "   E ! :)" ;
                 }
             }
 
@@ -296,34 +296,6 @@ public class ResultPage extends Activity {
         ll.addView(llText);
 
 
-    }
-
-        // TODO: changer linear layout à sortir de cette fonction. Ce sont les textes où il devrait y avoir des weight 1. En cas de doute, regarder ce qui a été fait dans le leaderboard
-    public void setLayoutForPlayerAnswer(String playerAnswer, String realAnswer, Object question, Integer i, Boolean isPlayer, LinearLayout llText) {
-        Globals globalVariables = (Globals) getApplicationContext();
-        TextView textQuestion = new TextView(this);
-        textQuestion.setText("question: " + question);
-
-        if (playerAnswer.replaceAll("\\s", "").equalsIgnoreCase(realAnswer.replaceAll("\\s", ""))) {
-            globalVariables.getCurrentGame().setReponsesTempsIndexScore(i);
-            TextView textReponse = new TextView(this);
-            textReponse.setText(isPlayer? "ta réponse: " :  "sa réponse: " + playerAnswer);
-            textReponse.setTextColor(getResources().getColor(R.color.green));
-            llText.addView(textQuestion);
-            llText.addView(textReponse);
-            llText.setBackground(getResources().getDrawable(R.drawable.reponse_true));
-        } else {
-            globalVariables.getCurrentGame().setReponsesTempsIndexScore0(i);
-            TextView textReponse = new TextView(this);
-            textReponse.setText(isPlayer? "ta réponse: " :  "sa réponse: " + playerAnswer);
-            textReponse.setTextColor(getResources().getColor(R.color.red));
-            TextView textSolution = new TextView(this);
-            textSolution.setText("la solution: " + realAnswer);
-            llText.addView(textQuestion);
-            llText.addView(textReponse);
-            llText.addView(textSolution);
-            llText.setBackground(getResources().getDrawable(R.drawable.reponse_false));
-        }
     }
 
 }
