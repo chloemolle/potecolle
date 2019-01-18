@@ -500,6 +500,7 @@ public class QuizPage extends Activity {
                                         updateUserGame();
                                         game.setScoreOpponent(game.getScoreOpponent());
                                         globalVariables.setCurrentQuestionNumero(0);
+                                        updateGames(Integer.valueOf(globalVariables.getCurrentGame().getScore()));
                                         Intent intent = new Intent(c, ResultPage.class);
                                         startActivity(intent);
                                     } else {
@@ -716,6 +717,65 @@ public class QuizPage extends Activity {
 
         }
         this.enteredToBackground = false;
+    }
+
+
+    public void updateGames(Integer scoreFinal) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
+        final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+
+        final Globals globalVariables = (Globals) getApplicationContext();
+        Map<String, Object> updateFields = new HashMap<>();
+        updateFields.put("score", scoreFinal.toString());
+        updateFields.put("repondu", true);
+        updateFields.put("player1Answers", globalVariables.getCurrentGame().getPlayer1Answers());
+        updateFields.put("vu", true);
+        updateFields.put("reponsesTemps", globalVariables.getCurrentGame().getReponsesTemps());
+
+
+        userDB.collection("Games").document(globalVariables.getCurrentGame().getId())
+                .update(updateFields)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
+
+
+        final Map<String, Object> updateOtherFields = new HashMap<>();
+        updateOtherFields.put("reponsesTempsOpponent", globalVariables.getCurrentGame().getReponsesTemps());
+        updateOtherFields.put("scoreOpponent", scoreFinal.toString());
+        updateOtherFields.put("player2Answers", globalVariables.getCurrentGame().getPlayer1Answers());
+        updateOtherFields.put("fini", true);
+        updateOtherFields.put("vu", false);
+
+
+        db.collection("Users")
+                .document(globalVariables.getCurrentGame().getAdversaire())
+                .collection("Games")
+                .document(globalVariables.getCurrentGame().getId())
+                .update(updateOtherFields)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
+
     }
 
 

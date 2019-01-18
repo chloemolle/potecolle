@@ -89,7 +89,7 @@ public class MesPartiesPage extends Activity {
                 newButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         globalVariables.setCurrentGame(game);
-                        Intent intent = new Intent(v.getContext(), LoadingQuizPage.class);
+                        Intent intent = new Intent(v.getContext(), QuizPage.class);
                         startActivity(intent);
                     }
                 });

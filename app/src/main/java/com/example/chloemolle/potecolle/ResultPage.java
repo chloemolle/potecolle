@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.text.Layout;
 import android.util.Log;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -116,6 +119,8 @@ public class ResultPage extends Activity {
         sonScoreText.setText(textSonScore);
         sonScoreText.setTextColor(getResources().getColor(R.color.colorTheme));
 
+        setResults();
+
 
         if(!game.getScoreVu()) {
             User user = globalVariables.getUser();
@@ -197,6 +202,128 @@ public class ResultPage extends Activity {
     public void onBackPressed(){
         Intent intent = new Intent(this, MainPage.class);
         startActivity(intent);
+    }
+
+    public void setResults() {
+        Globals globalVariables = (Globals) getApplicationContext();
+        ArrayList<String> player1Answers = globalVariables.getCurrentGame().getPlayer1Answers();
+
+        for (Integer i = 0; i < player1Answers.size(); i ++) {
+            processAnswer(i);
+        }
+
+    }
+
+    public void processAnswer(Integer i) {
+        final Globals globalVariables = (Globals) getApplicationContext();
+
+        Game game = globalVariables.getCurrentGame();
+        ArrayList<String> player1Answers = game.getPlayer1Answers();
+        ArrayList<String> player2Answers = game.getPlayer2Answers();
+
+        ArrayList<Question> realAnswers = game.getQuestions();
+
+        String playerAnswer = player1Answers.get(i);
+        String adversaireAnswer = player2Answers.get(i);
+        Object answer = realAnswers.get(i).getReponse();
+        Object question = realAnswers.get(i).getQuestion();
+        String realAnswer = "";
+        try {
+            realAnswer = answer.toString();
+        } catch (Exception e) {
+            Log.e("ERROR", "probleme" + realAnswers.get(i));
+        }
+
+
+        LinearLayout ll = (LinearLayout) findViewById(R.id.linear_layout_reponse);
+        LinearLayout llText = new LinearLayout(this);
+        llText.setOrientation(LinearLayout.VERTICAL);
+        llText.setPadding(10, 10, 10, 10);
+        LinearLayout.LayoutParams layoutParamsQuestion = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                1
+        );
+        layoutParamsQuestion.setMargins(20, 10, 20, 10);
+        llText.setLayoutParams(layoutParamsQuestion);
+
+        TextView textQuestion = new TextView(this);
+        textQuestion.setText("question: " + question);
+
+        Boolean hasError = false;
+
+        if (playerAnswer.replaceAll("\\s", "").equalsIgnoreCase(realAnswer.replaceAll("\\s", ""))) {
+            globalVariables.getCurrentGame().setReponsesTempsIndexScore(i);
+            TextView textReponse = new TextView(this);
+            textReponse.setText("ta réponse: " + playerAnswer);
+            textReponse.setTextColor(getResources().getColor(R.color.green));
+            llText.addView(textQuestion);
+            llText.addView(textReponse);
+            llText.setBackground(getResources().getDrawable(R.drawable.reponse_true));
+        } else {
+            globalVariables.getCurrentGame().setReponsesTempsIndexScore0(i);
+            TextView textReponse = new TextView(this);
+            textReponse.setText("ta réponse: " + playerAnswer);
+            textReponse.setTextColor(getResources().getColor(R.color.red));
+            llText.addView(textQuestion);
+            llText.addView(textReponse);
+            llText.setBackground(getResources().getDrawable(R.drawable.reponse_false));
+            hasError = true;
+        }
+
+        if (adversaireAnswer.replaceAll("\\s", "").equalsIgnoreCase(realAnswer.replaceAll("\\s", ""))) {
+            globalVariables.getCurrentGame().setReponsesTempsIndexScore(i);
+            TextView textReponse = new TextView(this);
+            textReponse.setText("sa réponse: " + adversaireAnswer);
+            textReponse.setTextColor(getResources().getColor(R.color.green));
+            llText.addView(textReponse);
+        } else {
+            globalVariables.getCurrentGame().setReponsesTempsIndexScore0(i);
+            TextView textReponse = new TextView(this);
+            textReponse.setText("sa réponse: " + adversaireAnswer);
+            textReponse.setTextColor(getResources().getColor(R.color.red));
+            llText.addView(textReponse);
+            hasError = true;
+        }
+
+        if (hasError) {
+            TextView textSolution = new TextView(this);
+            textSolution.setText("la solution: " + realAnswer);
+            llText.addView(textSolution);
+        }
+
+
+        ll.addView(llText);
+
+
+    }
+
+        // TODO: changer linear layout à sortir de cette fonction. Ce sont les textes où il devrait y avoir des weight 1. En cas de doute, regarder ce qui a été fait dans le leaderboard
+    public void setLayoutForPlayerAnswer(String playerAnswer, String realAnswer, Object question, Integer i, Boolean isPlayer, LinearLayout llText) {
+        Globals globalVariables = (Globals) getApplicationContext();
+        TextView textQuestion = new TextView(this);
+        textQuestion.setText("question: " + question);
+
+        if (playerAnswer.replaceAll("\\s", "").equalsIgnoreCase(realAnswer.replaceAll("\\s", ""))) {
+            globalVariables.getCurrentGame().setReponsesTempsIndexScore(i);
+            TextView textReponse = new TextView(this);
+            textReponse.setText(isPlayer? "ta réponse: " :  "sa réponse: " + playerAnswer);
+            textReponse.setTextColor(getResources().getColor(R.color.green));
+            llText.addView(textQuestion);
+            llText.addView(textReponse);
+            llText.setBackground(getResources().getDrawable(R.drawable.reponse_true));
+        } else {
+            globalVariables.getCurrentGame().setReponsesTempsIndexScore0(i);
+            TextView textReponse = new TextView(this);
+            textReponse.setText(isPlayer? "ta réponse: " :  "sa réponse: " + playerAnswer);
+            textReponse.setTextColor(getResources().getColor(R.color.red));
+            TextView textSolution = new TextView(this);
+            textSolution.setText("la solution: " + realAnswer);
+            llText.addView(textQuestion);
+            llText.addView(textReponse);
+            llText.addView(textSolution);
+            llText.setBackground(getResources().getDrawable(R.drawable.reponse_false));
+        }
     }
 
 }

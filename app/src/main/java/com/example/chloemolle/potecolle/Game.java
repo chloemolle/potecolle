@@ -297,19 +297,19 @@ public class Game {
     }
 
     public void addReponsesTemps(Integer reponseTemps) {
-        if (this.timed.equals("true")) {
+        if (this.timed) {
             this.reponsesTemps.add(reponseTemps);
         }
     }
 
     public void setReponsesTempsIndexScore(Integer index) {
-        if (this.timed.equals("true")) {
+        if (this.timed) {
             this.reponsesTemps.set(index, this.reponsesTemps.get(index) * 2);
         }
     }
 
     public void setReponsesTempsIndexScore0(Integer index) {
-        if (this.timed.equals("true")) {
+        if (this.timed) {
             this.reponsesTemps.set(index, 0);
         }
     }
