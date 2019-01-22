@@ -72,7 +72,9 @@ public class NotificationPage extends Activity {
 
 
         for (final Game partie: parties) {
-            createButton(partie, layout, userDB);
+            if(!partie.getVu()) {
+                createButton(partie, layout, userDB);
+            }
         }
 
         ArrayList<FriendRequest> friendRequests = user.getFriendRequests();
@@ -108,6 +110,7 @@ public class NotificationPage extends Activity {
         params.setMargins(25,25,25,0);
         newButton.setPadding(100, 0, 100, 0);
         newButton.setLayoutParams(params);
+        newButton.setAlpha((float) 0.5);
         newButton.setTextColor(getResources().getColor(R.color.colorTheme));
         newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
         newButton.setOnClickListener(new View.OnClickListener() {
@@ -215,7 +218,8 @@ public class NotificationPage extends Activity {
                     });
             newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
         } else {
-            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure_deja_vu));
+            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
+            newButton.setAlpha((float) 0.5);
         }
 
         newButton.setText(friendRequest.getUsername() + " souhaiterait devenir votre pote !");
@@ -415,26 +419,22 @@ public class NotificationPage extends Activity {
         newButton.setLayoutParams(params);
         newButton.setTextColor(getResources().getColor(R.color.colorTheme));
 
-        if (!game.getVu()) {
-            globalVariables.getUserDB().collection("Games")
-                    .document(game.getId())
-                    .update("vu", true)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Log.d("Reussi", "update réussi");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("Fail", e.getMessage());
-                        }
-                    });
-            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
-        } else {
-            newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure_deja_vu));
-        }
+        globalVariables.getUserDB().collection("Games")
+                .document(game.getId())
+                .update("vu", true)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("Reussi", "update réussi");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Fail", e.getMessage());
+                    }
+                });
+        newButton.setBackground(getResources().getDrawable(R.drawable.box_pour_entoure));
 
         if (!repondu) {
             newButton.setOnClickListener(new View.OnClickListener() {

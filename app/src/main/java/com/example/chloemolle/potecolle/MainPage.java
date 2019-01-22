@@ -632,6 +632,7 @@ public class MainPage extends Activity {
                             Boolean alreadyAdded = false;
                             for (DocumentSnapshot friend: query) {
                                 User friendUser = friend.toObject(User.class);
+
                                 if (user.getFriends().contains(friend.getId())) {
                                     if (!alreadyAdded && (Integer.valueOf(friendUser.getLevel()) == user.getLevel() && Double.valueOf(friendUser.getPointsActuels()) <= user.getPointsActuels()) || Integer.valueOf(friendUser.getLevel()) < user.getLevel())  {
                                         alreadyAdded = true;
