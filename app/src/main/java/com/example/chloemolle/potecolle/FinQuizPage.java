@@ -43,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import io.github.kexanie.library.MathView;
+
 import static com.firebase.ui.auth.AuthUI.TAG;
 
 /**
@@ -63,9 +65,12 @@ public class FinQuizPage extends Activity {
         ArrayList<String> player1Answers = globalVariables.getCurrentGame().getPlayer1Answers();
 
         Integer score = 0;
-        for (Integer i = 0; i < player1Answers.size(); i ++) {
-            score = processAnswer(i, score);
-        }
+
+        score = processAnswer(0, score, R.id.linear_layout_reponse1, R.id.question1_text_change, R.id.reponse1_text_change, R.id.reponse1_text, R.id.solution1_text_change, R.id.layout_solution1);
+        score = processAnswer(1, score, R.id.linear_layout_reponse2, R.id.question2_text_change, R.id.reponse2_text_change, R.id.reponse2_text, R.id.solution2_text_change, R.id.layout_solution2);
+        score = processAnswer(2, score, R.id.linear_layout_reponse3, R.id.question3_text_change, R.id.reponse3_text_change, R.id.reponse3_text, R.id.solution3_text_change, R.id.layout_solution3);
+        score = processAnswer(3, score, R.id.linear_layout_reponse4, R.id.question4_text_change, R.id.reponse4_text_change, R.id.reponse4_text, R.id.solution4_text_change, R.id.layout_solution4);
+        score = processAnswer(4, score, R.id.linear_layout_reponse5, R.id.question5_text_change, R.id.reponse5_text_change, R.id.reponse5_text, R.id.solution5_text_change, R.id.layout_solution5);
 
         TextView scoreText = (TextView) findViewById(R.id.fin_quiz_text2);
         scoreText.setText(score + "/" + globalVariables.getCurrentGame().getQuestionsId().size());
@@ -136,7 +141,7 @@ public class FinQuizPage extends Activity {
         dialog.show();
     }
 
-    public Integer processAnswer(Integer i, Integer score) {
+    public Integer processAnswer(Integer i, Integer score, Integer id_layout, Integer id_question, Integer id_reponse, Integer id_reponse_inchange, Integer id_solution, Integer id_layout_solution) {
         final Globals globalVariables = (Globals) getApplicationContext();
 
         Game game = globalVariables.getCurrentGame();
@@ -144,51 +149,46 @@ public class FinQuizPage extends Activity {
 
         ArrayList<Question> realAnswers = game.getQuestions();
 
-        LinearLayout ll = (LinearLayout) findViewById(R.id.linear_layout_reponse);
-
         String playerAnswer = player1Answers.get(i);
         Object answer = realAnswers.get(i).getReponse();
-        Object question = realAnswers.get(i).getQuestion();
+        String question = realAnswers.get(i).getQuestion();
+
+        MathView textQuestion = findViewById(id_question);
+        textQuestion.setText(question);
+
         String realAnswer = "";
         try {
             realAnswer = answer.toString();
         } catch (Exception e) {
             Log.e("ERROR", "probleme" + realAnswers.get(i));
         }
-        LinearLayout llText = new LinearLayout(this);
-        llText.setOrientation(LinearLayout.VERTICAL);
-        llText.setPadding(10, 10, 10, 10);
-        LinearLayout.LayoutParams layoutParamsQuestion = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        layoutParamsQuestion.setMargins(20, 10, 20, 10);
-        llText.setLayoutParams(layoutParamsQuestion);
-        TextView textQuestion = new TextView(this);
-        textQuestion.setText("question: " + question);
+
+        LinearLayout llText = (LinearLayout) findViewById(id_layout);
 
         if (playerAnswer.replaceAll("\\s", "").equalsIgnoreCase(realAnswer.replaceAll("\\s", ""))) {
             score ++;
             globalVariables.getCurrentGame().setReponsesTempsIndexScore(i);
-            TextView textReponse = new TextView(this);
-            textReponse.setText("ta réponse: " + playerAnswer);
-            textReponse.setTextColor(getResources().getColor(R.color.green));
-            llText.addView(textQuestion);
-            llText.addView(textReponse);
+
+            TextView textReponseInchange = (TextView) findViewById(id_reponse_inchange);
+            textReponseInchange.setTextColor(getResources().getColor(R.color.green));
+
+            MathView textReponse = findViewById(id_reponse);
+            textReponse.setText(playerAnswer);
+            MathView textSolution = findViewById(id_solution);
+            llText.removeView(findViewById(id_layout_solution));
             llText.setBackground(getResources().getDrawable(R.drawable.reponse_true));
         } else {
             globalVariables.getCurrentGame().setReponsesTempsIndexScore0(i);
-            TextView textReponse = new TextView(this);
-            textReponse.setText("ta réponse: " + playerAnswer);
-            textReponse.setTextColor(getResources().getColor(R.color.red));
-            TextView textSolution = new TextView(this);
-            textSolution.setText("la solution: " + realAnswer);
-            llText.addView(textQuestion);
-            llText.addView(textReponse);
-            llText.addView(textSolution);
+
+            TextView textReponseInchange = (TextView) findViewById(id_reponse_inchange);
+            textReponseInchange.setTextColor(getResources().getColor(R.color.red));
+
+            MathView textReponse = findViewById(id_reponse);
+            textReponse.setText(playerAnswer);
+            MathView textSolution = findViewById(id_solution);
+            textSolution.setText(realAnswer);
             llText.setBackground(getResources().getDrawable(R.drawable.reponse_false));
         }
-        ll.addView(llText);
         return score;
     }
 

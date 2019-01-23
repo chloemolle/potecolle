@@ -56,7 +56,395 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fin_quiz_text"></LinearLayout>
+            app:layout_constraintTop_toBottomOf="@id/fin_quiz_text">
+
+            <!-- Question 1 -->
+
+            <LinearLayout
+                android:id="@+id/linear_layout_reponse1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical"
+                android:padding="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/question1_text"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/question" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/question1_text_change"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/reponse1_text"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/reponse" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/reponse1_text_change"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_solution1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/solution1_text"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/solution" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/solution1_text_change"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- Question 2 -->
+
+            <LinearLayout
+                android:id="@+id/linear_layout_reponse2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/question2_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:text="@string/question" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/question2_text_change"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/reponse2_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:text="@string/reponse" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/reponse2_text_change"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_solution2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/solution2_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:text="@string/solution" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/solution2_text_change"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- Question 3 -->
+
+            <LinearLayout
+                android:id="@+id/linear_layout_reponse3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical"
+                android:padding="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/question3_text"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/question" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/question3_text_change"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/reponse3_text"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/reponse" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/reponse3_text_change"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_solution3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/solution3_text"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/solution" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/solution3_text_change"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- Question 4 -->
+
+            <LinearLayout
+                android:id="@+id/linear_layout_reponse4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical"
+                android:padding="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/question4_text"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.25"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/question" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/question4_text_change"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/reponse4_text"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/reponse" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/reponse4_text_change"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_solution4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/solution4_text"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.25"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/solution" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/solution4_text_change"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- Question 5 -->
+
+            <LinearLayout
+                android:id="@+id/linear_layout_reponse5"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/question5_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:text="@string/question" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/question5_text_change"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/reponse5_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:text="@string/reponse" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/reponse5_text_change"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_solution5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/solution5_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:text="@string/solution" />
+
+                    <io.github.kexanie.library.MathView
+                        android:id="@+id/solution5_text_change"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
 
     </ScrollView>
 
