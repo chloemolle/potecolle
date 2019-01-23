@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +36,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import io.github.kexanie.library.MathView;
 
 import static com.firebase.ui.auth.AuthUI.TAG;
 
@@ -184,90 +187,31 @@ public class QuizPage extends Activity {
                 }
 
 
-                final TextView prop1 = (TextView) findViewById(R.id.reponse_quiz1);
+                final MathView prop1 = (MathView) findViewById(R.id.reponse_quiz1);
                 prop1.setPadding(20, 20, 20, 20);
                 prop1.setText(propositionsShuffled.get(0));
-                if (answer.equals(prop1.getText().toString())) {
-                    prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
-                    prop1.setTextColor(getResources().getColor(R.color.white));
-                } else {
-                    prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-                    prop1.setTextColor(getResources().getColor(R.color.black));
-                }
 
-                prop1.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        String userAnswerText = prop1.getText().toString();
-                        if (userAnswerText.isEmpty()) {
-                            return;
-                        }
-                        qcmNext(userAnswerText, handler, runnable, v.getContext(), prop1);
-                    }
-                });
+                setOnClickListenerForLayout(R.id.reponse_quiz1_layout, prop1);
 
-                final TextView prop2 = (TextView) findViewById(R.id.reponse_quiz2);
+
+                final MathView prop2 = (MathView) findViewById(R.id.reponse_quiz2);
                 prop2.setPadding(20, 20, 20, 20);
                 prop2.setText(propositionsShuffled.get(1));
-                if (answer.equals(prop2.getText().toString())) {
-                    prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
-                    prop2.setTextColor(getResources().getColor(R.color.white));
-                } else {
-                    prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-                    prop2.setTextColor(getResources().getColor(R.color.black));
-                }
 
-                prop2.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        String userAnswerText = prop2.getText().toString();
-                        if (userAnswerText.isEmpty()) {
-                            return;
-                        }
-                        qcmNext(userAnswerText, handler, runnable, v.getContext(), prop2);
-                    }
-                });
+                setOnClickListenerForLayout(R.id.reponse_quiz2_layout, prop2);
 
-                final TextView prop3 = (TextView) findViewById(R.id.reponse_quiz3);
+                final MathView prop3 = (MathView) findViewById(R.id.reponse_quiz3);
                 prop3.setPadding(20, 20, 20, 20);
                 prop3.setText(propositionsShuffled.get(2));
-                if (answer.equals(prop3.getText().toString())) {
-                    prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
-                    prop3.setTextColor(getResources().getColor(R.color.white));
-                } else {
-                    prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-                    prop3.setTextColor(getResources().getColor(R.color.black));
-                }
 
-                prop3.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        String userAnswerText = prop3.getText().toString();
-                        if (userAnswerText.isEmpty()) {
-                            return;
-                        }
-                        qcmNext(userAnswerText, handler, runnable, v.getContext(), prop3);
-                    }
-                });
+                setOnClickListenerForLayout(R.id.reponse_quiz3_layout, prop3);
 
-                final TextView prop4 = (TextView) findViewById(R.id.reponse_quiz4);
+                final MathView prop4 = (MathView) findViewById(R.id.reponse_quiz4);
                 prop4.setPadding(20, 20, 20, 20);
-                if (answer.equals(prop4.getText().toString())) {
-                    prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
-                    prop4.setTextColor(getResources().getColor(R.color.white));
-                } else {
-                    prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-                    prop4.setTextColor(getResources().getColor(R.color.black));
-                }
                 prop4.setText(propositionsShuffled.get(3));
 
 
-                prop4.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        String userAnswerText = prop4.getText().toString();
-                        if (userAnswerText.isEmpty()) {
-                            return;
-                        }
-                        qcmNext(userAnswerText, handler, runnable, v.getContext(), prop4);
-                    }
-                });
+                setOnClickListenerForLayout(R.id.reponse_quiz4_layout, prop4);
             }
 
         } else if (currentQuestion.getType().equals("qcm") || currentQuestion.getType().equals("questionInversé")) {
@@ -288,107 +232,48 @@ public class QuizPage extends Activity {
 
             ArrayList<String> propositionsShuffled = currentQuestion.getProposition();
 
-            final TextView question = (TextView) findViewById(R.id.question_quiz);
-            question.setText(currentQuestion.getQuestion().toString());
+            final MathView question = (MathView) findViewById(R.id.question_quiz);
+            String text = currentQuestion.getQuestion();
+            question.setText(currentQuestion.getQuestion());
             String answer = "";
             if (globalVariables.getCurrentGame().getPlayer1Answers().size() > currentQuestionNumber) {
                 answer = globalVariables.getCurrentGame().getPlayer1Answers().get(currentQuestionNumber);
             }
 
-            final TextView prop1 = (TextView) findViewById(R.id.reponse_quiz1);
+            final MathView prop1 = (MathView) findViewById(R.id.reponse_quiz1);
             prop1.setPadding(20, 20, 20, 20);
             prop1.setText(propositionsShuffled.get(0));
             String test = propositionsShuffled.get(0);
-            if (answer.equals(test)) {
-                prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
-                prop1.setTextColor(getResources().getColor(R.color.white));
-            } else {
-                prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-                prop1.setTextColor(getResources().getColor(R.color.black));
-            }
 
-            prop1.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    String userAnswerText = prop1.getText().toString();
-                    if (userAnswerText.isEmpty()) {
-                        return;
-                    }
-                    qcmNext(userAnswerText, handler, runnable, v.getContext(), prop1);
+            setOnClickListenerForLayout(R.id.reponse_quiz1_layout, prop1);
 
-                }
-            });
 
-            final TextView prop2 = (TextView) findViewById(R.id.reponse_quiz2);
+            final MathView prop2 = (MathView) findViewById(R.id.reponse_quiz2);
             prop2.setPadding(20, 20, 20, 20);
             prop2.setText(propositionsShuffled.get(1));
-            if (answer.equals(prop2.getText().toString())) {
-                prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
-                prop2.setTextColor(getResources().getColor(R.color.white));
-            } else {
-                prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-                prop2.setTextColor(getResources().getColor(R.color.black));
-            }
 
-            prop2.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    String userAnswerText = prop2.getText().toString();
-                    if (userAnswerText.isEmpty()) {
-                        return;
-                    }
-                    qcmNext(userAnswerText, handler, runnable, v.getContext(), prop2);
+            setOnClickListenerForLayout(R.id.reponse_quiz2_layout, prop2);
 
-                }
-            });
 
-            final TextView prop3 = (TextView) findViewById(R.id.reponse_quiz3);
+            final MathView prop3 = (MathView) findViewById(R.id.reponse_quiz3);
             prop3.setPadding(20, 20, 20, 20);
             prop3.setText(propositionsShuffled.get(2));
-            if (answer.equals(prop3.getText().toString())) {
-                prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
-                prop3.setTextColor(getResources().getColor(R.color.white));
-            } else {
-                prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-                prop3.setTextColor(getResources().getColor(R.color.black));
-            }
 
-            prop3.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    String userAnswerText = prop3.getText().toString();
-                    if (userAnswerText.isEmpty()) {
-                        return;
-                    }
-                    qcmNext(userAnswerText, handler, runnable, v.getContext(), prop3);
+            setOnClickListenerForLayout(R.id.reponse_quiz3_layout, prop3);
 
-                }
-            });
 
-            final TextView prop4 = (TextView) findViewById(R.id.reponse_quiz4);
+            final MathView prop4 = (MathView) findViewById(R.id.reponse_quiz4);
             prop4.setPadding(20, 20, 20, 20);
             prop4.setText(propositionsShuffled.get(3));
-            if (answer.equals(prop4.getText().toString())) {
-                prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
-                prop4.setTextColor(getResources().getColor(R.color.white));
-            } else {
-                prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-                prop4.setTextColor(getResources().getColor(R.color.black));
-            }
 
 
-            prop4.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    String userAnswerText = prop4.getText().toString();
-                    if (userAnswerText.isEmpty()) {
-                        return;
-                    }
-                    qcmNext(userAnswerText, handler, runnable, v.getContext(), prop4);
-                }
-            });
+            setOnClickListenerForLayout(R.id.reponse_quiz4_layout, prop4);
 
 
         } else {
             setRetourButton();
             setProgressBar();
-            final TextView question = (TextView) findViewById(R.id.question_quiz);
+            final MathView question = (MathView) findViewById(R.id.question_quiz);
             question.setText(currentQuestion.getQuestion().toString());
             if (currentQuestionNumber < globalVariables.getCurrentGame().getPlayer1Answers().size()) {
                 globalVariables.setReponseText(globalVariables.getCurrentGame().getPlayer1Answers().get(currentQuestionNumber));
@@ -540,7 +425,7 @@ public class QuizPage extends Activity {
         }
     }
 
-    private void qcmNext(String userAnswerText, Handler handler, Runnable runnable, Context context, TextView prop) {
+    private void qcmNext(String userAnswerText, Handler handler, Runnable runnable, Context context, MathView prop) {
         Globals globalVariables = (Globals) getApplicationContext();
         Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
         globalVariables.setBrouillonText("");
@@ -548,25 +433,7 @@ public class QuizPage extends Activity {
         globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
         globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
         globalVariables.setTmpTime(30);
-        final TextView prop1 = (TextView) findViewById(R.id.reponse_quiz1);
-        prop1.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-        prop1.setTextColor(getResources().getColor(R.color.black));
 
-        final TextView prop2 = (TextView) findViewById(R.id.reponse_quiz2);
-        prop2.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-        prop2.setTextColor(getResources().getColor(R.color.black));
-
-        final TextView prop3 = (TextView) findViewById(R.id.reponse_quiz3);
-        prop3.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-        prop3.setTextColor(getResources().getColor(R.color.black));
-
-        final TextView prop4 = (TextView) findViewById(R.id.reponse_quiz4);
-        prop4.setBackground(getResources().getDrawable(R.drawable.background_quiz));
-        prop4.setTextColor(getResources().getColor(R.color.black));
-
-
-        prop.setBackground(getResources().getDrawable(R.drawable.background_quiz_selected));
-        prop.setTextColor(getResources().getColor(R.color.white));
         if (globalVariables.getCurrentGame().getTimed()) {
             handler.removeCallbacks(runnable);
         }
@@ -778,6 +645,19 @@ public class QuizPage extends Activity {
 
     }
 
+    private void setOnClickListenerForLayout(Integer id, final MathView prop1) {
+        LinearLayout prop1Layout = (LinearLayout) findViewById(id);
+        prop1Layout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String userAnswerText = prop1.getText();
+                if (userAnswerText.isEmpty()) {
+                    return;
+                }
+                qcmNext(userAnswerText, handler, runnable, v.getContext(), prop1);
+            }
+        });
+
+    }
 
 
 }
