@@ -135,7 +135,7 @@ public class QuizPage extends Activity {
         }
 
 
-        if (currentQuestion.getType().toString().contains("image")) {
+        if (currentQuestion.getType().contains("image")) {
             setRetourButton();
             setProgressBar();
 
@@ -176,42 +176,73 @@ public class QuizPage extends Activity {
                     200, false));
 
 
-            if (currentQuestion.getType().toString().contains("qcm")) {
+            if (currentQuestion.getType().contains("qcm")) {
 
 
                 ArrayList<String> propositionsShuffled = currentQuestion.getProposition();
 
                 String answer = "";
+                Boolean isAnswered = false;
                 if (globalVariables.getCurrentGame().getPlayer1Answers().size() > currentQuestionNumber) {
                     answer = globalVariables.getCurrentGame().getPlayer1Answers().get(currentQuestionNumber);
+                    isAnswered = true;
                 }
 
 
                 final MathView prop1 = (MathView) findViewById(R.id.reponse_quiz1);
                 prop1.setPadding(20, 20, 20, 20);
                 prop1.setText(propositionsShuffled.get(0));
+                LinearLayout layout1 = findViewById(R.id.reponse_quiz1_layout);
 
-                setOnClickListenerForLayout(R.id.reponse_quiz1_layout, prop1);
+                if (answer.equals(prop1.getText()) || !isAnswered) {
+                  layout1.setAlpha(1);
+                } else {
+                  layout1.setAlpha((float) 0.5);
+                }
+
+                setOnClickListenerForLayout(R.id.reponse_quiz1_layout, prop1, R.id.reponse_quiz1_layout);
 
 
                 final MathView prop2 = (MathView) findViewById(R.id.reponse_quiz2);
                 prop2.setPadding(20, 20, 20, 20);
                 prop2.setText(propositionsShuffled.get(1));
+                LinearLayout layout2 = findViewById(R.id.reponse_quiz2_layout);
 
-                setOnClickListenerForLayout(R.id.reponse_quiz2_layout, prop2);
+                if (answer.equals(prop2.getText()) || !isAnswered) {
+                    layout2.setAlpha(1);
+                } else {
+                    layout2.setAlpha((float) 0.5);
+                }
+
+
+                setOnClickListenerForLayout(R.id.reponse_quiz2_layout, prop2, R.id.reponse_quiz2_layout);
 
                 final MathView prop3 = (MathView) findViewById(R.id.reponse_quiz3);
                 prop3.setPadding(20, 20, 20, 20);
                 prop3.setText(propositionsShuffled.get(2));
+                LinearLayout layout3 = findViewById(R.id.reponse_quiz3_layout);
 
-                setOnClickListenerForLayout(R.id.reponse_quiz3_layout, prop3);
+                if (answer.equals(prop3.getText()) || !isAnswered) {
+                    layout3.setAlpha(1);
+                } else {
+                    layout3.setAlpha((float) 0.5);
+                }
+
+                setOnClickListenerForLayout(R.id.reponse_quiz3_layout, prop3, R.id.reponse_quiz3_layout);
 
                 final MathView prop4 = (MathView) findViewById(R.id.reponse_quiz4);
                 prop4.setPadding(20, 20, 20, 20);
                 prop4.setText(propositionsShuffled.get(3));
+                LinearLayout layout4 = findViewById(R.id.reponse_quiz4_layout);
+
+                if (answer.equals(prop4.getText()) || !isAnswered) {
+                    layout4.setAlpha(1);
+                } else {
+                    layout4.setAlpha((float) 0.5);
+                }
 
 
-                setOnClickListenerForLayout(R.id.reponse_quiz4_layout, prop4);
+                setOnClickListenerForLayout(R.id.reponse_quiz4_layout, prop4, R.id.reponse_quiz4_layout);
             }
 
         } else if (currentQuestion.getType().equals("qcm") || currentQuestion.getType().equals("questionInversé")) {
@@ -236,38 +267,70 @@ public class QuizPage extends Activity {
             String text = currentQuestion.getQuestion();
             question.setText(currentQuestion.getQuestion());
             String answer = "";
+            Boolean isAnswered = false;
             if (globalVariables.getCurrentGame().getPlayer1Answers().size() > currentQuestionNumber) {
                 answer = globalVariables.getCurrentGame().getPlayer1Answers().get(currentQuestionNumber);
+                isAnswered = true;
             }
 
             final MathView prop1 = (MathView) findViewById(R.id.reponse_quiz1);
             prop1.setPadding(20, 20, 20, 20);
             prop1.setText(propositionsShuffled.get(0));
             String test = propositionsShuffled.get(0);
+            LinearLayout layout1 = findViewById(R.id.reponse_quiz1_layout);
 
-            setOnClickListenerForLayout(R.id.reponse_quiz1_layout, prop1);
+            if (answer.equals(prop1.getText()) || !isAnswered) {
+                layout1.setAlpha(1);
+            } else {
+                layout1.setAlpha((float) 0.5);
+            }
+
+
+            setOnClickListenerForLayout(R.id.reponse_quiz1_layout, prop1, R.id.reponse_quiz1_layout);
 
 
             final MathView prop2 = (MathView) findViewById(R.id.reponse_quiz2);
             prop2.setPadding(20, 20, 20, 20);
             prop2.setText(propositionsShuffled.get(1));
+            LinearLayout layout2 = findViewById(R.id.reponse_quiz2_layout);
 
-            setOnClickListenerForLayout(R.id.reponse_quiz2_layout, prop2);
+            if (answer.equals(prop2.getText()) || !isAnswered) {
+                layout2.setAlpha(1);
+            } else {
+                layout2.setAlpha((float) 0.5);
+            }
+
+
+            setOnClickListenerForLayout(R.id.reponse_quiz2_layout, prop2, R.id.reponse_quiz2_layout);
 
 
             final MathView prop3 = (MathView) findViewById(R.id.reponse_quiz3);
             prop3.setPadding(20, 20, 20, 20);
             prop3.setText(propositionsShuffled.get(2));
+            LinearLayout layout3 = findViewById(R.id.reponse_quiz3_layout);
 
-            setOnClickListenerForLayout(R.id.reponse_quiz3_layout, prop3);
+            if (answer.equals(prop3.getText()) || !isAnswered) {
+                layout3.setAlpha(1);
+            } else {
+                layout3.setAlpha((float) 0.5);
+            }
+
+            setOnClickListenerForLayout(R.id.reponse_quiz3_layout, prop3, R.id.reponse_quiz3_layout);
 
 
             final MathView prop4 = (MathView) findViewById(R.id.reponse_quiz4);
             prop4.setPadding(20, 20, 20, 20);
             prop4.setText(propositionsShuffled.get(3));
+            LinearLayout layout4 = findViewById(R.id.reponse_quiz4_layout);
+
+            if (answer.equals(prop4.getText()) || !isAnswered) {
+                layout4.setAlpha(1);
+            } else {
+                layout4.setAlpha((float) 0.5);
+            }
 
 
-            setOnClickListenerForLayout(R.id.reponse_quiz4_layout, prop4);
+            setOnClickListenerForLayout(R.id.reponse_quiz4_layout, prop4, R.id.reponse_quiz4_layout);
 
 
         } else {
@@ -425,7 +488,7 @@ public class QuizPage extends Activity {
         }
     }
 
-    private void qcmNext(String userAnswerText, Handler handler, Runnable runnable, Context context, MathView prop) {
+    private void qcmNext(String userAnswerText, Handler handler, Runnable runnable, Context context, MathView prop, Integer id_layout) {
         Globals globalVariables = (Globals) getApplicationContext();
         Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
         globalVariables.setBrouillonText("");
@@ -433,6 +496,18 @@ public class QuizPage extends Activity {
         globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
         globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
         globalVariables.setTmpTime(30);
+
+        LinearLayout layoutReponse1 = (LinearLayout) findViewById(R.id.reponse_quiz1_layout);
+        layoutReponse1.setAlpha((float) 0.5);
+        LinearLayout layoutReponse2 = (LinearLayout) findViewById(R.id.reponse_quiz2_layout);
+        layoutReponse2.setAlpha((float) 0.5);
+        LinearLayout layoutReponse3 = (LinearLayout) findViewById(R.id.reponse_quiz3_layout);
+        layoutReponse3.setAlpha((float) 0.5);
+        LinearLayout layoutReponse4 = (LinearLayout) findViewById(R.id.reponse_quiz4_layout);
+        layoutReponse4.setAlpha((float) 0.5);
+
+        LinearLayout layoutReponse = (LinearLayout) findViewById(id_layout);
+        layoutReponse.setAlpha(1);
 
         if (globalVariables.getCurrentGame().getTimed()) {
             handler.removeCallbacks(runnable);
@@ -645,15 +720,15 @@ public class QuizPage extends Activity {
 
     }
 
-    private void setOnClickListenerForLayout(Integer id, final MathView prop1) {
+    private void setOnClickListenerForLayout(Integer id, final MathView prop, final Integer id_layout) {
         LinearLayout prop1Layout = (LinearLayout) findViewById(id);
         prop1Layout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String userAnswerText = prop1.getText();
+                String userAnswerText = prop.getText();
                 if (userAnswerText.isEmpty()) {
                     return;
                 }
-                qcmNext(userAnswerText, handler, runnable, v.getContext(), prop1);
+                qcmNext(userAnswerText, handler, runnable, v.getContext(), prop, id_layout);
             }
         });
 

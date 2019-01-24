@@ -60,7 +60,7 @@
 
             <io.github.kexanie.library.MathView
                 android:id="@+id/reponse_quiz1"
-                android:layout_width="320dp"
+                android:layout_width="296dp"
                 android:layout_height="wrap_content"
                 app:engine="MathJax" />
 
@@ -79,7 +79,7 @@
 
             <io.github.kexanie.library.MathView
                 android:id="@+id/reponse_quiz2"
-                android:layout_width="320dp"
+                android:layout_width="296dp"
                 android:layout_height="wrap_content"
                 app:engine="MathJax" />
 
@@ -98,7 +98,7 @@
 
             <io.github.kexanie.library.MathView
                 android:id="@+id/reponse_quiz3"
-                android:layout_width="320dp"
+                android:layout_width="296dp"
                 android:layout_height="wrap_content"
                 app:engine="MathJax" />
 
@@ -118,7 +118,7 @@
 
             <io.github.kexanie.library.MathView
                 android:id="@+id/reponse_quiz4"
-                android:layout_width="320dp"
+                android:layout_width="296dp"
                 android:layout_height="wrap_content"
                 app:engine="MathJax" />
         </LinearLayout>
