@@ -180,7 +180,6 @@ public class ChoixSujetPage extends Activity {
                             Game game = globalVariables.getCurrentGame();
                             game.createQuestions(task);
                             startActivity(intent);
-
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }

@@ -73,12 +73,6 @@ public class MainPage extends Activity {
 
         setMenuAppearance(linearLayout);
 
-        setButtonOfMenu(linearLayout);
-
-        setButtonVoirMesParties();
-
-        setButtonSolo();
-
         getUserInfo(globalVariables.getUser() == null, true);
 
         setHandler();
@@ -168,6 +162,10 @@ public class MainPage extends Activity {
 
                     if (firstOccurence) {
                         setLeaderboard(globalVariables);
+                        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layout_parametre);
+                        setButtonOfMenu(linearLayout);
+                        setButtonVoirMesParties();
+                        setButtonSolo();
                     }
 
                     getFriendRequestsAndGames(userDB);

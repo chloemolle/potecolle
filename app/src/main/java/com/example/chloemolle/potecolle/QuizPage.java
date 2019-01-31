@@ -519,7 +519,7 @@ public class QuizPage extends Activity {
     @Override
     public void onBackPressed() {
         final Globals globalVariables = (Globals) getApplicationContext();
-        if (!globalVariables.getCurrentGame().getTimed()) {
+        if (!globalVariables.getCurrentGame().getTimed() && globalVariables.getCurrentQuestionNumero() > 0) {
             globalVariables.setReponseText("");
             globalVariables.setBrouillonText("");
             globalVariables.setCurrentQuestionNumero(globalVariables.getCurrentQuestionNumero() - 1);

@@ -349,31 +349,28 @@ public class Game {
         ArrayList<Integer> questionToFetch = new ArrayList<>();
 
         Random r = new Random();
+        //On récupère 5 index de questions à récupérer
         while (questionToFetch.size() != 5) {
             Integer tmp = r.nextInt(nbQuestionDisponible);
             if (questionToFetch.indexOf(tmp) == -1) {
                 questionToFetch.add(tmp);
             }
         }
-        Integer index = 0;
         List<DocumentSnapshot> documents = task.getResult().getDocuments();
         for (int i = 0; i < questionToFetch.size(); i ++) {
             DocumentSnapshot document = documents.get(questionToFetch.get(i));
-            if (questionToFetch.indexOf(index) != -1) {
-                final Question question = document.toObject(Question.class);
-                if (question.getType().toString().contains("image")){
-                    getImage(question);
-                }
-                ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
-
-                if (propositions != null && propositions.size() > 0) {
-                    setPropositions(question, propositions);
-                }
-
-                questionsQuiz.add(question);
-                questionsQuizId.add(document.getId());
+            final Question question = document.toObject(Question.class);
+            if (question.getType().contains("image")){
+                getImage(question);
             }
-            index ++;
+            ArrayList<String> propositions = (ArrayList<String>) document.getData().get("propositions");
+
+            if (propositions != null && propositions.size() > 0) {
+                setPropositions(question, propositions);
+            }
+
+            questionsQuiz.add(question);
+            questionsQuizId.add(document.getId());
         }
         this.setQuestions(questionsQuiz);
         this.setQuestionsId(questionsQuizId);
