@@ -40,12 +40,13 @@ public class MesPartiesPage extends Activity {
         if (mesParties.size() > 0) {
             setLayoutForGames(mesParties);
         } else {
-            setLayoutForGamesEmpty();
+            setLayoutForEnCoursGamesEmpty();
+            setLayoutForFiniesGamesEmpty();
         }
 
     }
 
-    public void setLayoutForGamesEmpty() {
+    public void setLayoutForEnCoursGamesEmpty() {
         TextView emptyGame = new TextView(this);
         emptyGame.setText("Tu n'as pas de partie en cours... Lance une partie contre un pote ;)");
         emptyGame.setTextColor(getResources().getColor(R.color.colorTheme));
@@ -56,11 +57,22 @@ public class MesPartiesPage extends Activity {
         layout.addView(emptyGame);
     }
 
+    public void setLayoutForFiniesGamesEmpty() {
+        final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_fini);
+        layout.removeView((TextView) findViewById(R.id.parties_finies_text));
+    }
+
+
     public void setLayoutForGames(ArrayList<Game> mesParties) {
         final Context context = this;
         final Globals globalVariables = (Globals) getApplicationContext();
         final DocumentReference userDB = globalVariables.getUserDB();
-        final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
+        final LinearLayout layoutEnCours = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
+        final LinearLayout layoutFinies = (LinearLayout) findViewById(R.id.layout_partie_fini);
+
+        Boolean isEnCoursEmpty = true;
+        Boolean isFiniesEmpty = true;
+
         for (final Game game: mesParties) {
             // on ajoute un bouton pour accéder à la partie (/!!!!\ à changer rapidement
             final Button newButton = new Button(this);
@@ -117,7 +129,8 @@ public class MesPartiesPage extends Activity {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if (task.isSuccessful()){
-                                                            layout.removeView(newButton);
+                                                            layoutEnCours.removeView(newButton);
+                                                            layoutFinies.removeView(newButton);
                                                             Log.d("Success", "document successfully deleted");
                                                         } else {
                                                             Log.d("Error", "document NOT successfully deleted");
@@ -148,8 +161,21 @@ public class MesPartiesPage extends Activity {
 
             }
 
-            layout.addView(newButton);
+            if (!fini || !repondu) {
+                layoutEnCours.addView(newButton);
+                isEnCoursEmpty = false;
+            } else {
+                layoutFinies.addView(newButton);
+                isFiniesEmpty = false;
+            }
 
+        }
+
+        if(isEnCoursEmpty) {
+            setLayoutForEnCoursGamesEmpty();
+        }
+        if (isFiniesEmpty) {
+            setLayoutForFiniesGamesEmpty();
         }
 
     }
