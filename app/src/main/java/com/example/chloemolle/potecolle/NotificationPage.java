@@ -44,6 +44,8 @@ import static com.firebase.ui.auth.AuthUI.TAG;
 
 public class NotificationPage extends Activity {
 
+    private Context context = this;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -245,7 +247,7 @@ public class NotificationPage extends Activity {
                                 user.addPoints(100);
 
                                 if (previousLevel != user.getLevel()) {
-                                    openPopup();
+                                    Globals.openPopup(context, globalVariables.getUser().getLevel());
                                 }
 
                                 HashMap<String, Object> updateUser = new HashMap<>();
@@ -502,26 +504,6 @@ public class NotificationPage extends Activity {
 
         layout.addView(newButton);
 
-    }
-
-
-    private void openPopup() {
-        Globals globalVariables = (Globals) getApplicationContext();
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.popup_level_up);
-        Button retour = (Button) dialog.findViewById(R.id.retour_popup);
-        TextView textBravo = (TextView) dialog.findViewById(R.id.bravo_text);
-        textBravo.setText("Bravo !");
-        TextView text = (TextView) dialog.findViewById(R.id.level_up_text);
-        text.setText("Tu passes au niveau " + globalVariables.getUser().getLevel() + " ;)");
-        retour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
     }
 
 

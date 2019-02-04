@@ -122,24 +122,6 @@ public class FinQuizPage extends Activity {
 
     }
 
-    private void openPopup() {
-        Globals globalVariables = (Globals) getApplicationContext();
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.popup_level_up);
-        Button retour = (Button) dialog.findViewById(R.id.retour_popup);
-        TextView textBravo = (TextView) dialog.findViewById(R.id.bravo_text);
-        textBravo.setText("Bravo !");
-        TextView text = (TextView) dialog.findViewById(R.id.level_up_text);
-        text.setText("Tu passes au niveau " + globalVariables.getUser().getLevel() + " ;)");
-        retour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
 
     public Integer processAnswer(Integer i, Integer score, Integer id_layout, Integer id_question, Integer id_reponse, Integer id_reponse_inchange, Integer id_solution, Integer id_layout_solution) {
         final Globals globalVariables = (Globals) getApplicationContext();
@@ -243,7 +225,7 @@ public class FinQuizPage extends Activity {
         userForLevel.addPoints(newLevelPoints);
 
         if (previousLevel != userForLevel.getLevel()) {
-            openPopup();
+            Globals.openPopup(this, globalVariables.getUser().getLevel());
         }
 
         LayoutInflater inflater = getLayoutInflater();

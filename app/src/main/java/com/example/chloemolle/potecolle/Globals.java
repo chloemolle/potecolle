@@ -1,11 +1,14 @@
 package com.example.chloemolle.potecolle;
 
 import android.app.Application;
+import android.app.Dialog;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -117,7 +120,25 @@ public class Globals extends Application {
         toast.setDuration(Toast.LENGTH_LONG);
         toast.setView(layout);
         toast.show();
-
     }
+
+    public static void openPopup(Context context, Integer level) {
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.popup_level_up);
+        Button retour = (Button) dialog.findViewById(R.id.retour_popup);
+        TextView textBravo = (TextView) dialog.findViewById(R.id.bravo_text);
+        textBravo.setText("Bravo !");
+        TextView text = (TextView) dialog.findViewById(R.id.level_up_text);
+        text.setText("Tu passes au niveau " + level + " ;)");
+        retour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
 
 }

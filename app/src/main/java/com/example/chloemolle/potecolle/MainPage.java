@@ -54,6 +54,7 @@ public class MainPage extends Activity {
 
     public Handler handler;
     public Runnable runnable;
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -195,25 +196,6 @@ public class MainPage extends Activity {
         avancement.setMax(avancementInteger.intValue());
         avancement.setProgress(pointsActuelsDouble.intValue());
         avancement.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorTheme)));
-    }
-
-    private void openPopup() {
-        Globals globalVariables = (Globals) getApplicationContext();
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.popup_level_up);
-        Button retour = (Button) dialog.findViewById(R.id.retour_popup);
-        TextView textBravo = (TextView) dialog.findViewById(R.id.bravo_text);
-        textBravo.setText("Bravo !");
-        TextView text = (TextView) dialog.findViewById(R.id.level_up_text);
-        text.setText("Tu passes au niveau " + globalVariables.getUser().getLevel() + " ;)");
-        retour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
     }
 
 
@@ -500,7 +482,7 @@ public class MainPage extends Activity {
                                         user.addPoints(100);
 
                                         if(previousLevel != user.getLevel()) {
-                                            openPopup();
+                                            Globals.openPopup(context, globalVariables.getUser().getLevel());
                                         }
                                         updateProgressBar();
                                         LayoutInflater inflater = getLayoutInflater();
