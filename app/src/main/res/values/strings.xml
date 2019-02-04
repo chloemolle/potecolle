@@ -10,7 +10,8 @@
     <string name="points">Points</string>
 
     <string name="question">Question</string>
-    <string name="reponse">Réponse</string>
+    <string name="reponse">Ta Réponse</string>
+    <string name="sa_reponse">Sa Réponse</string>
     <string name="solution">Solution</string>
 
 

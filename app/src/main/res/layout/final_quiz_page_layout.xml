@@ -78,8 +78,11 @@
                     <TextView
                         android:id="@+id/question1_text"
                         android:layout_width="0dp"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:layout_height="wrap_content"
                         android:text="@string/question" />
 
@@ -98,8 +101,11 @@
                     <TextView
                         android:id="@+id/reponse1_text"
                         android:layout_width="0dp"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:layout_height="wrap_content"
                         android:text="@string/reponse" />
 
@@ -118,8 +124,11 @@
                     <TextView
                         android:id="@+id/solution1_text"
                         android:layout_width="0dp"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:layout_height="wrap_content"
                         android:text="@string/solution" />
 
@@ -156,8 +165,11 @@
                         android:id="@+id/question2_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:text="@string/question" />
 
                     <io.github.kexanie.library.MathView
@@ -177,8 +189,11 @@
                         android:id="@+id/reponse2_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:text="@string/reponse" />
 
                     <io.github.kexanie.library.MathView
@@ -198,8 +213,11 @@
                         android:id="@+id/solution2_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:text="@string/solution" />
 
                     <io.github.kexanie.library.MathView
@@ -233,8 +251,11 @@
                     <TextView
                         android:id="@+id/question3_text"
                         android:layout_width="0dp"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:layout_height="wrap_content"
                         android:text="@string/question" />
 
@@ -253,8 +274,11 @@
                     <TextView
                         android:id="@+id/reponse3_text"
                         android:layout_width="0dp"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:layout_height="wrap_content"
                         android:text="@string/reponse" />
 
@@ -273,8 +297,11 @@
                     <TextView
                         android:id="@+id/solution3_text"
                         android:layout_width="0dp"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:layout_height="wrap_content"
                         android:text="@string/solution" />
 
@@ -309,9 +336,12 @@
                     <TextView
                         android:id="@+id/question4_text"
                         android:layout_width="0dp"
-                        android:layout_weight="0.25"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:text="@string/question" />
 
                     <io.github.kexanie.library.MathView
@@ -329,8 +359,11 @@
                     <TextView
                         android:id="@+id/reponse4_text"
                         android:layout_width="0dp"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:layout_height="wrap_content"
                         android:text="@string/reponse" />
 
@@ -349,9 +382,12 @@
                     <TextView
                         android:id="@+id/solution4_text"
                         android:layout_width="0dp"
-                        android:layout_weight="0.25"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:text="@string/solution" />
 
                     <io.github.kexanie.library.MathView
@@ -387,8 +423,11 @@
                         android:id="@+id/question5_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:text="@string/question" />
 
                     <io.github.kexanie.library.MathView
@@ -408,8 +447,11 @@
                         android:id="@+id/reponse5_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:text="@string/reponse" />
 
                     <io.github.kexanie.library.MathView
@@ -429,8 +471,11 @@
                         android:id="@+id/solution5_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.25"
-                        android:gravity="center"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:paddingStart="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingEnd="5dp"
                         android:text="@string/solution" />
 
                     <io.github.kexanie.library.MathView
