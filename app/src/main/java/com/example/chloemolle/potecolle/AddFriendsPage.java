@@ -83,10 +83,11 @@ public class AddFriendsPage extends Activity {
         final ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarAddFriends);
         progressBar.setVisibility(View.VISIBLE);
 
+        Globals globalVariables = (Globals) getApplicationContext();
         FirebaseFunctions mFunctions = FirebaseFunctions.getInstance();
         mFunctions
                 .getHttpsCallable("getUsers")
-                .call("")
+                .call(globalVariables.getUser().getTypeAbonnement())
                 .continueWith(new Continuation<HttpsCallableResult, String>() {
                     @Override
                     public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
