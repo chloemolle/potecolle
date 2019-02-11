@@ -105,9 +105,12 @@ public class AskForUsername extends Activity {
     }
 
     public Spinner setSpinner(){
+        Globals globalVariables = (Globals) getApplicationContext();
+        Integer type_abonnement = globalVariables.getUser().getAutorisations();
+
         Spinner choixClasse = (Spinner) findViewById(R.id.spinner_classe);
         ArrayAdapter<CharSequence> adapterFamily = ArrayAdapter.createFromResource(this,
-                R.array.classes, android.R.layout.simple_spinner_item);
+                type_abonnement, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapterFamily.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner

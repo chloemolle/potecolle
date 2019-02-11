@@ -56,9 +56,18 @@
     <string name="stop_partie">Nous avons arrêté ta partie car tu es partie... Recommence la dans tes parties !  </string>
 
 
-    <string-array name="classes">
+    <string-array name="classes_VC">
         <item>Troisieme</item>
         <item>Villebon-Charpak</item>
+    </string-array>
+
+    <string-array name="classes_reverie">
+        <item>Troisieme</item>
+        <item>La reverie</item>
+    </string-array>
+
+    <string-array name="no_class">
+        <item>Tu n\'as pas de classe disponible</item>
     </string-array>
 
 

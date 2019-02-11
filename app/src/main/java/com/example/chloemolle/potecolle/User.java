@@ -17,6 +17,7 @@ public class User {
     private ArrayList<FriendRequest> friendRequests = new ArrayList<>();
     private Integer level;
     private Double pointsActuels;
+    private String typeAbonnement;
 
     public User() {};
 
@@ -78,5 +79,18 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getTypeAbonnement() {
+        return typeAbonnement;
+    }
+
+    public Integer getAutorisations() {
+        if (getTypeAbonnement().equals("VC")) {
+            return R.array.classes_VC;
+        } else if (getTypeAbonnement().equals("reverie")) {
+            return R.array.classes_reverie;
+        }
+        return R.array.no_class;
     }
 }
