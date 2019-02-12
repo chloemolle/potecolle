@@ -74,7 +74,7 @@ public class MainPage extends Activity {
 
         setMenuAppearance(linearLayout);
 
-        getUserInfo(globalVariables.getUser() == null, true);
+        getUserInfo((globalVariables.getUser() == null || globalVariables.getUser().getLevel() == null), true);
 
         setHandler();
 

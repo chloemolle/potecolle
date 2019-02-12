@@ -57,11 +57,14 @@ public class AskForUsername extends Activity {
 
         final Spinner choixClasse = setSpinner();
 
+        final EditText text = (EditText) findViewById(R.id.username_text);
+        Globals globalVariables = (Globals) getApplicationContext();
+        text.setText(globalVariables.getUser().getUsername());
+
         Button nextPage = (Button) findViewById(R.id.ok);
         nextPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final EditText text = (EditText) findViewById(R.id.username_text);
                 final Context context = v.getContext();
                 progressBarCheckUsername.setVisibility(View.VISIBLE);
 

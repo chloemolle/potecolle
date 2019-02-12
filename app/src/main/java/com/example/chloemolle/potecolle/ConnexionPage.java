@@ -8,7 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -85,18 +87,8 @@ public class ConnexionPage extends Activity {
             final IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-                ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.layout_connexion);
-                Button bouton = (Button) findViewById(R.id.s_inscrire_bouton);
-                ImageView logo = (ImageView) findViewById(R.id.logo);
-                layout.removeView(bouton);
-                layout.removeView(logo);
-                ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleLarge);
-                progressBar.setVisibility(View.VISIBLE);
-                layout.addView(progressBar);
-
 
                 createUser();
-
 
             } else {
                 // Sign in failed. If response is null the user canceled the
@@ -112,6 +104,7 @@ public class ConnexionPage extends Activity {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final String email = user.getEmail();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final Context context = this;
 
         db.collection("Users")
                 .document(email)
@@ -119,37 +112,70 @@ public class ConnexionPage extends Activity {
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful() && task.getResult().getData() != null) {
-                            Map<String, Object> doc = task.getResult().getData();
-                            Intent intent = new Intent(ConnexionPage.context, MainPage.class);
-                            startActivity(intent);
+                        if (task.isSuccessful()) {
+                            User user = task.getResult().toObject(User.class);
+                            if (user != null) {
+                                ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.layout_connexion);
+                                Button bouton = (Button) findViewById(R.id.s_inscrire_bouton);
+                                ImageView logo = (ImageView) findViewById(R.id.logo);
+                                layout.removeView(bouton);
+                                layout.removeView(logo);
+                                ProgressBar progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleLarge);
+                                progressBar.setVisibility(View.VISIBLE);
+                                layout.addView(progressBar);
 
-                        } else {
-                            Log.d(TAG, "Creating new user: ", task.getException());
-                            Map<String, Object> new_user = new HashMap<>();
-                            new_user.put("classe", "Troisieme");
-                            new_user.put("friends", new ArrayList<String>());
-                            new_user.put("username", email);
-                            new_user.put("level", 1);
-                            new_user.put("pointsActuels", 0);
+                                Globals globalVariables = (Globals) getApplicationContext();
+                                globalVariables.setUser(user);
+                                if (user.getLevel() != null) {
+                                    Map<String, Object> doc = task.getResult().getData();
+                                    Intent intent = new Intent(ConnexionPage.context, MainPage.class);
+                                    startActivity(intent);
+                                } else {
+                                    Log.d(TAG, "Creating new user: ", task.getException());
+                                    Map<String, Object> new_user = new HashMap<>();
+                                    new_user.put("friends", new ArrayList<String>());
+                                    new_user.put("level", 1);
+                                    new_user.put("pointsActuels", 0);
 
-                            db.collection("Users").document(email)
-                                    .set(new_user)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, "DocumentSnapshot successfully written!");
-                                            Intent intent = new Intent(ConnexionPage.context, AskForUsername.class);
-                                            startActivity(intent);
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error writing document", e);
-                                        }
-                                    });
+                                    db.collection("Users").document(email)
+                                            .update(new_user)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                    Intent intent = new Intent(ConnexionPage.context, AskForUsername.class);
+                                                    startActivity(intent);
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w(TAG, "Error writing document", e);
+                                                }
+                                            });
 
+                                }
+                            } else {
+                                LayoutInflater inflater = getLayoutInflater();
+                                View layout = inflater.inflate(R.layout.toast,
+                                        (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                                Globals.makeToast("Ton école n'a pas l'air de t'avoir créé un compte. Demande lui de t'en créer un pour que tu puisses jouer ;)",layout,context);
+
+                                AuthUI.getInstance()
+                                        .delete(context)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    // Deletion succeeded
+                                                } else {
+                                                    // Deletion failed
+                                                }
+                                            }
+                                        });
+
+                            }
                         }
                     }
                 });
