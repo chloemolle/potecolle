@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -136,6 +137,9 @@ public class ConnexionPage extends Activity {
                                     new_user.put("friends", new ArrayList<String>());
                                     new_user.put("level", 1);
                                     new_user.put("pointsActuels", 0);
+
+                                    FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
+                                    mFirebaseAnalytics.setUserProperty("abonnement", user.getTypeAbonnement());
 
                                     db.collection("Users").document(email)
                                             .update(new_user)
