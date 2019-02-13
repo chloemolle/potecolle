@@ -139,7 +139,7 @@ public class ConnexionPage extends Activity {
                                     new_user.put("pointsActuels", 0);
 
                                     FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
-                                    mFirebaseAnalytics.setUserProperty("abonnement", user.getTypeAbonnement());
+                                    mFirebaseAnalytics.setUserProperty("ecole", user.getTypeAbonnement());
 
                                     db.collection("Users").document(email)
                                             .update(new_user)
