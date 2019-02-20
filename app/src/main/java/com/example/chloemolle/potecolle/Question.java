@@ -16,6 +16,9 @@ public class Question {
     private String type;
     private String image;
     private Bitmap bmp;
+    private Integer nombrePose;
+    private Integer nombreReussi;
+    private Integer difficulte;
     private Integer temps;
     private ArrayList<String> propositions = new ArrayList<>();
     private String keyboardType;
@@ -73,5 +76,29 @@ public class Question {
 
     public String getKeyboardType() {
         return keyboardType;
+    }
+
+    public Integer getDifficulte() {
+        return difficulte;
+    }
+
+    public Integer getNombrePose() {
+        return nombrePose;
+    }
+
+    public Integer getNombreReussi() {
+        return nombreReussi;
+    }
+
+    public void setDifficulte(Integer difficulte) {
+        this.difficulte = difficulte;
+    }
+
+    public void setNombrePose(Integer nombrePose) {
+        this.nombrePose = nombrePose;
+    }
+
+    public void setNombreReussi(Integer nombreReussi) {
+        this.nombreReussi = nombreReussi;
     }
 }

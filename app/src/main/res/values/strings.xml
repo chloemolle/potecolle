@@ -66,6 +66,13 @@
         <item>La reverie</item>
     </string-array>
 
+    <string-array name="all_classes_for_debug">
+        <item>Troisieme</item>
+        <item>La reverie</item>
+    </string-array>
+
+
+
     <string-array name="no_class">
         <item>Tu n\'as pas de classe disponible</item>
     </string-array>

@@ -428,13 +428,18 @@ public class QuizPage extends Activity {
         final Globals globalVariables = (Globals) getApplicationContext();
         Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
         if (currentQuestionNumber == 4) {
+
+            final FirebaseFirestore db = FirebaseFirestore.getInstance();
+            final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
+            final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+            HashMap<String, Object> updateUser = new HashMap<>();
+            Integer numberOfQuiz = globalVariables.getUser().getNumberOfQuiz() + 1;
+            updateUser.put("numberOfQuiz", numberOfQuiz);
+            userDB.update(updateUser);
             if(globalVariables.getCurrentGame().getSeul()) {
                 Intent intent = new Intent(c, FinQuizPage.class);
                 startActivity(intent);
             } else {
-                final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-                final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
 
                 userDB.collection("Games")
                         .document(globalVariables.getCurrentGame().getId())

@@ -53,6 +53,7 @@ public class Game {
     private Boolean seul = false;
     private Boolean scoreVu = false;
     private Boolean vu = false;
+    private String pathQuestion;
 
     public Game () {
     }
@@ -65,6 +66,7 @@ public class Game {
         this.seul =_seul;
         this.timed = _timed;
         this.id = _id;
+        this.setPathQuestion(this.classe + "/" + this.matiere);
     }
 
 
@@ -79,6 +81,7 @@ public class Game {
         this.player2 = _player2;
         this.adversaire = _player2Email;
         this.revanche = _revanche;
+        this.setPathQuestion(this.classe);
     }
 
     public Game (String _player1, String _player2, String _classe, String _matiere, String _sujet) {
@@ -87,6 +90,7 @@ public class Game {
         this.sujet = _sujet;
         this.matiere = _matiere;
         this.classe = _classe;
+        this.setPathQuestion(this.classe + "/" + this.matiere + "/" + this.sujet);
     }
 
 
@@ -112,6 +116,7 @@ public class Game {
 
         this.score = _score;
         this.scoreOpponent = _scoreOpponent;
+        this.setPathQuestion(this.classe + "/" + this.matiere + "/" + this.sujet);
 
     }
 
@@ -168,6 +173,7 @@ public class Game {
 
     public void setMatiere(String matiere) {
         this.matiere = matiere;
+        this.setPathQuestion(this.classe + "/" + this.matiere + "/" + this.sujet);
     }
 
     public String getSujet() {
@@ -176,6 +182,7 @@ public class Game {
 
     public void setSujet(String sujet) {
         this.sujet = sujet;
+        this.setPathQuestion(this.classe + "/" + this.matiere + "/" + this.sujet);
     }
 
     public ArrayList<Question> getQuestions() {
@@ -453,6 +460,7 @@ public class Game {
 
         newGame.put("questionsId", currentGame.getQuestionsId());
         newGame.put("questions", questions);
+        newGame.put("pathQuestion", currentGame.getPathQuestion());
 
         db.collection("Users")
                 .document(monMail)
@@ -487,5 +495,13 @@ public class Game {
         this.vu = false;
     }
 
+
+    public String getPathQuestion() {
+        return pathQuestion;
+    }
+
+    public void setPathQuestion(String pathQuestion) {
+        this.pathQuestion = pathQuestion;
+    }
 
 }

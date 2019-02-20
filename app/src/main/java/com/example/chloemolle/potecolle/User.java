@@ -18,6 +18,7 @@ public class User {
     private Integer level;
     private Double pointsActuels;
     private String typeAbonnement;
+    private Integer numberOfQuiz;
 
     public User() {};
 
@@ -90,7 +91,13 @@ public class User {
             return R.array.classes_VC;
         } else if (getTypeAbonnement().equals("reverie")) {
             return R.array.classes_reverie;
+        } else if (getTypeAbonnement().equals("debug")) {
+            return R.array.all_classes_for_debug;
         }
         return R.array.no_class;
+    }
+
+    public Integer getNumberOfQuiz() {
+        return numberOfQuiz;
     }
 }
