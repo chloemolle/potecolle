@@ -8,6 +8,9 @@
     <string name="nom_joueur">Nom</string>
     <string name="niveau">Niveau</string>
     <string name="points">Points</string>
+    <string name="ok">Ok</string>
+
+
 
     <string name="question">Question</string>
     <string name="reponse">Ta Réponse</string>

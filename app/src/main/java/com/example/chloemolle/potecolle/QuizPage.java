@@ -433,13 +433,49 @@ public class QuizPage extends Activity {
             final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
             final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
             HashMap<String, Object> updateUser = new HashMap<>();
-            Integer numberOfQuiz = globalVariables.getUser().getNumberOfQuiz() + 1;
-            updateUser.put("numberOfQuiz", numberOfQuiz);
-            userDB.update(updateUser);
             if(globalVariables.getCurrentGame().getSeul()) {
                 Intent intent = new Intent(c, FinQuizPage.class);
                 startActivity(intent);
+
+                final Integer numberOfQuiz = globalVariables.getUser().getNumberOfQuizSolo() + 1;
+                Log.d("Success", "Number quiz ok : " + globalVariables.getUser().getNumberOfQuizSolo());
+                globalVariables.getUser().setNumberOfQuizSolo(numberOfQuiz);
+                updateUser.put("numberOfQuizSolo", globalVariables.getUser().getNumberOfQuizSolo());
+                userDB.update(updateUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Success", "Number quiz ok : " + numberOfQuiz);
+                    }
+                }). addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Failure", "number quiz not ok : " + numberOfQuiz);
+                    }
+                });
+
+
+
+
+
             } else {
+
+
+                final Integer numberOfQuiz = globalVariables.getUser().getNumberOfQuizDuel() + 1;
+                Log.d("Success", "Number quiz ok : " + globalVariables.getUser().getNumberOfQuizDuel());
+                globalVariables.getUser().setNumberOfQuizDuel(numberOfQuiz);
+                updateUser.put("numberOfQuizDuel", globalVariables.getUser().getNumberOfQuizDuel());
+                userDB.update(updateUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Success", "Number quiz ok : " + numberOfQuiz);
+                    }
+                }). addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Failure", "number quiz not ok : " + numberOfQuiz);
+                    }
+                });
+
 
                 userDB.collection("Games")
                         .document(globalVariables.getCurrentGame().getId())

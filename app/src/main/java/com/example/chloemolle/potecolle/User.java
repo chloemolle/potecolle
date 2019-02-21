@@ -18,7 +18,8 @@ public class User {
     private Integer level;
     private Double pointsActuels;
     private String typeAbonnement;
-    private Integer numberOfQuiz;
+    private Integer numberOfQuizDuel = 0;
+    private Integer numberOfQuizSolo = 0;
 
     public User() {};
 
@@ -97,7 +98,19 @@ public class User {
         return R.array.no_class;
     }
 
-    public Integer getNumberOfQuiz() {
-        return numberOfQuiz;
+    public Integer getNumberOfQuizDuel() {
+        return numberOfQuizDuel;
+    }
+
+    public Integer getNumberOfQuizSolo() {
+        return numberOfQuizSolo;
+    }
+
+    public void setNumberOfQuizDuel(Integer numberOfQuizDuel) {
+        this.numberOfQuizDuel = numberOfQuizDuel;
+    }
+
+    public void setNumberOfQuizSolo(Integer numberOfQuizSolo) {
+        this.numberOfQuizSolo = numberOfQuizSolo;
     }
 }

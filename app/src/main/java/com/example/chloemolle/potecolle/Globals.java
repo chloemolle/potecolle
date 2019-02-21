@@ -140,5 +140,24 @@ public class Globals extends Application {
         dialog.show();
     }
 
+    public static void openPopupThankYou(Context context, String textAAfficher, String title) {
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.popup_thank_you);
+        Button retour = (Button) dialog.findViewById(R.id.retour_popup);
+        TextView textBravo = (TextView) dialog.findViewById(R.id.title_text);
+        textBravo.setText(title);
+        TextView text = (TextView) dialog.findViewById(R.id.thank_you_text);
+        text.setText(textAAfficher);
+        retour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+
 
 }
