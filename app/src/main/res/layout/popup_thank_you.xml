@@ -17,6 +17,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
         android:textColor="@color/colorTheme"
+        android:text="Merci beaucoup !"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.484"
@@ -28,26 +29,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:text="Vous avez accepté d'être l'un de nos premiers testeurs, merci ! Si vous avez la moindre question ou retour à nous faire sur l'application n'hésitez pas à nous contacter à l'adresse chloe.potecolle@gmail.com. "
+        android:textAlignment="center"
         android:textColor="@color/colorTheme"
-        android:textSize="36sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bravo_text" />
+        app:layout_constraintTop_toBottomOf="@+id/title_text" />
 
     <Button
         android:id="@+id/retour_popup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/button_with_radius"
         android:padding="10dp"
         android:text="@string/ok"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/level_up_text" />
+        app:layout_constraintTop_toBottomOf="@+id/thank_you_text" />
 
 </android.support.constraint.ConstraintLayout>

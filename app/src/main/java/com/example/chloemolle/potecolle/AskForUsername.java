@@ -51,7 +51,7 @@ public class AskForUsername extends Activity {
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.ask_for_username_page);
-        Globals.openPopupThankYou(this, "Vous avez accepté d'être nos premiers testeurs, merci ! Si vous avez la moindre question ou retour à nous faire sur l'application n'hésitez pas à nous contacter à l'adresse chloe.potecolle@gmail.com. ", "Merci beaucoup !");
+        Globals.openPopupThankYou(this);
         final ProgressBar progressBarCheckUsername = (ProgressBar) findViewById(R.id.progress_bar_check_username);
         progressBarCheckUsername.setVisibility(View.GONE);
 
