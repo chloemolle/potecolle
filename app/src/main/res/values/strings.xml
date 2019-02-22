@@ -10,6 +10,9 @@
     <string name="points">Points</string>
     <string name="ok">Ok</string>
 
+    <string name="not_created">Ton compte n\'a pas été créé</string>
+    <string name="no_account">Ton école n\'a pas l\'air de t\'avoir créé un compte. Demande lui de t\'en créer un pour que tu puisses jouer ;)</string>
+    <string name="problem">Un problème est survenu, merci d\'envoyer un message à chloe.potecolle@gmail.com avec dans le corps du message "merci de supprimer le compte lié à l\'adresse mail " et de mettre l\'adresse mail que vous avez utilisé pour créer votre compte</string>
 
 
     <string name="question">Question</string>
