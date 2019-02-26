@@ -113,4 +113,16 @@ public class User {
     public void setNumberOfQuizSolo(Integer numberOfQuizSolo) {
         this.numberOfQuizSolo = numberOfQuizSolo;
     }
+
+    public void setFriends(ArrayList<String> friends) {
+        this.friends = friends;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public void setPointsActuels(Double pointsActuels) {
+        this.pointsActuels = pointsActuels;
+    }
 }
