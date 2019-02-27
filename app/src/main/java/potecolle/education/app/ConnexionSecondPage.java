@@ -114,5 +114,14 @@ public class ConnexionSecondPage extends Activity {
             }
         });
 
+        TextView mdpOublie = findViewById(R.id.mdp_oublie);
+        mdpOublie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), PasswordForgottenPage.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }

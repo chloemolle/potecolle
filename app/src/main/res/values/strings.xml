@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Potecolle</string>
     <string name="message_inscription">Inscription</string>
-    <string name="inscription">S\'inscrire ou se connecter</string>
+    <string name="inscription">S\'inscrire</string>
     <string name="se_connecter">Se connecter</string>
     <string name="connexion">Connexion</string>
     <string name="revanche">Revanche</string>
@@ -22,6 +22,9 @@
     <string name="reponse">Ta Réponse</string>
     <string name="sa_reponse">Sa Réponse</string>
     <string name="solution">Solution</string>
+    <string name="mdp_oublie">Mot de passe oublié ?</string>
+    <string name="envoyer_mail">Réinitialiser le mot de passe</string>
+    <string name="message_explicatif_reinitialiser_mdp">Renseignez votre mail, si vous avez un compte Potecolle, nous vous enverrons un mail pour réinitialiser votre mot de passe :)</string>
 
 
     <string name="username">Mail</string>
