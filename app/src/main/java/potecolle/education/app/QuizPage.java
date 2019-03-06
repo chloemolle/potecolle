@@ -338,7 +338,7 @@ public class QuizPage extends Activity {
             setRetourButton();
             setProgressBar();
             final MathView question = (MathView) findViewById(R.id.question_quiz);
-            question.setText(currentQuestion.getQuestion().toString());
+            question.setText(currentQuestion.getQuestion());
             if (currentQuestionNumber < globalVariables.getCurrentGame().getPlayer1Answers().size()) {
                 globalVariables.setReponseText(globalVariables.getCurrentGame().getPlayer1Answers().get(currentQuestionNumber));
             }
