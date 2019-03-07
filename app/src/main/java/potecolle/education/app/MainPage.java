@@ -28,6 +28,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -56,13 +57,15 @@ public class MainPage extends Activity {
         final Globals globalVariables = (Globals) getApplicationContext();
 
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
-        final String userEmail = userFirebase.getEmail();
+        String userEmail = userFirebase.getEmail();
+        if (userEmail == null) {
+            userEmail = userFirebase.getUid();
+        }
         globalVariables.setUserDB(db.collection("Users").document(userEmail));
 
         final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layout_parametre);
 
         linearLayout.setVisibility(View.GONE);
-
 
         setMenuAppearance(linearLayout);
 
@@ -281,15 +284,6 @@ public class MainPage extends Activity {
             }
         });
 
-        TextView configurerCompte = (TextView) findViewById(R.id.configurer_compte);
-        configurerCompte.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearLayout.setVisibility(View.GONE);
-                Intent intent = new Intent(v.getContext(), ConfigureComptePage.class);
-                startActivity(intent);
-            }
-        });
 
     }
 

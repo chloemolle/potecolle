@@ -13,7 +13,7 @@
         android:layout_marginTop="20dp"
         android:layout_weight="1"
         android:background="@drawable/button_with_radius"
-        android:text="@string/inscription"
+        android:text="@string/se_connecter"
         android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -34,16 +34,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.512" />
 
-    <TextView
-        android:id="@+id/se_connecter_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/se_connecter"
-        android:textColor="@color/colorTheme"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/s_inscrire_bouton" />
 
 </android.support.constraint.ConstraintLayout>

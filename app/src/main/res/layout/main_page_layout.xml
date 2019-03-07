@@ -213,18 +213,6 @@
                 tools:layout_editor_absoluteY="38dp" />
 
             <TextView
-                android:id="@+id/configurer_compte"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/box_pour_menu"
-                android:padding="10dp"
-                android:text="@string/configurer_compte"
-                android:textColor="@color/colorTheme"
-                android:textSize="20dp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="38dp" />
-
-            <TextView
                 android:id="@+id/se_deconnecter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

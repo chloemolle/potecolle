@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.chloemolle.potecolle.R;
 import com.firebase.ui.auth.AuthUI;
@@ -23,6 +24,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -30,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +47,6 @@ import static com.firebase.ui.auth.AuthUI.TAG;
 public class ConnexionPage extends Activity {
 
     private static int RC_SIGN_IN = 100;
-    private static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,22 +59,56 @@ public class ConnexionPage extends Activity {
             return;
         }
         super.onCreate(savedInstanceState);
-        ConnexionPage.context = this;
         setContentView(R.layout.connexion_page_layout);
-
-        TextView seConnecter = findViewById(R.id.se_connecter_button);
-        seConnecter.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), ConnexionSecondPage.class);
-                startActivity(intent);
-            }
-        });
 
         Button sInscrire = findViewById(R.id.s_inscrire_bouton);
         sInscrire.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), SubscriptionPage.class);
-                startActivity(intent);
+                final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                final Context context = v.getContext();
+                mAuth.signInAnonymously()
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d(TAG, "signInAnonymously:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                    HashMap<String, Object> newUser = new HashMap<>();
+                                    newUser.put("typeAbonnement", "startupForKids");
+                                    newUser.put("classe", "StartupForKids");
+                                    newUser.put("friends", new ArrayList<String>());
+                                    newUser.put("level", 1);
+                                    newUser.put("points", 0);
+                                    Long date = new Date().getTime();
+                                    Long numero = date % 1000;
+
+                                    newUser.put("username", "joueur" + numero);
+
+                                    db.collection("Users")
+                                            .document(user.getUid())
+                                            .set(newUser)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Intent intent = new Intent(context, MainPage.class);
+                                                        startActivity(intent);
+                                                    } else {
+                                                        Log.d("Fail", task.getException().getMessage());
+                                                    }
+                                                }
+                                            });
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.w(TAG, "signInAnonymously:failure", task.getException());
+                                }
+
+                                // ...
+                            }
+                        });
+
             }
         });
     }

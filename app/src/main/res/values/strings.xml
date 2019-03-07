@@ -76,6 +76,12 @@
         <item>La reverie</item>
     </string-array>
 
+
+    <string-array name="classes_startup">
+        <item>StartupForKids</item>
+    </string-array>
+
+
     <string-array name="all_classes_for_debug">
         <item>Villebon-Charpak</item>
         <item>La reverie</item>
