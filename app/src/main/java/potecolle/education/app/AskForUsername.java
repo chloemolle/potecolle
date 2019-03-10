@@ -120,7 +120,8 @@ public class AskForUsername extends Activity {
         final String userClass = choixClasse.getSelectedItem().toString();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
-        final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
+        Globals globalVariables = (Globals) getApplicationContext();
+        final DocumentReference userDB = db.collection("Users").document(globalVariables.getUser().getId());
 
         Map<String, Object> updateUser = new HashMap<>();
         updateUser.put("username", text.getText().toString());

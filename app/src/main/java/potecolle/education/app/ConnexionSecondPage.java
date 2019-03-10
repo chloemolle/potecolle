@@ -72,6 +72,7 @@ public class ConnexionSecondPage extends Activity {
 
                 final FirebaseAuth mAuth = FirebaseAuth.getInstance();
                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                final Globals globalVariables = (Globals) getApplicationContext();
 
                 mAuth.signInWithEmailAndPassword(email, mdpEdit.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -81,7 +82,7 @@ public class ConnexionSecondPage extends Activity {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d(TAG, "signInWithEmail:success");
                                     FirebaseUser userDB = mAuth.getCurrentUser();
-                                    db.collection("Users").document(userDB.getEmail())
+                                    db.collection("Users").document(globalVariables.getUser().getId())
                                             .get()
                                             .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                                        @Override

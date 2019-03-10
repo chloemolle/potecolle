@@ -13,6 +13,8 @@ import android.widget.Toast;
 import com.example.chloemolle.potecolle.R;
 import com.google.firebase.firestore.DocumentReference;
 
+import java.util.logging.Handler;
+
 /**
  * Created by chloemolle on 19/10/2018.
  */
@@ -28,6 +30,7 @@ public class Globals extends Application {
     private Boolean debug = true;
     private int tmpTime = 0;
     private Long test = new Long(0);
+    private Handler handler;
 
     public Game getCurrentGame() {
         return currentGame;
@@ -151,6 +154,11 @@ public class Globals extends Application {
         dialog.show();
     }
 
+    public Handler getHandler() {
+        return handler;
+    }
 
-
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
 }

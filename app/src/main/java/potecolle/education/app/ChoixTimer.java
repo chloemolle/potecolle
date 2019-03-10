@@ -70,15 +70,15 @@ public class ChoixTimer extends Activity {
         final Globals globalVariables = (Globals) getApplicationContext();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-        final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+        final DocumentReference userDB = db.collection("Users").document(globalVariables.getUser().getId());
         final Game currentGame = globalVariables.getCurrentGame();
         final String opponentUsername = currentGame.getAdversaire();
 
         //set game for user
-        setGameForOneUser(userAuth.getEmail(), true, currentGame.getAdversaire(), currentGame.getPlayer2());
+        setGameForOneUser(globalVariables.getUser().getId(), true, currentGame.getAdversaire(), currentGame.getPlayer2());
 
         //set game for opponent
-        setGameForOneUser(opponentUsername, false, userAuth.getEmail(), globalVariables.getUser().getUsername());
+        setGameForOneUser(opponentUsername, false, globalVariables.getUser().getId(), globalVariables.getUser().getUsername());
     }
 
     public void setGameForOneUser(final String monMail, final Boolean vu, String adversaire, String player2) {

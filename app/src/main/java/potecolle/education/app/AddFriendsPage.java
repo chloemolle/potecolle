@@ -137,7 +137,7 @@ public class AddFriendsPage extends Activity {
                     friends.add(email);
                     updateUser.put("friends", friends);
                     //On l'ajoute à nos amis
-                    db.collection("Users").document(userAuth.getEmail())
+                    db.collection("Users").document(globalVariables.getUser().getId())
                             .update(updateUser)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -153,8 +153,8 @@ public class AddFriendsPage extends Activity {
 
 
                 //On met à jour la friendRequest de notre ami et la notre
-                fillDatabase(email, userAuth.getEmail(), user.getUsername(), false, false, false, false, getApplicationContext(), getResources().getString(R.string.demande_envoye));
-                fillDatabase(userAuth.getEmail(), email, ami.get("username"), true, true, false, true, getApplicationContext(), "");
+                fillDatabase(email, globalVariables.getUser().getId(), user.getUsername(), false, false, false, false, getApplicationContext(), getResources().getString(R.string.demande_envoye));
+                fillDatabase(globalVariables.getUser().getId(), email, ami.get("username"), true, true, false, true, getApplicationContext(), "");
 
 
             }
@@ -164,7 +164,7 @@ public class AddFriendsPage extends Activity {
     public Boolean dealWithOneUser(final HashMap<String, String> ami){
         final String email = ami.get("email");
         //Si l'ami n'est pas nous même
-        if (!userAuth.getEmail().equals(email)) {
+        if (!globalVariables.getUser().getId().equals(email)) {
             final ArrayList<String> friends = globalVariables.getUser().getFriends();
             ArrayList<FriendRequest> listFriendRequests = globalVariables.getUser().getFriendRequests();
             ArrayList<String> emailFriendRequest = new ArrayList<>();

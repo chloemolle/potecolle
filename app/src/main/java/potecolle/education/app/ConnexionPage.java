@@ -80,9 +80,10 @@ public class ConnexionPage extends Activity {
                                     newUser.put("classe", "StartupForKids");
                                     newUser.put("friends", new ArrayList<String>());
                                     newUser.put("level", 1);
-                                    newUser.put("points", 0);
+                                    newUser.put("id", user.getUid());
+                                    newUser.put("pointsActuels", 0);
                                     Long date = new Date().getTime();
-                                    Long numero = date % 1000;
+                                    Long numero = date % 10000;
 
                                     newUser.put("username", "joueur" + numero);
 

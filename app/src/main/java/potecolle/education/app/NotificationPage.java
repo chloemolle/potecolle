@@ -52,7 +52,7 @@ public class NotificationPage extends Activity {
         final User user = globalVariables.getUser();
         ArrayList<Game> parties = user.getPartiesEnCours();
 
-        final DocumentReference userDB = db.collection("Users").document(userFirebase.getEmail());
+        final DocumentReference userDB = db.collection("Users").document(globalVariables.getUser().getId());
 
         Button backButton = (Button) findViewById(R.id.retour_main_page_from_notification);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +122,7 @@ public class NotificationPage extends Activity {
                                 friends.remove(friendRequest.getEmail());
 
                                 db.collection("Users")
-                                        .document(userFirebase.getEmail())
+                                        .document(globalVariables.getUser().getId())
                                         .update("friends", friends)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -138,7 +138,7 @@ public class NotificationPage extends Activity {
                                 //On supprime  celle du demandeur
                                 db.collection("Users").document(friendRequest.getEmail())
                                         .collection("FriendRequests")
-                                        .document(userFirebase.getEmail())
+                                        .document(globalVariables.getUser().getId())
                                         .delete()
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -244,7 +244,7 @@ public class NotificationPage extends Activity {
                                 HashMap<String, Object> updateUser = new HashMap<>();
                                 updateUser.put("level", user.getLevel());
                                 updateUser.put("pointsActuels", user.getPointsActuels());
-                                db.collection("Users").document(userFirebase.getEmail())
+                                db.collection("Users").document(globalVariables.getUser().getId())
                                         .update(updateUser)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -277,7 +277,7 @@ public class NotificationPage extends Activity {
                                 //On met à jour celle de notre pote
                                 db.collection("Users").document(friendRequest.getEmail())
                                         .collection("FriendRequests")
-                                        .document(userFirebase.getEmail())
+                                        .document(globalVariables.getUser().getId())
                                         .update(demandeAccepte)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -300,7 +300,7 @@ public class NotificationPage extends Activity {
                                 //On supprime  celle du demandeur
                                 db.collection("Users").document(friendRequest.getEmail())
                                         .collection("FriendRequests")
-                                        .document(userFirebase.getEmail())
+                                        .document(globalVariables.getUser().getId())
                                         .delete()
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -340,7 +340,7 @@ public class NotificationPage extends Activity {
                                 ArrayList<String> friends = user.getFriends();
                                 if (friends.indexOf(friendRequest.getEmail()) == -1) {
                                     friends.add(friendRequest.getEmail());
-                                    db.collection("Users").document(userFirebase.getEmail())
+                                    db.collection("Users").document(globalVariables.getUser().getId())
                                             .update("friends", friends)
                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override

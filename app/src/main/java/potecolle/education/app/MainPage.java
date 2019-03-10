@@ -58,7 +58,7 @@ public class MainPage extends Activity {
 
         final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         String userEmail = userFirebase.getEmail();
-        if (userEmail == null) {
+        if (userEmail == null || userEmail.equals("")) {
             userEmail = userFirebase.getUid();
         }
         globalVariables.setUserDB(db.collection("Users").document(userEmail));
@@ -104,7 +104,7 @@ public class MainPage extends Activity {
         final DocumentReference userDB;
         try {
             if (globalVariables.getUserDB() == null) {
-                final String userEmail = userFirebase.getEmail();
+                final String userEmail = globalVariables.getUser().getId();
                 userDB = db.collection("Users").document(userEmail);
                 globalVariables.setUserDB(userDB);
             } else {
@@ -152,7 +152,7 @@ public class MainPage extends Activity {
                     TextView studentName = (TextView) findViewById(R.id.student_name);
 
                     TextView level = (TextView) findViewById(R.id.niveau);
-                    level.setText("Niveau " + user.getLevel().toString());
+                    level.setText(user.getUsername() + " Niveau " + user.getLevel().toString());
 
                     updateProgressBar();
 
@@ -202,47 +202,7 @@ public class MainPage extends Activity {
         }
     }
 
-    @Override
-    public void onBackPressed(){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        final Context context = this;
-        alertDialog.setPositiveButton(R.string.se_deconnecter, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                FirebaseAuth test = FirebaseAuth.getInstance();
-                test.signOut();
-                flushGlobalVariables();
-                Intent intent = new Intent(context, ConnexionPage.class);
-                startActivity(intent);
-            }
-        });
-        alertDialog.setNegativeButton(R.string.rester_connecter, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            }
-        });
 
-
-        alertDialog.setTitle("Deconnexion");
-        alertDialog.setMessage("Es-tu sur de vouloir te déconnecter?");
-        alertDialog.setCancelable(true);
-        alertDialog.create().show();
-    }
-
-
-    public void flushGlobalVariables() {
-        Globals globalVariables = (Globals) getApplicationContext();
-        globalVariables.setCurrentGame(null);
-        globalVariables.setUserDB(null);
-        globalVariables.setUser(null);
-        globalVariables.setCurrentQuestionNumero(0);
-        globalVariables.setBrouillonText("");
-        globalVariables.setReponseText("");
-        globalVariables.setDebug(true);
-        globalVariables.setTmpTime(0);
-        globalVariables.setTest(new Long(0));
-        if (handler != null) {
-            handler.removeCallbacksAndMessages(null);
-        }
-    }
 
     public void setButtonOfMenu(final LinearLayout linearLayout) {
         final Context context = this;
@@ -262,25 +222,8 @@ public class MainPage extends Activity {
         seDeconnecter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-                alertDialog.setPositiveButton(R.string.se_deconnecter, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        FirebaseAuth.getInstance().signOut();
-                        flushGlobalVariables();
-                        linearLayout.setVisibility(View.GONE);
-                        Intent intent = new Intent(context, ConnexionPage.class);
-                        startActivity(intent);
-                    }
-                });
-                alertDialog.setNegativeButton(R.string.rester_connecter, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-
-                alertDialog.setTitle("Deconnexion");
-                alertDialog.setMessage("Es-tu sur de vouloir te déconnecter?");
-                alertDialog.setCancelable(true);
-                alertDialog.create().show();
+                Intent intent = new Intent(v.getContext(), ConfigureComptePage.class);
+                startActivity(intent);
             }
         });
 
@@ -480,7 +423,7 @@ public class MainPage extends Activity {
                                         HashMap<String, Object> updateUser = new HashMap<>();
                                         updateUser.put("level", user.getLevel());
                                         updateUser.put("pointsActuels", user.getPointsActuels());
-                                        db.collection("Users").document(userFirebase.getEmail())
+                                        db.collection("Users").document(globalVariables.getUser().getId())
                                                 .update(updateUser)
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
@@ -496,7 +439,7 @@ public class MainPage extends Activity {
 
                                         HashMap<String, Object> updateFriendRequest = new HashMap<>();
                                         updateFriendRequest.put("vu", true);
-                                        db.collection("Users").document(userFirebase.getEmail())
+                                        db.collection("Users").document(globalVariables.getUser().getId())
                                                 .collection("FriendRequests")
                                                 .document(friendRequest.getId())
                                                 .update(updateFriendRequest)

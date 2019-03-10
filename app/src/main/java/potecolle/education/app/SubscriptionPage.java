@@ -114,6 +114,7 @@ public class SubscriptionPage extends Activity {
                                 } else if (result == 1) {
                                     final FirebaseFirestore db = FirebaseFirestore.getInstance();
                                     final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                                    final Globals globalVariables = (Globals) getApplicationContext();
 
                                     mAuth.createUserWithEmailAndPassword(email, mdpEdit.getText().toString())
                                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -124,7 +125,7 @@ public class SubscriptionPage extends Activity {
                                                         Log.d(TAG, "createUserWithEmail:success");
                                                         FirebaseUser userDB = mAuth.getCurrentUser();
 
-                                                        db.collection("Users").document(userDB.getEmail())
+                                                        db.collection("Users").document(globalVariables.getUser().getId())
                                                                 .get()
                                                                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                                     @Override

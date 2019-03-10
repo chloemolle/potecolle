@@ -20,6 +20,7 @@ public class User {
     private String typeAbonnement;
     private Integer numberOfQuizDuel = 0;
     private Integer numberOfQuizSolo = 0;
+    private String id;
 
     public User() {};
 
@@ -124,5 +125,13 @@ public class User {
 
     public void setPointsActuels(Double pointsActuels) {
         this.pointsActuels = pointsActuels;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 }

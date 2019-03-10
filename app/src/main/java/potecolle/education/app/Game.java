@@ -354,7 +354,7 @@ public class Game {
 
         Random r = new Random();
         //On récupère 5 index de questions à récupérer
-        while (questionToFetch.size() != 5) {
+        while (questionToFetch.size() != 10) {
             Integer tmp = r.nextInt(nbQuestionDisponible);
             if (questionToFetch.indexOf(tmp) == -1) {
                 questionToFetch.add(tmp);
@@ -417,10 +417,10 @@ public class Game {
         final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
 
         //set game for user
-        setGameForOneUser(userAuth.getEmail(), true, this.adversaire, this.player2);
+        setGameForOneUser(globalVariables.getUser().getId(), true, this.adversaire, this.player2);
 
         //set game for opponent
-        setGameForOneUser(this.adversaire, false, userAuth.getEmail(), globalVariables.getUser().getUsername());
+        setGameForOneUser(this.adversaire, false, globalVariables.getUser().getId(), globalVariables.getUser().getUsername());
     }
 
     public void setGameForOneUser(final String monMail, final Boolean vu, String adversaire, String player2) {

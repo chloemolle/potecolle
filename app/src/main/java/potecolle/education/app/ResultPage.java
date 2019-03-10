@@ -151,7 +151,7 @@ public class ResultPage extends Activity {
 
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
             final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-            final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+            final DocumentReference userDB = db.collection("Users").document(globalVariables.getUser().getId());
 
             userDB.update(updateUser)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {

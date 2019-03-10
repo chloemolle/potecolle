@@ -57,6 +57,11 @@ public class FinQuizPage extends Activity {
         score = processAnswer(2, score, R.id.linear_layout_reponse3, R.id.question3_text_change, R.id.reponse3_text_change, R.id.reponse3_text, R.id.solution3_text_change, R.id.layout_solution3);
         score = processAnswer(3, score, R.id.linear_layout_reponse4, R.id.question4_text_change, R.id.reponse4_text_change, R.id.reponse4_text, R.id.solution4_text_change, R.id.layout_solution4);
         score = processAnswer(4, score, R.id.linear_layout_reponse5, R.id.question5_text_change, R.id.reponse5_text_change, R.id.reponse5_text, R.id.solution5_text_change, R.id.layout_solution5);
+        score = processAnswer(5, score, R.id.linear_layout_reponse6, R.id.question6_text_change, R.id.reponse6_text_change, R.id.reponse6_text, R.id.solution6_text_change, R.id.layout_solution6);
+        score = processAnswer(6, score, R.id.linear_layout_reponse7, R.id.question7_text_change, R.id.reponse7_text_change, R.id.reponse7_text, R.id.solution7_text_change, R.id.layout_solution7);
+        score = processAnswer(7, score, R.id.linear_layout_reponse8, R.id.question8_text_change, R.id.reponse8_text_change, R.id.reponse8_text, R.id.solution8_text_change, R.id.layout_solution8);
+        score = processAnswer(8, score, R.id.linear_layout_reponse9, R.id.question9_text_change, R.id.reponse9_text_change, R.id.reponse9_text, R.id.solution9_text_change, R.id.layout_solution9);
+        score = processAnswer(9, score, R.id.linear_layout_reponse10, R.id.question10_text_change, R.id.reponse10_text_change, R.id.reponse10_text, R.id.solution10_text_change, R.id.layout_solution10);
 
         TextView scoreText = (TextView) findViewById(R.id.fin_quiz_text2);
         scoreText.setText(score + "/" + globalVariables.getCurrentGame().getQuestionsId().size());
@@ -71,7 +76,7 @@ public class FinQuizPage extends Activity {
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-        final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+        final DocumentReference userDB = db.collection("Users").document(globalVariables.getUser().getId());
         final Integer scoreFinal = score;
 
         if (!globalVariables.getCurrentGame().getSeul()) {
@@ -183,7 +188,7 @@ public class FinQuizPage extends Activity {
 
     public void setTextFin(Integer score){
         String textFin = "";
-        if (score > 2) {
+        if (score > 5) {
             textFin += "Bravo !";
         } else {
             textFin += "Ne baisse pas les bras !";
@@ -242,9 +247,9 @@ public class FinQuizPage extends Activity {
     public void updateGames(Integer scoreFinal) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-        final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+        Globals globalVariables = (Globals) getApplicationContext();
+        final DocumentReference userDB = db.collection("Users").document(globalVariables.getUser().getId());
 
-        final Globals globalVariables = (Globals) getApplicationContext();
         Map<String, Object> updateFields = new HashMap<>();
         updateFields.put("score", scoreFinal.toString());
         updateFields.put("repondu", true);

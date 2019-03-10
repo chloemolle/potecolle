@@ -428,11 +428,15 @@ public class QuizPage extends Activity {
     public void nextPage(final Context c) {
         final Globals globalVariables = (Globals) getApplicationContext();
         Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
-        if (currentQuestionNumber == 4) {
+        if (currentQuestionNumber == 9) {
 
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
             final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-            final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+            String email = globalVariables.getUser().getId();
+            if (email == null || email.equals("")){
+                email = userAuth.getUid();
+            }
+            final DocumentReference userDB = db.collection("Users").document(email);
             HashMap<String, Object> updateUser = new HashMap<>();
             if(globalVariables.getCurrentGame().getSeul()) {
                 Intent intent = new Intent(c, FinQuizPage.class);
@@ -594,7 +598,7 @@ public class QuizPage extends Activity {
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-        final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
+        final DocumentReference userDB = db.collection("Users").document(globalVariables.getUser().getId());
         final Integer scoreFinal = score;
         globalVariables.getCurrentGame().setScore(score.toString());
         if (!globalVariables.getCurrentGame().getSeul()) {
@@ -707,9 +711,9 @@ public class QuizPage extends Activity {
     public void updateGames(Integer scoreFinal) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
-        final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
-
         final Globals globalVariables = (Globals) getApplicationContext();
+        final DocumentReference userDB = db.collection("Users").document(globalVariables.getUser().getId());
+
         Map<String, Object> updateFields = new HashMap<>();
         updateFields.put("score", scoreFinal.toString());
         updateFields.put("repondu", true);

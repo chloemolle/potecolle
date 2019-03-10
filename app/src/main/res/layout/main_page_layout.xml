@@ -218,7 +218,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/box_pour_menu"
                 android:padding="10dp"
-                android:text="@string/se_deconnecter"
+                android:text="Paramètres"
                 android:textColor="@color/colorTheme"
                 android:textSize="20dp"
                 tools:layout_editor_absoluteX="0dp"

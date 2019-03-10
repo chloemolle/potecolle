@@ -141,7 +141,7 @@ public class VoirAmiPage extends Activity {
                                 ArrayList<String> amis = globalVariables.getUser().getFriends();
                                 amis.remove(email);
                                 db.collection("Users")
-                                        .document(userFirebase.getEmail())
+                                        .document(globalVariables.getUser().getId())
                                         .update("friends", amis)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -156,7 +156,7 @@ public class VoirAmiPage extends Activity {
                                         });
 
                                 db.collection("Users")
-                                        .document(userFirebase.getEmail())
+                                        .document(globalVariables.getUser().getId())
                                         .collection("Games")
                                         .whereEqualTo("adversaire", email)
                                         .get()
@@ -168,7 +168,7 @@ public class VoirAmiPage extends Activity {
                                                     List<DocumentSnapshot> docs = query.getDocuments();
                                                     for (DocumentSnapshot doc: docs) {
                                                         db.collection("Users")
-                                                                .document(userFirebase.getEmail())
+                                                                .document(globalVariables.getUser().getId())
                                                                 .collection("Games")
                                                                 .document(doc.getId())
                                                                 .delete()
@@ -197,7 +197,7 @@ public class VoirAmiPage extends Activity {
 
 
                                 HashMap<String, Object> friendDeletion = new HashMap<>();
-                                friendDeletion.put("email", userFirebase.getEmail());
+                                friendDeletion.put("email", globalVariables.getUser().getId());
 
                                 db.collection("Users")
                                         .document(email)
@@ -220,7 +220,7 @@ public class VoirAmiPage extends Activity {
                                 db.collection("Users")
                                         .document(email)
                                         .collection("Games")
-                                        .whereEqualTo("adversaire", userFirebase.getEmail())
+                                        .whereEqualTo("adversaire", globalVariables.getUser().getId())
                                         .get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
