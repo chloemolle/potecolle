@@ -42,8 +42,6 @@ public class NotificationPage extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notification_page_layout);
 
-        final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
-
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Globals globalVariables = (Globals) getApplicationContext();
 
@@ -88,7 +86,6 @@ public class NotificationPage extends Activity {
     private void addButtonFriendRequestSent(final FriendRequest friendRequest){
         final Context context = this;
         final Button newButton = new Button(context);
-        final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
 
@@ -187,7 +184,6 @@ public class NotificationPage extends Activity {
     private void addButtonFriendRequestReceived(final FriendRequest friendRequest){
         final Context context = this;
         final Button newButton = new Button(context);
-        final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
         final Globals globalVariables = (Globals) getApplicationContext();
@@ -322,13 +318,12 @@ public class NotificationPage extends Activity {
     // Supprime une requete de FriendRequests et ajoute ou non l'ami à notre base de donnée
     public void suppressRequestFromDatabase(final FriendRequest friendRequest, final Boolean addFriend, final Button newButton, final Boolean showMessage, final Boolean suppressLayout){
         final Context context = this;
-        final FirebaseUser userFirebase = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_partie_en_cours);
         final Globals globalVariables = (Globals) getApplicationContext();
         final User user = globalVariables.getUser();
 
-        db.collection("Users").document(userFirebase.getEmail())
+        db.collection("Users").document(user.getId())
                 .collection("FriendRequests")
                 .document(friendRequest.getEmail())
                 .delete()
