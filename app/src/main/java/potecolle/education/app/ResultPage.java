@@ -215,6 +215,7 @@ public class ResultPage extends Activity {
         } catch (Exception e) {
             Log.e("ERROR", "probleme" + realAnswers.get(i));
         }
+        globalVariables.getCurrentGame().getQuestions().get(i).setNombrePose(globalVariables.getCurrentGame().getQuestions().get(i).getNombreReussi() + 1);
 
 
         LinearLayout llText = findViewById(id_layout);

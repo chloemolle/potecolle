@@ -23,7 +23,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -132,10 +135,12 @@ public class FinQuizPage extends Activity {
         }
 
         LinearLayout llText = (LinearLayout) findViewById(id_layout);
+        globalVariables.getCurrentGame().getQuestions().get(i).setNombrePose(globalVariables.getCurrentGame().getQuestions().get(i).getNombreReussi() + 1);
 
         if (playerAnswer.replaceAll("\\s", "").equalsIgnoreCase(realAnswer.replaceAll("\\s", ""))) {
             score ++;
             globalVariables.getCurrentGame().setReponsesTempsIndexScore(i);
+            globalVariables.getCurrentGame().getQuestions().get(i).setNombreReussi(globalVariables.getCurrentGame().getQuestions().get(i).getNombreReussi() + 1);
 
             TextView textReponseInchange = (TextView) findViewById(id_reponse_inchange);
             textReponseInchange.setTextColor(getResources().getColor(R.color.green));
@@ -157,6 +162,32 @@ public class FinQuizPage extends Activity {
             textSolution.setText(realAnswer);
             llText.setBackground(getResources().getDrawable(R.drawable.reponse_false));
         }
+
+
+        String pathQuestion = globalVariables.getCurrentGame().getPathQuestion();
+
+        ArrayList<String> data = new ArrayList<>();
+        data.add(pathQuestion);
+        data.add(globalVariables.getCurrentGame().getQuestionsId().get(i));
+        data.add(globalVariables.getCurrentGame().getQuestions().get(i).getNombreReussi().toString());
+        data.add(globalVariables.getCurrentGame().getQuestions().get(i).getNombrePose().toString());
+
+
+        FirebaseFunctions mFunctions = FirebaseFunctions.getInstance();
+        mFunctions.getHttpsCallable("updateQuestion")
+                .call(data)
+                .addOnCompleteListener(new OnCompleteListener<HttpsCallableResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<HttpsCallableResult> task) {
+                        if(task.isSuccessful()) {
+                            Log.d("reussi", "question update");
+                        } else {
+                            Log.d("fail", task.getException().getMessage());
+                        }
+
+                    }
+                });
+
         return score;
     }
 
