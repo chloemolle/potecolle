@@ -1,4 +1,4 @@
-package potecolle.education.app;
+package potecolle.application.about.education;
 
 /**
  * Created by chloemolle on 23/10/2018.

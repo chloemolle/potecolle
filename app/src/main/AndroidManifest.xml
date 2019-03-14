@@ -3,7 +3,7 @@
     package="com.example.chloemolle.potecolle">
 
     <application
-        android:name="potecolle.education.app.Globals"
+        android:name="potecolle.application.about.education.Globals"
         android:allowBackup="true"
         android:label="Potecolle"
         android:icon="@mipmap/ic_launcher"
@@ -11,72 +11,72 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="potecolle.education.app.FirstPage">
+        <activity android:name="potecolle.application.about.education.FirstPage">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="potecolle.education.app.ConnexionPage">
+        <activity android:name="potecolle.application.about.education.ConnexionPage">
         </activity>
 
 
-        <activity android:name="potecolle.education.app.MainPage">
+        <activity android:name="potecolle.application.about.education.MainPage">
         </activity>
 
-        <activity android:name="potecolle.education.app.ChoixMatierePage">
+        <activity android:name="potecolle.application.about.education.ChoixMatierePage">
         </activity>
 
-        <activity android:name="potecolle.education.app.ChoixSujetPage">
+        <activity android:name="potecolle.application.about.education.ChoixSujetPage">
         </activity>
 
-        <activity android:name="potecolle.education.app.ChoixAmiPage">
+        <activity android:name="potecolle.application.about.education.ChoixAmiPage">
         </activity>
 
-        <activity android:name="potecolle.education.app.QuizPage"
+        <activity android:name="potecolle.application.about.education.QuizPage"
             android:windowSoftInputMode="adjustResize">
         </activity>
 
-        <activity android:name="potecolle.education.app.FinQuizPage">
+        <activity android:name="potecolle.application.about.education.FinQuizPage">
         </activity>
 
-        <activity android:name="potecolle.education.app.ResultPage">
+        <activity android:name="potecolle.application.about.education.ResultPage">
         </activity>
 
-        <activity android:name="potecolle.education.app.BrouillonPage">
+        <activity android:name="potecolle.application.about.education.BrouillonPage">
         </activity>
 
-        <activity android:name="potecolle.education.app.LoadingQuizPage">
+        <activity android:name="potecolle.application.about.education.LoadingQuizPage">
         </activity>
 
-        <activity android:name="potecolle.education.app.NotificationPage">
+        <activity android:name="potecolle.application.about.education.NotificationPage">
         </activity>
 
-        <activity android:name="potecolle.education.app.ChoixTimer">
+        <activity android:name="potecolle.application.about.education.ChoixTimer">
         </activity>
 
-        <activity android:name="potecolle.education.app.AskForUsername">
+        <activity android:name="potecolle.application.about.education.AskForUsername">
         </activity>
 
-        <activity android:name="potecolle.education.app.AddFriendsPage">
+        <activity android:name="potecolle.application.about.education.AddFriendsPage">
         </activity>
 
-        <activity android:name="potecolle.education.app.VoirAmiPage">
+        <activity android:name="potecolle.application.about.education.VoirAmiPage">
         </activity>
 
-        <activity android:name="potecolle.education.app.ConfigureComptePage">
+        <activity android:name="potecolle.application.about.education.ConfigureComptePage">
         </activity>
 
-        <activity android:name="potecolle.education.app.MesPartiesPage">
+        <activity android:name="potecolle.application.about.education.MesPartiesPage">
         </activity>
 
-        <activity android:name="potecolle.education.app.NoAccountPage"></activity>
+        <activity android:name="potecolle.application.about.education.NoAccountPage"></activity>
 
-        <activity android:name="potecolle.education.app.SubscriptionPage"></activity>
+        <activity android:name="potecolle.application.about.education.SubscriptionPage"></activity>
 
-        <activity android:name="potecolle.education.app.ConnexionSecondPage"></activity>
-        <activity android:name="potecolle.education.app.PasswordForgottenPage"></activity>
+        <activity android:name="potecolle.application.about.education.ConnexionSecondPage"></activity>
+        <activity android:name="potecolle.application.about.education.PasswordForgottenPage"></activity>
 
 
     </application>

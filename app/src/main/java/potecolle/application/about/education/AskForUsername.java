@@ -1,4 +1,4 @@
-package potecolle.education.app;
+package potecolle.application.about.education;
 
 import android.app.Activity;
 import android.content.Context;
@@ -127,6 +127,14 @@ public class AskForUsername extends Activity {
         updateUser.put("classe", userClass);
         updateUser.put("level", 1);
         updateUser.put("pointsActuels", 0);
+
+
+        Globals globalVariables = (Globals) getApplicationContext();
+        User user = globalVariables.getUser();
+        user.setClasse(userClass);
+        user.setUsername(text.getText().toString());
+        user.setLevel(1);
+        user.setPointsActuels((double) 0);
 
         userDB.update(updateUser)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

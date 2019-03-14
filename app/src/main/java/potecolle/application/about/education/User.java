@@ -1,4 +1,4 @@
-package potecolle.education.app;
+package potecolle.application.about.education;
 
 import com.example.chloemolle.potecolle.R;
 

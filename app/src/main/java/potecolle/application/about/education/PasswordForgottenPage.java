@@ -1,4 +1,4 @@
-package potecolle.education.app;
+package potecolle.application.about.education;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.example.chloemolle.potecolle.R;
 import com.google.android.gms.tasks.OnCompleteListener;
