@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_main_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/constraint_layout_id">
+
+        <ImageButton
+            android:id="@+id/button_notification"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/notif2_new"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageButton
+            android:id="@+id/button_notification_on"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/notification_on"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <LinearLayout
+            android:id="@+id/duel_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/student_name">
+
+            <ImageView
+                android:id="@+id/duel_image"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/duel" />
+
+            <Button
+                android:id="@+id/lancer_partie"
+                android:layout_width="142dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="28dp"
+                android:background="@drawable/button_with_radius"
+                android:text="@string/start_duel"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/s_entrainer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/duel_layout">
+
+            <ImageView
+                android:id="@+id/entrainement_image"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/entrainement" />
+
+            <Button
+                android:id="@+id/s_entrainer"
+                android:layout_width="142dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="28dp"
+                android:background="@drawable/box_pour_entoure"
+                android:text="@string/start_solo"
+                android:textColor="@color/colorTheme" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/game_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s_entrainer_layout">
+
+            <ImageView
+                android:id="@+id/game_image"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/games" />
+
+            <Button
+                android:id="@+id/voir_mes_parties"
+                android:layout_width="142dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="28dp"
+                android:background="@drawable/box_pour_entoure"
+                android:text="@string/voir_mes_parties"
+                android:textColor="@color/colorTheme" />
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/student_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:gravity="center_horizontal"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/welcome_text"
+            android:textColor="@color/colorTheme"
+            android:textSize="30sp"
+
+            app:layout_constraintBottom_toTopOf="@+id/duel_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/parametre_button"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_chainStyle="spread_inside" />
+
+        <ProgressBar
+            android:id="@+id/progressBarAvancement"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/niveau" />
+
+        <TextView
+            android:id="@+id/niveau"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/colorTheme"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/game_layout" />
+
+        <TextView
+            android:id="@+id/avancement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="276dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/progressBarAvancement" />
+
+        <ImageButton
+            android:id="@+id/parametre_button"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/parametre"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <LinearLayout
+            android:id="@+id/layout_parametre"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/parametre_button">
+
+            <TextView
+                android:id="@+id/voir_ami"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/box_pour_menu"
+                android:padding="10dp"
+                android:text="@string/voir_ami"
+                android:textColor="@color/colorTheme"
+                android:textSize="20dp"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="38dp" />
+
+            <TextView
+                android:id="@+id/configurer_compte"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/box_pour_menu"
+                android:padding="10dp"
+                android:text="@string/configurer_compte"
+                android:textColor="@color/colorTheme"
+                android:textSize="20dp"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="38dp" />
+
+            <TextView
+                android:id="@+id/se_deconnecter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/box_pour_menu"
+                android:padding="10dp"
+                android:text="@string/se_deconnecter"
+                android:textColor="@color/colorTheme"
+                android:textSize="20dp"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="58dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/leaderboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/avancement">
+
+            <TextView
+                android:id="@+id/leaderboard_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorTheme"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:text="@string/leaderBoard"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:id="@+id/leaderboard_top"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorTheme"
+                android:orientation="horizontal"
+                android:paddingStart="1dp"
+                android:paddingEnd="1dp"
+                android:paddingBottom="1dp">
+
+                <TextView
+                    android:id="@+id/leaderboard_top_username"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/colorTheme"
+                    android:gravity="center"
+                    android:text="@string/nom_joueur"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/leaderboard_top_level"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/colorTheme"
+                    android:gravity="center"
+                    android:text="@string/niveau"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/leaderboard_top_points"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/colorTheme"
+                    android:gravity="center"
+                    android:text="@string/points"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nested_scrollview_leaderboard_linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+
+
+</ScrollView>

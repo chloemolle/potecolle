@@ -71,6 +71,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
     <ProgressBar
         android:id="@+id/progress_bar_check_username_configuration"
         style="?android:attr/progressBarStyle"
@@ -82,6 +83,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/username_text"
         app:layout_constraintTop_toTopOf="parent" />
+
 
 
 </android.support.constraint.ConstraintLayout>
