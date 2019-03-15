@@ -321,7 +321,7 @@ public class MainPage extends Activity {
 
     public void setHandler() {
         this.handler = new Handler();
-        final int delay = 100000; //milliseconds
+        final int delay = 30000; //milliseconds
         final Context self = this;
         this.runnable = new Runnable(){
             public void run() {

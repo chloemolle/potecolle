@@ -433,7 +433,7 @@ public class NotificationPage extends Activity {
             newButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     globalVariables.setCurrentGame(game);
-                    globalVariables.setTmpTime(30);
+                    globalVariables.setTmpTime(60);
                     Intent intent = new Intent(v.getContext(), QuizPage.class);
                     startActivity(intent);
                 }

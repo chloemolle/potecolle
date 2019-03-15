@@ -41,7 +41,7 @@ public class ChoixTimer extends Activity {
                 final Globals globalVariables = (Globals) getApplicationContext();
                 final Game currentGame = globalVariables.getCurrentGame();
                 currentGame.setTimed(true);
-                globalVariables.setTmpTime(30);
+                globalVariables.setTmpTime(60);
                 if (!globalVariables.getCurrentGame().getSeul()){
                     setGame(true);
                 }

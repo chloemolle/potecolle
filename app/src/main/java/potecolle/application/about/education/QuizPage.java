@@ -118,7 +118,7 @@ public class QuizPage extends Activity {
                         globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
                     }
                     globalVariables.getCurrentGame().addReponsesTemps(0);
-                    globalVariables.setTmpTime(30);
+                    globalVariables.setTmpTime(60);
                     nextPage(getBaseContext());
                 } else {
                     pgBar.setProgress(globalVariables.getTmpTime());
@@ -163,7 +163,7 @@ public class QuizPage extends Activity {
                         globalVariables.setBrouillonText("");
                         globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
                         globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                        globalVariables.setTmpTime(30);
+                        globalVariables.setTmpTime(60);
                         if (globalVariables.getCurrentGame().getTimed()) {
                             handler.removeCallbacks(runnable);
                         }
@@ -370,7 +370,7 @@ public class QuizPage extends Activity {
                     globalVariables.setBrouillonText("");
                     globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
                     globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    globalVariables.setTmpTime(30);
+                    globalVariables.setTmpTime(60);
                     if (globalVariables.getCurrentGame().getTimed()) {
                         handler.removeCallbacks(runnable);
                     }
@@ -389,7 +389,7 @@ public class QuizPage extends Activity {
                     globalVariables.setBrouillonText("");
                     globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
                     globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-                    globalVariables.setTmpTime(30);
+                    globalVariables.setTmpTime(60);
                     if (globalVariables.getCurrentGame().getTimed()) {
                         handler.removeCallbacks(runnable);
                     }
@@ -416,7 +416,7 @@ public class QuizPage extends Activity {
                     globalVariables.setReponseText("");
                     globalVariables.setBrouillonText("");
                     globalVariables.setCurrentQuestionNumero(currentQuestionNumber - 1);
-                    globalVariables.setTmpTime(30);
+                    globalVariables.setTmpTime(60);
                     Intent intent = new Intent(v.getContext(), QuizPage.class);
                     startActivity(intent);
                 }
@@ -537,7 +537,7 @@ public class QuizPage extends Activity {
         globalVariables.setReponseText("");
         globalVariables.getCurrentGame().addReponsesTemps(globalVariables.getTmpTime());
         globalVariables.getCurrentGame().addAnswerForPlayer1(currentQuestionNumber, userAnswerText);
-        globalVariables.setTmpTime(30);
+        globalVariables.setTmpTime(60);
 
         LinearLayout layoutReponse1 = (LinearLayout) findViewById(R.id.reponse_quiz1_layout);
         layoutReponse1.setAlpha((float) 0.5);

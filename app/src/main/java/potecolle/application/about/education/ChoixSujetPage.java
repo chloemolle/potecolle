@@ -126,7 +126,7 @@ public class ChoixSujetPage extends Activity {
                 } else {
                     intent = new Intent(v.getContext(), ChoixAmiPage.class);
                 }
-                globalVariables.setTmpTime(30);
+                globalVariables.setTmpTime(60);
                 globalVariables.getCurrentGame().setSujet(name);
 
 
