@@ -353,8 +353,8 @@ public class Game {
         ArrayList<Integer> questionToFetch = new ArrayList<>();
 
         Random r = new Random();
-        //On récupère 5 index de questions à récupérer
-        while (questionToFetch.size() != 5) {
+        //On récupère 10 index de questions à récupérer
+        while (questionToFetch.size() != 10) {
             Integer tmp = r.nextInt(nbQuestionDisponible);
             if (questionToFetch.indexOf(tmp) == -1) {
                 questionToFetch.add(tmp);

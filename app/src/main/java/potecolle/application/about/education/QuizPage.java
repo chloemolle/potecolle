@@ -428,7 +428,7 @@ public class QuizPage extends Activity {
     public void nextPage(final Context c) {
         final Globals globalVariables = (Globals) getApplicationContext();
         Integer currentQuestionNumber = globalVariables.getCurrentQuestionNumero();
-        if (currentQuestionNumber == 4) {
+        if (currentQuestionNumber == 9) {
 
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
             final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();

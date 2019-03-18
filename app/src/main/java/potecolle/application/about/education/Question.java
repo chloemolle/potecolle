@@ -16,9 +16,9 @@ public class Question {
     private String type;
     private String image;
     private Bitmap bmp;
-    private Integer nombrePose;
-    private Integer nombreReussi;
-    private Integer difficulte;
+    private Integer nombrePose = 1;
+    private Integer nombreReussi = 1;
+    private Integer difficulte = 1;
     private Integer temps;
     private ArrayList<String> propositions = new ArrayList<>();
     private String keyboardType;
