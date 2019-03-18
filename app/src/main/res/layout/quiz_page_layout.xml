@@ -96,5 +96,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/avancement_quiz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="test"
+        android:textColor="@color/colorTheme"
+        app:layout_constraintEnd_toStartOf="@id/next_quiz"
+        app:layout_constraintStart_toEndOf="@+id/retour_precedent_quiz"
+        app:layout_constraintTop_toBottomOf="@+id/user_answer" />
+
 
 </android.support.constraint.ConstraintLayout>

@@ -63,7 +63,7 @@ public class QuizPage extends Activity {
             setContentView(R.layout.image_page_layout);
             EditText editText = (EditText) findViewById(R.id.user_answer);
             if (currentQuestion.getKeyboardType().equals("numberSigned")) {
-                editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             }
         } else if (currentQuestion.getType().equals("imageqcm")) {
             setContentView(R.layout.image_qcm_page_layout);
@@ -87,7 +87,7 @@ public class QuizPage extends Activity {
             setContentView(R.layout.quiz_page_layout);
             EditText editText = (EditText) findViewById(R.id.user_answer);
             if (currentQuestion.getKeyboardType().equals("numberSigned")) {
-                editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             }
         }
 
@@ -95,6 +95,10 @@ public class QuizPage extends Activity {
             ImageButton boutonPrecedent = (ImageButton) findViewById(R.id.retour_precedent_quiz);
             boutonPrecedent.setVisibility(View.GONE);
         }
+
+        TextView progressionQuiz = findViewById(R.id.avancement_quiz);
+        Integer numeroQuesion = globalVariables.getCurrentQuestionNumero() + 1;
+        progressionQuiz.setText(numeroQuesion + "/10");
 
         final ProgressBar pgBar = (ProgressBar) findViewById(R.id.progressBarTimer);
         this.handler = new Handler();
