@@ -46,29 +46,7 @@ public class ChoixSujetPage extends Activity {
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar_sujets);
         progressBar.setVisibility(View.VISIBLE);
 
-        File cacheFile = new File(context.getCacheDir(), globalVariables.getUser().getClasse() + "_sujets_" + globalVariables.getCurrentGame().getMatiere());
-
-        try {
-            FileInputStream fis = new FileInputStream(cacheFile);
-            fis.getChannel().position(0);
-            BufferedReader bfr = new BufferedReader(new InputStreamReader(fis));
-            String currentLine = bfr.readLine();
-            if (currentLine == null) {
-                goWithTheDatabase();
-            } else {
-                while (currentLine != null) {
-                    createButtonWithNameForSubject(currentLine);
-                    currentLine = bfr.readLine();
-                }
-            }
-            fis.close();
-            bfr.close();
-            progressBar.setVisibility(View.GONE);
-        } catch (Exception e) {
-            Log.d("problemeCache", e.getMessage());
-            goWithTheDatabase();
-        }
-
+        goWithTheDatabase();
     }
 
     private void goWithTheDatabase(){
@@ -89,24 +67,16 @@ public class ChoixSujetPage extends Activity {
                 .continueWith(new Continuation<HttpsCallableResult, String>() {
                     @Override
                     public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                        ArrayList<String> arr = (ArrayList<String>) task.getResult().getData();
-                        FileWriter fw;
-                        BufferedWriter bfw;
-                        File cacheFile = new File(context.getCacheDir(), globalVariables.getUser().getClasse() + "_sujets_" + globalVariables.getCurrentGame().getMatiere());
-                        try {
-                            fw = new FileWriter(cacheFile.getAbsoluteFile());
-                            bfw = new BufferedWriter(fw);
+                        if (task.isSuccessful()) {
+                            ArrayList<String> arr = (ArrayList<String>) task.getResult().getData();
                             for (String sujet : arr) {
                                 createButtonWithNameForSubject(sujet);
-                                bfw.write(sujet);
-                                bfw.newLine();
                             }
-                            bfw.close();
-                        } catch (Exception e) {
-                            Log.d("problemeCache", e.getMessage());
-                        }
 
-                        progressBar.setVisibility(View.GONE);
+                            progressBar.setVisibility(View.GONE);
+                        } else {
+                            Log.d("Fail", task.getException().getMessage());
+                        }
                         return "";
                     }
                 });
@@ -145,7 +115,7 @@ public class ChoixSujetPage extends Activity {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        params.setMargins(20, 20, 20, 20);
+        params.setMargins(100, 20, 100, 20);
         newButton.setLayoutParams(params);
         newButton.setBackground(getResources().getDrawable(R.drawable.button_with_radius));
 

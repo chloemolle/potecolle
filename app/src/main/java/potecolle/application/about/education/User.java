@@ -92,6 +92,8 @@ public class User {
             return R.array.classes_VC;
         } else if (getTypeAbonnement().equals("reverie")) {
             return R.array.classes_reverie;
+        } else if(getTypeAbonnement().equals("startupforkids")) {
+            return R.array.classes_startupforkids;
         } else if (getTypeAbonnement().equals("debug")) {
             return R.array.all_classes_for_debug;
         }
