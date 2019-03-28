@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -127,6 +128,9 @@ public class MainPage extends Activity {
                         user = globalVariables.getUser();
                         Log.d("INFO", "on a récupéré un user");
                     }
+
+                    TextView nameUser = findViewById(R.id.name_user);
+                    nameUser.setText(globalVariables.getUser().getUsername());
 
                     //delete friends
                     deleteFriend(userDB, user);
@@ -590,8 +594,8 @@ public class MainPage extends Activity {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("Users")
                 .whereArrayContains("friends", globalVariables.getUserDB().getId())
-                .orderBy("level")
-                .orderBy("pointsActuels")
+                .orderBy("level", Query.Direction.DESCENDING)
+                .orderBy("pointsActuels", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -606,7 +610,7 @@ public class MainPage extends Activity {
                                 User friendUser = friend.toObject(User.class);
 
                                 if (user.getFriends().contains(friend.getId())) {
-                                    if (!alreadyAdded && (Integer.valueOf(friendUser.getLevel()) == user.getLevel() && Double.valueOf(friendUser.getPointsActuels()) <= user.getPointsActuels()) || Integer.valueOf(friendUser.getLevel()) < user.getLevel())  {
+                                    if (!alreadyAdded && (Integer.valueOf(friendUser.getLevel()) == user.getLevel() && Double.valueOf(friendUser.getPointsActuels()) <= user.getPointsActuels() || Integer.valueOf(friendUser.getLevel()) < user.getLevel()))  {
                                         alreadyAdded = true;
                                         leaderboardData.add(user);
                                     }
