@@ -18,6 +18,8 @@ public class User {
     private Integer level;
     private Double pointsActuels;
     private String typeAbonnement;
+    private Integer numberOfQuiz = 0;
+    private String id;
     private Integer numberOfQuizDuel = 0;
     private Integer numberOfQuizSolo = 0;
 

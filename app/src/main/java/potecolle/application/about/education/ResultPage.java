@@ -45,6 +45,7 @@ public class ResultPage extends Activity {
         TextView text = (TextView) findViewById(R.id.result_quiz_text);
         String votreScoreString = game.getScore();
         String sonScoreString = game.getScoreOpponent();
+        Log.d("TestSK", " in game.getfini " + globalVariables.getCurrentGame().getScoreOpponent());
 
         Integer votreScore = Integer.parseInt(votreScoreString);
         Integer sonScore = Integer.parseInt(sonScoreString);

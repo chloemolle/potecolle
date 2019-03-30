@@ -501,4 +501,7 @@ public class Game {
         this.pathQuestion = pathQuestion;
     }
 
+    public void setReponsesTempsOpponent(ArrayList<Integer> reponsesTempsOpponent) {
+        this.reponsesTempsOpponent = reponsesTempsOpponent;
+    }
 }

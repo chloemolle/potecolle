@@ -98,6 +98,7 @@ public class ConnexionSecondPage extends Activity {
                                                                        }
                                                                    });
                                 } else {
+                                    Log.d("Fail", task.getException().getMessage());
                                     // If sign in fails, display a message to the user.
                                     LayoutInflater inflater = getLayoutInflater();
                                     View layoutToast = inflater.inflate(R.layout.toast,

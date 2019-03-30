@@ -490,11 +490,16 @@ public class QuizPage extends Activity {
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 if (task.isSuccessful()) {
                                     Game game = task.getResult().toObject(Game.class);
+                                    Log.d("TestSK", game.getScoreOpponent());
                                     if (game.getFini()) {
                                         updateUserGame();
-                                        game.setScoreOpponent(game.getScoreOpponent());
                                         globalVariables.setCurrentQuestionNumero(0);
                                         updateGames(Integer.valueOf(globalVariables.getCurrentGame().getScore()));
+                                        globalVariables.getCurrentGame().setScoreOpponent(game.getScoreOpponent());
+                                        globalVariables.getCurrentGame().setPlayer2Answers(game.getPlayer2Answers());
+                                        globalVariables.getCurrentGame().setReponsesTempsOpponent(game.getReponsesTempsOpponent());
+
+                                        Log.d("TestSK", " in game.getfini 2 " + game.getScoreOpponent());
                                         Intent intent = new Intent(c, ResultPage.class);
                                         startActivity(intent);
                                     } else {
@@ -596,11 +601,15 @@ public class QuizPage extends Activity {
             }
         }
 
+
+        globalVariables.getCurrentGame().setScore(score.toString());
+
+        /*
+
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
         final DocumentReference userDB = db.collection("Users").document(userAuth.getEmail());
         final Integer scoreFinal = score;
-        globalVariables.getCurrentGame().setScore(score.toString());
         if (!globalVariables.getCurrentGame().getSeul()) {
 
             Map<String, Object> updateFields = new HashMap<>();
@@ -662,6 +671,7 @@ public class QuizPage extends Activity {
                         }
                     });
         }
+*/
     }
 
     @Override
@@ -721,6 +731,10 @@ public class QuizPage extends Activity {
         updateFields.put("vu", true);
         updateFields.put("reponsesTemps", globalVariables.getCurrentGame().getReponsesTemps());
 
+        Game game = globalVariables.getCurrentGame();
+        game.setScore(scoreFinal.toString());
+        game.setRepondu(true);
+        game.setVu(true);
 
         userDB.collection("Games").document(globalVariables.getCurrentGame().getId())
                 .update(updateFields)

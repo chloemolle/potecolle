@@ -129,8 +129,6 @@ public class MainPage extends Activity {
                         Log.d("INFO", "on a récupéré un user");
                     }
 
-                    TextView nameUser = findViewById(R.id.name_user);
-                    nameUser.setText(globalVariables.getUser().getUsername());
 
                     //delete friends
                     deleteFriend(userDB, user);

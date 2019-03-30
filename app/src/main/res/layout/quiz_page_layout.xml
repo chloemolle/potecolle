@@ -35,7 +35,7 @@
         android:layout_marginBottom="24dp"
         android:ems="10"
         android:imeOptions="actionNext"
-        android:inputType="textNoSuggestions"
+        android:inputType="textNoSuggestions|textVisiblePassword"
         android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@+id/retour_precedent_quiz"
         app:layout_constraintEnd_toEndOf="parent"
