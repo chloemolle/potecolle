@@ -12,7 +12,7 @@
         android:layout_marginLeft="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginRight="24dp"
-        android:background="@drawable/background_quiz"
+        android:background="@drawable/background_question_quiz"
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,7 +20,7 @@
 
         <io.github.kexanie.library.MathView
             android:id="@+id/question_quiz"
-            android:layout_width="320dp"
+            android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             app:engine="MathJax"
@@ -32,12 +32,13 @@
         android:id="@+id/user_answer"
         android:layout_width="290dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="32dp"
         android:ems="10"
+        android:hint="Ta réponse :)"
         android:imeOptions="actionNext"
         android:inputType="textNoSuggestions|textVisiblePassword"
         android:textSize="22sp"
-        app:layout_constraintBottom_toTopOf="@+id/retour_precedent_quiz"
+        app:layout_constraintBottom_toTopOf="@+id/avancement_quiz"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -48,9 +49,8 @@
         android:id="@+id/next_quiz"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/fleche_droite"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -100,12 +100,13 @@
         android:id="@+id/avancement_quiz"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginBottom="28dp"
         android:text="test"
         android:textColor="@color/colorTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/next_quiz"
-        app:layout_constraintStart_toEndOf="@+id/retour_precedent_quiz"
-        app:layout_constraintTop_toBottomOf="@+id/user_answer" />
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toEndOf="@+id/retour_precedent_quiz" />
 
 
 </android.support.constraint.ConstraintLayout>

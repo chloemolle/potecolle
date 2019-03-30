@@ -31,7 +31,7 @@
             android:layout_marginLeft="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginRight="24dp"
-            android:background="@drawable/background_quiz"
+            android:background="@drawable/background_question_quiz"
             android:padding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -39,7 +39,7 @@
 
             <io.github.kexanie.library.MathView
                 android:id="@+id/question_quiz"
-                android:layout_width="320dp"
+                android:layout_width="400dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 app:engine="MathJax"

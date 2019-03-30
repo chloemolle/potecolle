@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -112,9 +113,10 @@ public class ChoixSujetPage extends Activity {
         Button newButton = new Button(this);
         newButton.setText(name_sujet);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
+                800,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
+        params.gravity = Gravity.CENTER_HORIZONTAL;
         params.setMargins(100, 20, 100, 20);
         newButton.setLayoutParams(params);
         newButton.setBackground(getResources().getDrawable(R.drawable.button_with_radius));
