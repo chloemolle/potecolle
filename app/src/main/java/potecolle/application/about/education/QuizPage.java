@@ -490,16 +490,16 @@ public class QuizPage extends Activity {
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 if (task.isSuccessful()) {
                                     Game game = task.getResult().toObject(Game.class);
-                                    Log.d("TestSK", game.getScoreOpponent());
                                     if (game.getFini()) {
                                         updateUserGame();
                                         globalVariables.setCurrentQuestionNumero(0);
                                         updateGames(Integer.valueOf(globalVariables.getCurrentGame().getScore()));
-                                        globalVariables.getCurrentGame().setScoreOpponent(game.getScoreOpponent());
-                                        globalVariables.getCurrentGame().setPlayer2Answers(game.getPlayer2Answers());
-                                        globalVariables.getCurrentGame().setReponsesTempsOpponent(game.getReponsesTempsOpponent());
+                                        if (game.getScoreOpponent() != null){
+                                            globalVariables.getCurrentGame().setScoreOpponent(game.getScoreOpponent());
+                                            globalVariables.getCurrentGame().setPlayer2Answers(game.getPlayer2Answers());
+                                            globalVariables.getCurrentGame().setReponsesTempsOpponent(game.getReponsesTempsOpponent());
+                                        }
 
-                                        Log.d("TestSK", " in game.getfini 2 " + game.getScoreOpponent());
                                         Intent intent = new Intent(c, ResultPage.class);
                                         startActivity(intent);
                                     } else {

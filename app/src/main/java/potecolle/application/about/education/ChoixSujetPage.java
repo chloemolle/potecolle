@@ -113,11 +113,11 @@ public class ChoixSujetPage extends Activity {
         Button newButton = new Button(this);
         newButton.setText(name_sujet);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                800,
+                1000,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
         params.gravity = Gravity.CENTER_HORIZONTAL;
-        params.setMargins(100, 20, 100, 20);
+        params.setMargins(40, 20, 40, 20);
         newButton.setLayoutParams(params);
         newButton.setBackground(getResources().getDrawable(R.drawable.button_with_radius));
 
